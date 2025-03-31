@@ -55,14 +55,11 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     open-in-view: false
 
-# Logging Configuration
 logging:
   level:
     root: INFO
     org.springframework.web: INFO
-    com.example: DEBUG # Replace with your application package
-  file:
-    name: logs/application.log
+    com.projectmanage.main: DEBUG
   pattern:
     file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
   logback:
