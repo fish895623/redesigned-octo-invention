@@ -1,5 +1,5 @@
 import { useState, useEffect, ReactNode } from "react";
-import { User } from "../types/auth";
+import { User, LoginRequest, RegisterRequest } from "../types/auth";
 import {
   getCurrentUser,
   login as apiLogin,
@@ -11,15 +11,6 @@ import { useLocation } from "react-router-dom";
 
 interface AuthProviderProps {
   children: ReactNode;
-}
-
-interface LoginRequest {
-  email: string;
-  password: string;
-}
-
-interface RegisterRequest extends LoginRequest {
-  name: string;
 }
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {

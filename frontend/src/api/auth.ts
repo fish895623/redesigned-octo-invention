@@ -1,4 +1,4 @@
-import { User } from "../types/auth";
+import { User, LoginRequest, RegisterRequest } from "../types/auth";
 import { API_ENDPOINTS, createHeaders } from "../config/api";
 
 export const getCurrentUser = async (): Promise<User> => {
@@ -8,6 +8,9 @@ export const getCurrentUser = async (): Promise<User> => {
       credentials: "include",
       headers: createHeaders(),
     });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
     const data = await response.json();
     return {
       authenticated: data.authenticated,
@@ -21,10 +24,7 @@ export const getCurrentUser = async (): Promise<User> => {
   }
 };
 
-export const login = async (credentials: {
-  email: string;
-  password: string;
-}): Promise<User> => {
+export const login = async (credentials: LoginRequest): Promise<User> => {
   try {
     const response = await fetch(API_ENDPOINTS.auth.login, {
       method: "POST",
@@ -32,6 +32,9 @@ export const login = async (credentials: {
       headers: createHeaders(),
       body: JSON.stringify(credentials),
     });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
     const data = await response.json();
     return {
       authenticated: data.authenticated,
@@ -45,11 +48,7 @@ export const login = async (credentials: {
   }
 };
 
-export const register = async (userData: {
-  email: string;
-  password: string;
-  name: string;
-}): Promise<User> => {
+export const register = async (userData: RegisterRequest): Promise<User> => {
   try {
     const response = await fetch(API_ENDPOINTS.auth.register, {
       method: "POST",
@@ -57,6 +56,9 @@ export const register = async (userData: {
       headers: createHeaders(),
       body: JSON.stringify(userData),
     });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
     const data = await response.json();
     return {
       authenticated: data.authenticated,
@@ -72,11 +74,14 @@ export const register = async (userData: {
 
 export const logout = async (): Promise<void> => {
   try {
-    await fetch(API_ENDPOINTS.auth.logout, {
+    const response = await fetch(API_ENDPOINTS.auth.logout, {
       method: "POST",
       credentials: "include",
       headers: createHeaders(),
     });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
     localStorage.removeItem("jwt_token");
     window.location.href = "/";
   } catch (err) {

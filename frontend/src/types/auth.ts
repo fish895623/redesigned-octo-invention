@@ -5,10 +5,19 @@ export interface User {
   picture?: string;
 }
 
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+export interface RegisterRequest extends LoginRequest {
+  name: string;
+}
+
 export interface AuthContextType {
   user: User | null;
   loading: boolean;
-  login: (credentials: any) => Promise<User>;
-  register: (userData: any) => Promise<User>;
+  login: (credentials: LoginRequest) => Promise<User>;
+  register: (userData: RegisterRequest) => Promise<User>;
   logout: () => Promise<void>;
 }
