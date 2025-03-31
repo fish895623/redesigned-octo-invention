@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useProjects } from "../../hooks/useProjects";
 import { Milestone } from "../../types/project";
 import "../../css/Modal.css";
+import { API_BASE_URL, createHeaders } from "../../config/api";
 
 interface CreateTaskModalProps {
   projectId: string;
@@ -10,12 +11,7 @@ interface CreateTaskModalProps {
   selectedMilestoneId?: string | null;
 }
 
-const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
-  projectId,
-  milestones,
-  onClose,
-  selectedMilestoneId,
-}) => {
+const CreateTaskModal: React.FC<CreateTaskModalProps> = ({ projectId, milestones, onClose, selectedMilestoneId }) => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [milestoneId, setMilestoneId] = useState<string | undefined>(undefined);
@@ -34,22 +30,30 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
     if (titleError) setTitleError("");
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!title.trim()) {
-      setTitleError("Task title is required");
-      return;
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/projects/${projectId}/tasks`, {
+        method: "POST",
+        credentials: "include",
+        headers: createHeaders(),
+        body: JSON.stringify({
+          title,
+          description,
+          milestoneId,
+        }),
+      });
+      await response.json();
+      addTask(projectId, {
+        title: title.trim(),
+        description: description.trim() || undefined,
+        completed: false,
+        milestoneId: milestoneId,
+      });
+      onClose();
+    } catch (error) {
+      console.error("Error creating task:", error);
     }
-
-    addTask(projectId, {
-      title: title.trim(),
-      description: description.trim() || undefined,
-      completed: false,
-      milestoneId: milestoneId,
-    });
-
-    onClose();
   };
 
   return (
@@ -57,11 +61,7 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
       <div className="modal" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
           <h2>Create New Task</h2>
-          <button
-            className="close-button"
-            onClick={onClose}
-            aria-label="Close modal"
-          >
+          <button className="close-button" onClick={onClose} aria-label="Close modal">
             &times;
           </button>
         </div>
@@ -91,10 +91,7 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
 
           <div className="form-field">
             <h3>Milestone</h3>
-            <select
-              value={milestoneId || ""}
-              onChange={(e) => setMilestoneId(e.target.value || undefined)}
-            >
+            <select value={milestoneId || ""} onChange={(e) => setMilestoneId(e.target.value || undefined)}>
               <option value="">No Milestone</option>
               {milestones.map((milestone) => (
                 <option key={milestone.id} value={milestone.id}>
@@ -115,12 +112,9 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
                 if (!title.trim()) {
                   return; // Don't proceed if title is empty (handled by form submit)
                 }
-                await fetch(`/api/projects/${projectId}/tasks`, {
+                await fetch(`${API_BASE_URL}/api/projects/${projectId}/tasks`, {
                   method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                    Accept: "application/json",
-                  },
+                  headers: createHeaders(),
                   credentials: "include",
                   body: JSON.stringify({
                     title: title.trim(),

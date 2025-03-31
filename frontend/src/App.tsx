@@ -3,6 +3,7 @@ import { AuthProvider } from "./context/AuthContext";
 import NavigationBar from "./components/NavigationBar";
 import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import { lazy, Suspense, useEffect } from "react";
+import { oauth2Service } from "./services/oauth2Service";
 
 // Lazy load page components for better performance
 const Profile = lazy(() => import("./ProfilePage"));
@@ -23,15 +24,29 @@ const OAuthCallback = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Short delay to allow authentication state to update
-    const redirectTimer = setTimeout(() => {
-      navigate("/project");
-    }, 1500);
+    const handleCallback = async () => {
+      try {
+        await oauth2Service.handleCallback();
+        // Clear the URL parameters after successful authentication
+        window.history.replaceState({}, document.title, "/oauth/callback");
+        navigate("/project");
+      } catch (error) {
+        console.error("Error handling OAuth callback:", error);
+        navigate("/login");
+      }
+    };
 
-    return () => clearTimeout(redirectTimer);
+    handleCallback();
   }, [navigate]);
 
-  return <div className="loading">Authentication successful. Redirecting...</div>;
+  return (
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+      <div className="p-8 bg-white rounded-lg shadow-md">
+        <h2 className="text-2xl font-bold text-gray-800 mb-4">Authentication successful</h2>
+        <p className="text-gray-600">Redirecting to projects...</p>
+      </div>
+    </div>
+  );
 };
 
 function App() {

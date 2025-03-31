@@ -3,6 +3,18 @@ import { UserProfile } from "./UserProfile";
 import { Link } from "react-router-dom";
 import "../css/NavigationBar.css";
 
+const onGoogleLogin = () => {
+  window.location.href = "http://localhost:8080/oauth2/authorization/google";
+};
+
+function Login() {
+  return (
+    <>
+      <h1>Login</h1>
+      <button onClick={onGoogleLogin}>naver login</button>
+    </>
+  );
+}
 const NavigationBar = () => {
   const { user, loading } = useAuth();
 
@@ -34,9 +46,7 @@ const NavigationBar = () => {
           </>
         ) : (
           <div className="auth-nav-buttons">
-            <Link to="/login" className="nav-link">
-              Login
-            </Link>
+            <Login />
             <Link to="/register" className="nav-link">
               Register
             </Link>

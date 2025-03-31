@@ -3,6 +3,7 @@ import { useProject } from "../context/ProjectContext";
 import { Milestone } from "../types/project";
 import CreateMilestoneModal from "./modal/CreateMilestoneModal";
 import "../css/MilestoneList.css";
+import { API_BASE_URL, createHeaders } from "../config/api";
 
 interface MilestoneListProps {
   projectId: string;
@@ -15,9 +16,7 @@ const MilestoneList = ({ projectId }: MilestoneListProps) => {
   const [milestones, setMilestones] = useState<Milestone[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [editingMilestoneId, setEditingMilestoneId] = useState<string | null>(
-    null,
-  );
+  const [editingMilestoneId, setEditingMilestoneId] = useState<string | null>(null);
   const [editTitle, setEditTitle] = useState("");
   const [editDescription, setEditDescription] = useState("");
   const [showMilestoneModal, setShowMilestoneModal] = useState(false);
@@ -78,7 +77,7 @@ const MilestoneList = ({ projectId }: MilestoneListProps) => {
       if (!date) return "N/A";
       return date.toLocaleString();
     },
-    [convertArrayToDate],
+    [convertArrayToDate]
   );
 
   // Fetch milestones from API
@@ -87,10 +86,10 @@ const MilestoneList = ({ projectId }: MilestoneListProps) => {
       setLoading(true);
       setError(null);
       try {
-        const response = await fetch(`/api/projects/${projectId}/milestones`);
-        if (!response.ok) {
-          throw new Error(`Failed to fetch milestones: ${response.statusText}`);
-        }
+        const response = await fetch(`${API_BASE_URL}/api/projects/${projectId}/milestones`, {
+          credentials: "include",
+          headers: createHeaders(),
+        });
         const data = await response.json();
         console.log("Raw milestone data from API:", data);
 
@@ -125,9 +124,7 @@ const MilestoneList = ({ projectId }: MilestoneListProps) => {
 
         setMilestones(processedData);
       } catch (err) {
-        setError(
-          err instanceof Error ? err.message : "An unknown error occurred",
-        );
+        setError(err instanceof Error ? err.message : "An unknown error occurred");
         console.error("Error fetching milestones:", err);
       } finally {
         setLoading(false);
@@ -143,10 +140,10 @@ const MilestoneList = ({ projectId }: MilestoneListProps) => {
   const refreshMilestones = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await fetch(`/api/projects/${projectId}/milestones`);
-      if (!response.ok) {
-        throw new Error(`Failed to refresh milestones: ${response.statusText}`);
-      }
+      const response = await fetch(`${API_BASE_URL}/api/projects/${projectId}/milestones`, {
+        credentials: "include",
+        headers: createHeaders(),
+      });
       const data = await response.json();
       console.log("Refresh: Raw milestone data from API:", data);
 
@@ -198,24 +195,18 @@ const MilestoneList = ({ projectId }: MilestoneListProps) => {
     async (milestone: Milestone) => {
       if (editTitle.trim()) {
         try {
-          const response = await fetch(
-            `/api/projects/${projectId}/milestones/${milestone.id}`,
-            {
-              method: "PUT",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                title: editTitle.trim(),
-                description: editDescription.trim() || undefined,
-              }),
-            },
-          );
+          const response = await fetch(`${API_BASE_URL}/api/projects/${projectId}/milestones/${milestone.id}`, {
+            method: "PUT",
+            credentials: "include",
+            headers: createHeaders(),
+            body: JSON.stringify({
+              title: editTitle.trim(),
+              description: editDescription.trim() || undefined,
+            }),
+          });
 
           if (!response.ok) {
-            throw new Error(
-              `Failed to update milestone: ${response.statusText}`,
-            );
+            throw new Error(`Failed to update milestone: ${response.statusText}`);
           }
 
           // Update local state optimistically
@@ -235,25 +226,18 @@ const MilestoneList = ({ projectId }: MilestoneListProps) => {
         setEditingMilestoneId(null);
       }
     },
-    [editTitle, editDescription, updateMilestone, projectId, refreshMilestones],
+    [editTitle, editDescription, updateMilestone, projectId, refreshMilestones]
   );
 
   const handleDeleteMilestone = useCallback(
     async (milestoneId: string) => {
       if (window.confirm("Are you sure you want to delete this milestone?")) {
         try {
-          const response = await fetch(
-            `/api/projects/${projectId}/milestones/${milestoneId}`,
-            {
-              method: "DELETE",
-            },
-          );
-
-          if (!response.ok) {
-            throw new Error(
-              `Failed to delete milestone: ${response.statusText}`,
-            );
-          }
+          await fetch(`${API_BASE_URL}/api/projects/${projectId}/milestones/${milestoneId}`, {
+            method: "DELETE",
+            credentials: "include",
+            headers: createHeaders(),
+          });
 
           // Update local state
           deleteMilestone(projectId, milestoneId);
@@ -265,7 +249,7 @@ const MilestoneList = ({ projectId }: MilestoneListProps) => {
         }
       }
     },
-    [deleteMilestone, projectId, refreshMilestones],
+    [deleteMilestone, projectId, refreshMilestones]
   );
 
   const handleToggleMilestone = useCallback(
@@ -289,8 +273,8 @@ const MilestoneList = ({ projectId }: MilestoneListProps) => {
                 completed: newCompletedState,
                 updatedAt: currentTimestamp,
               }
-            : m,
-        ),
+            : m
+        )
       );
 
       // Also update the global state
@@ -329,16 +313,12 @@ const MilestoneList = ({ projectId }: MilestoneListProps) => {
         console.log("Sending update to server:", requestBody);
 
         // Backend uses PUT for updates
-        const response = await fetch(
-          `/api/projects/${projectId}/milestones/${milestone.id}`,
-          {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(requestBody),
-          },
-        );
+        const response = await fetch(`${API_BASE_URL}/api/projects/${projectId}/milestones/${milestone.id}`, {
+          method: "PUT",
+          credentials: "include",
+          headers: createHeaders(),
+          body: JSON.stringify(requestBody),
+        });
 
         if (!response.ok) {
           throw new Error(`Failed to toggle milestone: ${response.statusText}`);
@@ -359,8 +339,8 @@ const MilestoneList = ({ projectId }: MilestoneListProps) => {
                   completed: milestone.completed,
                   updatedAt: milestone.updatedAt,
                 }
-              : m,
-          ),
+              : m
+          )
         );
 
         updateMilestone({
@@ -373,7 +353,7 @@ const MilestoneList = ({ projectId }: MilestoneListProps) => {
         alert("Failed to update milestone status. Please try again.");
       }
     },
-    [updateMilestone, projectId, setMilestones],
+    [updateMilestone, projectId, setMilestones]
   );
 
   // Sort milestones by either created or updated time
@@ -399,16 +379,11 @@ const MilestoneList = ({ projectId }: MilestoneListProps) => {
       <div className="milestone-list-header">
         <h2>Milestones</h2>
         <div className="milestone-list-controls">
-          <select
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
-          >
+          <select value={sortBy} onChange={(e) => setSortBy(e.target.value as typeof sortBy)}>
             <option value="updated">Sort by Updated</option>
             <option value="created">Sort by Created</option>
           </select>
-          <button onClick={() => setShowMilestoneModal(true)}>
-            Add Milestone
-          </button>
+          <button onClick={() => setShowMilestoneModal(true)}>Add Milestone</button>
         </div>
       </div>
       <div className="milestone-list-content">
@@ -417,9 +392,7 @@ const MilestoneList = ({ projectId }: MilestoneListProps) => {
         ) : error ? (
           <div className="error-message">{error}</div>
         ) : sortedMilestones.length === 0 ? (
-          <div className="empty-message">
-            No milestones found for this project.
-          </div>
+          <div className="empty-message">No milestones found for this project.</div>
         ) : (
           sortedMilestones.map((milestone) => (
             <div key={milestone.id} className="milestone-item">
@@ -430,9 +403,7 @@ const MilestoneList = ({ projectId }: MilestoneListProps) => {
                     value={editTitle}
                     onChange={(e) => setEditTitle(e.target.value)}
                     onBlur={() => handleSaveEdit(milestone)}
-                    onKeyDown={(e) =>
-                      e.key === "Enter" && handleSaveEdit(milestone)
-                    }
+                    onKeyDown={(e) => e.key === "Enter" && handleSaveEdit(milestone)}
                   />
                   <textarea
                     value={editDescription}
@@ -446,68 +417,41 @@ const MilestoneList = ({ projectId }: MilestoneListProps) => {
                   <div className="milestone-header">
                     <div className="milestone-info">
                       <div>
-                        <div
-                          className={`milestone-title ${
-                            milestone.completed ? "completed" : ""
-                          }`}
-                        >
-                          <span className="milestone-id">
-                            (ID: {milestone.id}){" "}
-                          </span>
+                        <div className={`milestone-title ${milestone.completed ? "completed" : ""}`}>
+                          <span className="milestone-id">(ID: {milestone.id}) </span>
                           {milestone.title}
                         </div>
-                        {milestone.description && (
-                          <div className="milestone-description">
-                            {milestone.description}
-                          </div>
-                        )}
+                        {milestone.description && <div className="milestone-description">{milestone.description}</div>}
                       </div>
                     </div>
                     <div className="milestone-actions">
                       <button
-                        className={`toggle ${
-                          milestone.completed ? "complete" : "incomplete"
-                        }`}
+                        className={`toggle ${milestone.completed ? "complete" : "incomplete"}`}
                         onClick={() => handleToggleMilestone(milestone)}
                       >
                         {milestone.completed ? "Completed" : "Mark Complete"}
                       </button>
                       <button
-                        onClick={() =>
-                          (window.location.href = `/project/${projectId}/milestone/${milestone.id}`)
-                        }
+                        onClick={() => (window.location.href = `/project/${projectId}/milestone/${milestone.id}`)}
                         className="more-info-button"
                       >
                         More Info
                       </button>
-                      <button
-                        className="edit"
-                        onClick={() => handleEditMilestone(milestone)}
-                      >
+                      <button className="edit" onClick={() => handleEditMilestone(milestone)}>
                         Edit
                       </button>
-                      <button
-                        className="delete"
-                        onClick={() => handleDeleteMilestone(milestone.id)}
-                      >
+                      <button className="delete" onClick={() => handleDeleteMilestone(milestone.id)}>
                         Delete
                       </button>
                     </div>
                   </div>
                   <div className="milestone-stats">
                     <span>Tasks: {milestone.tasks.length}</span>
-                    <span>
-                      Status:{" "}
-                      {milestone.completed ? "Completed" : "In Progress"}
-                    </span>
+                    <span>Status: {milestone.completed ? "Completed" : "In Progress"}</span>
                   </div>
                   <div className="milestone-meta">
-                    <span className="milestone-date">
-                      Updated: {formatDate(milestone.updatedAt)}
-                    </span>
-                    <span className="milestone-date">
-                      Created: {formatDate(milestone.createdAt)}
-                    </span>
+                    <span className="milestone-date">Updated: {formatDate(milestone.updatedAt)}</span>
+                    <span className="milestone-date">Created: {formatDate(milestone.createdAt)}</span>
                   </div>
                 </div>
               )}

@@ -1,26 +1,15 @@
 import { User } from "../types/auth";
+import { oauth2Service } from "../services/oauth2Service";
 
 export const getCurrentUser = async (): Promise<User> => {
   try {
-    const response = await fetch("/api/auth/user", {
-      credentials: "include",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      return {
-        authenticated: data.authenticated,
-        name: data.name,
-        email: data.email,
-        picture: data.picture,
-      };
-    } else {
-      return { authenticated: false };
-    }
+    const data = await oauth2Service.getCurrentUser();
+    return {
+      authenticated: data.authenticated,
+      name: data.name,
+      email: data.email,
+      picture: data.picture,
+    };
   } catch (err) {
     console.error("Failed to check authentication status", err);
     return { authenticated: false };
@@ -28,20 +17,12 @@ export const getCurrentUser = async (): Promise<User> => {
 };
 
 export const loginWithGoogle = () => {
-  window.location.assign("/oauth2/authorization/google");
+  oauth2Service.initiateGoogleLogin();
 };
 
 export const logout = async (): Promise<void> => {
   try {
-    await fetch("/api/auth/logout", {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-    });
-    window.location.href = "/";
+    await oauth2Service.logout();
   } catch (err) {
     console.error("Logout failed:", err);
   }
