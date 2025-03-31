@@ -6,6 +6,8 @@ import { lazy, Suspense, useEffect } from "react";
 
 // Lazy load page components for better performance
 const Profile = lazy(() => import("./ProfilePage"));
+const LoginPage = lazy(() => import("./pages/LoginPage"));
+const RegistrationPage = lazy(() => import("./pages/RegistrationPage"));
 const ProjectListPage = lazy(() => import("./pages/ProjectListPage"));
 const ProjectPage = lazy(() => import("./pages/ProjectPage"));
 const MilestoneListPage = lazy(() => import("./pages/MilestoneListPage"));
@@ -39,6 +41,8 @@ function App() {
       <Suspense fallback={<LoadingFallback />}>
         <Routes>
           <Route path="/profile" element={<Profile />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegistrationPage />} />
           <Route path="/project" element={<ProjectListPage />} />
           <Route path="/project/:projectId" element={<ProjectPage />} />
           <Route path="/project/:projectId/milestone" element={<MilestoneListPage />} />
