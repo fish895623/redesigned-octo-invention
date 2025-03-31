@@ -1,12 +1,25 @@
 import { useState, useEffect, ReactNode } from "react";
-import { LoginRequest, RegisterRequest } from "../services/oauth2Service";
 import { User } from "../types/auth";
-import { getCurrentUser, login as apiLogin, logout as apiLogout, register as apiRegister } from "../api/auth";
+import {
+  getCurrentUser,
+  login as apiLogin,
+  logout as apiLogout,
+  register as apiRegister,
+} from "../api/auth";
 import { AuthContext } from "./AuthContextDefinition";
 import { useLocation } from "react-router-dom";
 
 interface AuthProviderProps {
   children: ReactNode;
+}
+
+interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+interface RegisterRequest extends LoginRequest {
+  name: string;
 }
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
@@ -61,8 +74,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   const logout = async () => {
-    await apiLogout();
-    setUser(null);
+    try {
+      await apiLogout();
+      setUser(null);
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
   };
 
   const value = {

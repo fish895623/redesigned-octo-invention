@@ -1,5 +1,3 @@
-import { LoginRequest, RegisterRequest } from "../services/oauth2Service";
-
 export interface User {
   authenticated: boolean;
   name?: string;
@@ -10,7 +8,7 @@ export interface User {
 export interface AuthContextType {
   user: User | null;
   loading: boolean;
-  login: (credentials: LoginRequest) => Promise<User>;
-  register: (userData: RegisterRequest) => Promise<User>;
+  login: (credentials: any) => Promise<User>;
+  register: (userData: any) => Promise<User>;
   logout: () => Promise<void>;
 }
