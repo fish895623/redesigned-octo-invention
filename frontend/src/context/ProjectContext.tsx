@@ -1,260 +1,293 @@
-import { createContext, useState, useEffect, ReactNode, useContext } from "react";
+import {
+  createContext,
+  useState,
+  useEffect,
+  ReactNode,
+  useContext,
+} from "react";
 import { Project, Milestone, Task } from "../types/project";
-import { API_BASE_URL, createHeaders } from "../config/api";
+import { API_ENDPOINTS } from "../config/api";
+import { apiClient } from "../api/apiClient";
+import { useAuth } from "./AuthContextDefinition";
 
 export interface ProjectContextType {
   projects: Project[];
   loading: boolean;
   error: string | null;
-  addProject: (project: Omit<Project, "id" | "createdAt" | "updatedAt" | "milestones" | "tasks">) => void;
-  updateProject: (project: Project) => void;
-  deleteProject: (projectId: string) => void;
+  addProject: (
+    project: Omit<
+      Project,
+      "id" | "createdAt" | "updatedAt" | "milestones" | "tasks"
+    >
+  ) => Promise<Project>;
+  updateProject: (project: Project) => Promise<void>;
+  deleteProject: (projectId: string) => Promise<void>;
   addMilestone: (
     projectId: string,
-    milestone: Omit<Milestone, "id" | "projectId" | "createdAt" | "updatedAt" | "tasks">
-  ) => void;
-  updateMilestone: (milestone: Milestone) => void;
-  deleteMilestone: (projectId: string, milestoneId: string) => void;
-  addTask: (projectId: string, task: Omit<Task, "id" | "projectId" | "createdAt" | "updatedAt">) => void;
-  updateTask: (task: Task) => void;
-  deleteTask: (projectId: string, taskId: string) => void;
+    milestone: Omit<
+      Milestone,
+      "id" | "projectId" | "createdAt" | "updatedAt" | "tasks"
+    >
+  ) => Promise<Milestone>;
+  updateMilestone: (milestone: Milestone) => Promise<void>;
+  deleteMilestone: (projectId: string, milestoneId: string) => Promise<void>;
+  addTask: (
+    projectId: string,
+    task: Omit<Task, "id" | "projectId" | "createdAt" | "updatedAt">
+  ) => Promise<Task>;
+  updateTask: (task: Task) => Promise<void>;
+  deleteTask: (projectId: string, taskId: string) => Promise<void>;
 }
 
-export const ProjectContext = createContext<ProjectContextType | undefined>(undefined);
+export const ProjectContext = createContext<ProjectContextType | undefined>(
+  undefined
+);
 
 interface ProjectProviderProps {
   children: ReactNode;
 }
 
-// Use function declaration for component exports (better for Fast Refresh)
 export function ProjectProvider({ children }: ProjectProviderProps) {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, _setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const { user, loading: authLoading } = useAuth();
 
-  // Fetch real projects from the API
+  // Fetch projects only when authenticated
   useEffect(() => {
     const fetchProjects = async () => {
+      if (!user?.authenticated) return;
+
       try {
         setLoading(true);
-        const response = await fetch(`${API_BASE_URL}/api/projects`, {
-          credentials: "include",
-          headers: createHeaders(),
-        });
-        const data = await response.json();
-        setProjects(data);
+        const response = await apiClient.get<Project[]>(
+          API_ENDPOINTS.projects.list
+        );
+        setProjects(response.data);
       } catch (error) {
         console.error("Error fetching projects:", error);
+        setError("Failed to fetch projects");
       } finally {
         setLoading(false);
       }
     };
 
     fetchProjects();
-  }, []);
+  }, [user?.authenticated]);
 
-  const addProject = async (project: Omit<Project, "id" | "createdAt" | "updatedAt" | "milestones" | "tasks">) => {
+  const addProject = async (
+    project: Omit<
+      Project,
+      "id" | "createdAt" | "updatedAt" | "milestones" | "tasks"
+    >
+  ) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/projects`, {
-        method: "POST",
-        credentials: "include",
-        headers: createHeaders(),
-        body: JSON.stringify(project),
-      });
-      const data = await response.json();
-      setProjects((prev) => [...prev, data]);
-      return data;
+      const response = await apiClient.post<Project>(
+        API_ENDPOINTS.projects.create,
+        project
+      );
+      setProjects((prev) => [...prev, response.data]);
+      return response.data;
     } catch (error) {
       console.error("Error creating project:", error);
+      setError("Failed to create project");
       throw error;
     }
   };
 
-  const updateProject = (updatedProject: Project) => {
-    setProjects(projects.map((project) => (project.id === updatedProject.id ? updatedProject : project)));
+  const updateProject = async (updatedProject: Project) => {
+    try {
+      await apiClient.put<Project>(
+        `${API_ENDPOINTS.projects.update}/${updatedProject.id}`,
+        updatedProject
+      );
+      setProjects(
+        projects.map((project) =>
+          project.id === updatedProject.id ? updatedProject : project
+        )
+      );
+    } catch (error) {
+      console.error("Error updating project:", error);
+      setError("Failed to update project");
+      throw error;
+    }
   };
 
-  const deleteProject = (projectId: string) => {
-    setProjects(projects.filter((project) => project.id !== projectId));
+  const deleteProject = async (projectId: string) => {
+    try {
+      await apiClient.delete(`${API_ENDPOINTS.projects.delete}/${projectId}`);
+      setProjects(projects.filter((project) => project.id !== projectId));
+    } catch (error) {
+      console.error("Error deleting project:", error);
+      setError("Failed to delete project");
+      throw error;
+    }
   };
 
-  const addMilestone = (
+  const addMilestone = async (
     projectId: string,
-    milestone: Omit<Milestone, "id" | "projectId" | "createdAt" | "updatedAt" | "tasks">
+    milestone: Omit<
+      Milestone,
+      "id" | "projectId" | "createdAt" | "updatedAt" | "tasks"
+    >
   ) => {
-    const newMilestone: Milestone = {
-      ...milestone,
-      id: crypto.randomUUID(),
-      projectId,
-      tasks: [],
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-
-    setProjects(
-      projects.map((project) => {
-        if (project.id === projectId) {
-          return {
-            ...project,
-            milestones: [...project.milestones, newMilestone],
-          };
-        }
-        return project;
-      })
-    );
-  };
-
-  const updateMilestone = (updatedMilestone: Milestone) => {
-    setProjects(
-      projects.map((project) => {
-        if (project.id === updatedMilestone.projectId) {
-          return {
-            ...project,
-            milestones: project.milestones.map((milestone) =>
-              milestone.id === updatedMilestone.id ? updatedMilestone : milestone
-            ),
-          };
-        }
-        return project;
-      })
-    );
-  };
-
-  const deleteMilestone = (projectId: string, milestoneId: string) => {
-    setProjects(
-      projects.map((project) => {
-        if (project.id === projectId) {
-          return {
-            ...project,
-            milestones: project.milestones.filter((milestone) => milestone.id !== milestoneId),
-            tasks: project.tasks.map((task) => {
-              if (task.milestoneId === milestoneId) {
-                return { ...task, milestoneId: undefined };
-              }
-              return task;
-            }),
-          };
-        }
-        return project;
-      })
-    );
-  };
-
-  const addTask = (projectId: string, task: Omit<Task, "id" | "projectId" | "createdAt" | "updatedAt">) => {
-    const newTask: Task = {
-      ...task,
-      id: crypto.randomUUID(),
-      projectId,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-
-    setProjects(
-      projects.map((project) => {
-        if (project.id === projectId) {
-          const updatedProject = {
-            ...project,
-            tasks: [...project.tasks, newTask],
-          };
-
-          // If task has a milestoneId, add it to the milestone's tasks as well
-          if (newTask.milestoneId) {
-            updatedProject.milestones = project.milestones.map((milestone) => {
-              if (milestone.id === newTask.milestoneId) {
-                return {
-                  ...milestone,
-                  tasks: [...milestone.tasks, newTask],
-                };
-              }
-              return milestone;
-            });
+    try {
+      const response = await apiClient.post<Milestone>(
+        `${API_ENDPOINTS.milestones.create}/${projectId}`,
+        milestone
+      );
+      setProjects(
+        projects.map((project) => {
+          if (project.id === projectId) {
+            return {
+              ...project,
+              milestones: [...project.milestones, response.data],
+            };
           }
-
-          return updatedProject;
-        }
-        return project;
-      })
-    );
+          return project;
+        })
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error creating milestone:", error);
+      setError("Failed to create milestone");
+      throw error;
+    }
   };
 
-  const updateTask = (updatedTask: Task) => {
-    setProjects(
-      projects.map((project) => {
-        if (project.id === updatedTask.projectId) {
-          const updatedProject = {
-            ...project,
-            tasks: project.tasks.map((task) => (task.id === updatedTask.id ? updatedTask : task)),
-          };
-
-          // Update task in milestone if needed
-          updatedProject.milestones = project.milestones.map((milestone) => {
-            // Check if task was previously in this milestone
-            const taskInMilestone = milestone.tasks.some((task) => task.id === updatedTask.id);
-
-            if (milestone.id === updatedTask.milestoneId) {
-              // Task should be in this milestone
-              if (taskInMilestone) {
-                // Update existing task
-                return {
-                  ...milestone,
-                  tasks: milestone.tasks.map((task) => (task.id === updatedTask.id ? updatedTask : task)),
-                };
-              } else {
-                // Add task to milestone
-                return {
-                  ...milestone,
-                  tasks: [...milestone.tasks, updatedTask],
-                };
-              }
-            } else if (taskInMilestone) {
-              // Remove task from this milestone
-              return {
-                ...milestone,
-                tasks: milestone.tasks.filter((task) => task.id !== updatedTask.id),
-              };
-            }
-
-            return milestone;
-          });
-
-          return updatedProject;
-        }
-        return project;
-      })
-    );
+  const updateMilestone = async (updatedMilestone: Milestone) => {
+    try {
+      await apiClient.put<Milestone>(
+        `${API_ENDPOINTS.milestones.update}/${updatedMilestone.projectId}/${updatedMilestone.id}`,
+        updatedMilestone
+      );
+      setProjects(
+        projects.map((project) => {
+          if (project.id === updatedMilestone.projectId) {
+            return {
+              ...project,
+              milestones: project.milestones.map((milestone) =>
+                milestone.id === updatedMilestone.id
+                  ? updatedMilestone
+                  : milestone
+              ),
+            };
+          }
+          return project;
+        })
+      );
+    } catch (error) {
+      console.error("Error updating milestone:", error);
+      setError("Failed to update milestone");
+      throw error;
+    }
   };
 
-  const deleteTask = (projectId: string, taskId: string) => {
-    setProjects(
-      projects.map((project) => {
-        if (project.id === projectId) {
-          // Remove task from project
-          const updatedProject = {
-            ...project,
-            tasks: project.tasks.filter((task) => task.id !== taskId),
-          };
+  const deleteMilestone = async (projectId: string, milestoneId: string) => {
+    try {
+      await apiClient.delete(
+        `${API_ENDPOINTS.milestones.delete}/${projectId}/${milestoneId}`
+      );
+      setProjects(
+        projects.map((project) => {
+          if (project.id === projectId) {
+            return {
+              ...project,
+              milestones: project.milestones.filter(
+                (milestone) => milestone.id !== milestoneId
+              ),
+            };
+          }
+          return project;
+        })
+      );
+    } catch (error) {
+      console.error("Error deleting milestone:", error);
+      setError("Failed to delete milestone");
+      throw error;
+    }
+  };
 
-          // Remove task from any milestone that contains it
-          updatedProject.milestones = project.milestones.map((milestone) => {
-            if (milestone.tasks.some((task) => task.id === taskId)) {
-              return {
-                ...milestone,
-                tasks: milestone.tasks.filter((task) => task.id !== taskId),
-              };
-            }
-            return milestone;
-          });
+  const addTask = async (
+    projectId: string,
+    task: Omit<Task, "id" | "projectId" | "createdAt" | "updatedAt">
+  ) => {
+    try {
+      const response = await apiClient.post<Task>(
+        `${API_ENDPOINTS.tasks.create}/${projectId}`,
+        task
+      );
+      setProjects(
+        projects.map((project) => {
+          if (project.id === projectId) {
+            return {
+              ...project,
+              tasks: [...project.tasks, response.data],
+            };
+          }
+          return project;
+        })
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error creating task:", error);
+      setError("Failed to create task");
+      throw error;
+    }
+  };
 
-          return updatedProject;
-        }
-        return project;
-      })
-    );
+  const updateTask = async (updatedTask: Task) => {
+    try {
+      await apiClient.put<Task>(
+        `${API_ENDPOINTS.tasks.update}/${updatedTask.projectId}/${updatedTask.id}`,
+        updatedTask
+      );
+      setProjects(
+        projects.map((project) => {
+          if (project.id === updatedTask.projectId) {
+            return {
+              ...project,
+              tasks: project.tasks.map((task) =>
+                task.id === updatedTask.id ? updatedTask : task
+              ),
+            };
+          }
+          return project;
+        })
+      );
+    } catch (error) {
+      console.error("Error updating task:", error);
+      setError("Failed to update task");
+      throw error;
+    }
+  };
+
+  const deleteTask = async (projectId: string, taskId: string) => {
+    try {
+      await apiClient.delete(
+        `${API_ENDPOINTS.tasks.delete}/${projectId}/${taskId}`
+      );
+      setProjects(
+        projects.map((project) => {
+          if (project.id === projectId) {
+            return {
+              ...project,
+              tasks: project.tasks.filter((task) => task.id !== taskId),
+            };
+          }
+          return project;
+        })
+      );
+    } catch (error) {
+      console.error("Error deleting task:", error);
+      setError("Failed to delete task");
+      throw error;
+    }
   };
 
   const value = {
     projects,
-    loading,
+    loading: loading || authLoading,
     error,
     addProject,
     updateProject,
@@ -267,10 +300,11 @@ export function ProjectProvider({ children }: ProjectProviderProps) {
     deleteTask,
   };
 
-  return <ProjectContext.Provider value={value}>{children}</ProjectContext.Provider>;
+  return (
+    <ProjectContext.Provider value={value}>{children}</ProjectContext.Provider>
+  );
 }
 
-// Custom hook to use the ProjectContext
 export const useProject = () => {
   const context = useContext(ProjectContext);
   if (context === undefined) {
