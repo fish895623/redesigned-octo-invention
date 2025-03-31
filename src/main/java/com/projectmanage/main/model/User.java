@@ -25,16 +25,19 @@ public class User {
     
     private String picture;
 
-	private String role;
-	private String username;
+    private String role;
     
-    @Column(nullable = false, unique = true)
+    private String username;
+    
+    private String password;
+    
+    @Column(unique = true)
     private String providerId;
     
     @Enumerated(EnumType.STRING)
     private Provider provider;
     
     public enum Provider {
-        GOOGLE
+        EMAIL, GOOGLE
     }
 }

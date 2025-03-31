@@ -1,9 +1,8 @@
 import "./App.css";
 import { AuthProvider } from "./context/AuthContext";
 import NavigationBar from "./components/NavigationBar";
-import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
-import { lazy, Suspense, useEffect } from "react";
-import { oauth2Service } from "./services/oauth2Service";
+import { Routes, Route, Navigate } from "react-router-dom";
+import { lazy, Suspense } from "react";
 
 // Lazy load page components for better performance
 const Profile = lazy(() => import("./ProfilePage"));
@@ -18,36 +17,6 @@ const TaskPage = lazy(() => import("./pages/TaskPage"));
 
 // Loading fallback component
 const LoadingFallback = () => <div className="loading">Loading...</div>;
-
-// OAuth callback handler component
-const OAuthCallback = () => {
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const handleCallback = async () => {
-      try {
-        await oauth2Service.handleCallback();
-        // Clear the URL parameters after successful authentication
-        window.history.replaceState({}, document.title, "/oauth/callback");
-        navigate("/project");
-      } catch (error) {
-        console.error("Error handling OAuth callback:", error);
-        navigate("/login");
-      }
-    };
-
-    handleCallback();
-  }, [navigate]);
-
-  return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-      <div className="p-8 bg-white rounded-lg shadow-md">
-        <h2 className="text-2xl font-bold text-gray-800 mb-4">Authentication successful</h2>
-        <p className="text-gray-600">Redirecting to projects...</p>
-      </div>
-    </div>
-  );
-};
 
 function App() {
   return (
@@ -64,7 +33,6 @@ function App() {
           <Route path="/project/:projectId/milestone/:milestoneId" element={<MilestonePage />} />
           <Route path="/project/:projectId/task" element={<TaskListPage />} />
           <Route path="/project/:projectId/task/:taskId" element={<TaskPage />} />
-          <Route path="/oauth/callback" element={<OAuthCallback />} />
           <Route path="*" element={<Navigate to="/project" />} />
         </Routes>
       </Suspense>

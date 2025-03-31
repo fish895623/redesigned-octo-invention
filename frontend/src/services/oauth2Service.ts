@@ -1,4 +1,4 @@
-import { API_BASE_URL, createHeaders } from "../config/api";
+import { API_ENDPOINTS, createHeaders } from "../config/api";
 
 // Helper function to handle fetch responses
 const handleResponse = async <T>(response: Response): Promise<T> => {
@@ -8,56 +8,91 @@ const handleResponse = async <T>(response: Response): Promise<T> => {
   return response.json();
 };
 
-export interface OAuth2Response {
-  redirectUrl: string;
-}
-
 export interface UserInfo {
   authenticated: boolean;
   name?: string;
   email?: string;
   picture?: string;
+  token?: string;
 }
 
-export const oauth2Service = {
-  // Initiate Google OAuth2 flow
-  initiateGoogleLogin: async (): Promise<void> => {
-    try {
-      // Directly redirect to the backend OAuth2 endpoint
-      window.location.href = `${API_BASE_URL}/oauth2/authorization/google`;
-    } catch (error) {
-      console.error("Error initiating Google login:", error);
-      throw error;
-    }
-  },
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
 
-  // Handle OAuth2 callback
-  handleCallback: async (): Promise<void> => {
+export interface RegisterRequest {
+  email: string;
+  name: string;
+  password: string;
+}
+
+export const authService = {
+  // Login with email and password
+  login: async (credentials: LoginRequest): Promise<UserInfo> => {
     try {
-      // Get the user info
-      const response = await fetch(`${API_BASE_URL}/api/auth/user`, {
-        method: "GET",
+      const response = await fetch(API_ENDPOINTS.auth.login, {
+        method: "POST",
         credentials: "include",
         headers: createHeaders(),
+        body: JSON.stringify(credentials),
       });
-      await handleResponse(response);
+      
+      const data = await handleResponse<UserInfo>(response);
+      
+      if (data.token) {
+        localStorage.setItem('jwt_token', data.token);
+      }
+      
+      return data;
     } catch (error) {
-      console.error("Error handling OAuth callback:", error);
+      console.error("Error logging in:", error);
       throw error;
     }
   },
-
+  
+  // Register a new user
+  register: async (userData: RegisterRequest): Promise<UserInfo> => {
+    try {
+      const response = await fetch(API_ENDPOINTS.auth.register, {
+        method: "POST",
+        credentials: "include",
+        headers: createHeaders(),
+        body: JSON.stringify(userData),
+      });
+      
+      const data = await handleResponse<UserInfo>(response);
+      
+      if (data.token) {
+        localStorage.setItem('jwt_token', data.token);
+      }
+      
+      return data;
+    } catch (error) {
+      console.error("Error registering:", error);
+      throw error;
+    }
+  },
+  
   // Get current user
   getCurrentUser: async (): Promise<UserInfo> => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/auth/user`, {
+      console.log("Getting current user...");
+      // Check if we have a token in localStorage
+      const token = localStorage.getItem('jwt_token');
+      
+      const response = await fetch(API_ENDPOINTS.auth.user, {
         method: "GET",
         credentials: "include",
-        headers: createHeaders(),
+        headers: {
+          ...createHeaders(),
+          ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+        },
       });
-      return await handleResponse<UserInfo>(response);
+      
+      return handleResponse<UserInfo>(response);
     } catch (error) {
-      console.error("Error fetching current user:", error);
+      console.error("Error getting current user:", error);
       return { authenticated: false };
     }
   },
@@ -65,15 +100,19 @@ export const oauth2Service = {
   // Logout
   logout: async (): Promise<void> => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/auth/logout`, {
+      // Clear token from localStorage
+      localStorage.removeItem('jwt_token');
+      
+      const response = await fetch(API_ENDPOINTS.auth.logout, {
         method: "POST",
         credentials: "include",
         headers: createHeaders(),
       });
       await handleResponse(response);
-      window.location.href = "/";
     } catch (error) {
-      console.error("Error during logout:", error);
+      console.error("Error logging out:", error);
+      // Clear local storage even if server logout fails
+      localStorage.removeItem('jwt_token');
       throw error;
     }
   },

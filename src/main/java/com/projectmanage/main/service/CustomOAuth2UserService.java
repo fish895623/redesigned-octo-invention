@@ -66,9 +66,9 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             UserDTO userDTO = new UserDTO();
             userDTO.setUsername(username);
             userDTO.setEmail(oAuth2Response.getEmail());
-            userDTO.setFullName(oAuth2Response.getName());
+            userDTO.setName(oAuth2Response.getName());
             userDTO.setRoles(Collections.singletonList("ROLE_USER"));
-            userDTO.setAvatarUrl(picture);
+            userDTO.setPicture(picture);
 
             return new CustomOAuth2User(userDTO);
         } else {
@@ -90,9 +90,9 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             UserDTO userDTO = new UserDTO();
             userDTO.setUsername(existData.getUsername());
             userDTO.setEmail(existData.getEmail());
-            userDTO.setFullName(oAuth2Response.getName());
+            userDTO.setName(oAuth2Response.getName());
             userDTO.setRoles(Collections.singletonList(existData.getRole()));
-            userDTO.setAvatarUrl(existData.getPicture());
+            userDTO.setPicture(existData.getPicture());
 
             return new CustomOAuth2User(userDTO);
         }

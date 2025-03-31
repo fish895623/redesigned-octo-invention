@@ -1,14 +1,18 @@
-import { useAuth } from "../hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 
 export const LoginButton = ({
-  label = "Login with Google",
+  label = "Login",
 }: {
   label?: string;
 }) => {
-  const { loginWithGoogle } = useAuth();
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate("/login");
+  };
 
   return (
-    <button onClick={loginWithGoogle} className="login-button">
+    <button onClick={handleClick} className="login-button">
       {label}
     </button>
   );

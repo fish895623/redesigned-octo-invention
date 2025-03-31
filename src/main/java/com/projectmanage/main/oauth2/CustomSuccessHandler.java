@@ -44,24 +44,34 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String token = jwtUtil.createJwt(username, role, 60 * 60 * 60 * 60L);
 
         // Add necessary headers for CORS
+        // Set CORS headers explicitly for the redirect
         response.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
         response.setHeader("Access-Control-Allow-Credentials", "true");
         response.setHeader("Access-Control-Expose-Headers", "Authorization, Set-Cookie");
-
+        
+        // Set the JWT token as a secure cookie
         response.addCookie(createCookie("Authorization", token));
-        response.sendRedirect("http://localhost:5173/oauth/callback");
+        
+        // Also add token as Authorization header for redundancy
+        response.setHeader("Authorization", "Bearer " + token);
+        
+        // Redirect to the frontend callback URL and include token as a parameter
+        // This provides another way for the frontend to capture the token
+        response.sendRedirect("http://localhost:5173/oauth/callback?token=" + token);
     }
 
     private Cookie createCookie(String key, String value) {
-
         Cookie cookie = new Cookie(key, value);
-        cookie.setMaxAge(60 * 60 * 60 * 60);
-        // cookie.setSecure(true);
+        cookie.setMaxAge(60 * 60 * 24); // 24 hours
         cookie.setPath("/");
-        cookie.setHttpOnly(true);
-        // Add SameSite attribute to None for cross-origin requests
-        cookie.setAttribute("SameSite", "None");
-
+        cookie.setHttpOnly(true);  // Prevents JavaScript access
+        
+        // In development, we don't need secure, but for production it should be true
+        // cookie.setSecure(true);  // Uncomment for production
+        
+        // SameSite=Lax is more compatible when testing locally
+        cookie.setAttribute("SameSite", "Lax");
+        
         return cookie;
     }
 }

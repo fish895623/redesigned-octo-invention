@@ -8,8 +8,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.projectmanage.main.dto.CustomOAuth2User;
-import com.projectmanage.main.model.dto.UserDTO;
+import com.projectmanage.main.dto.CustomUserDetails;
+import com.projectmanage.main.model.User;
+import com.projectmanage.main.repository.UserRepository;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -22,9 +23,11 @@ import lombok.extern.slf4j.Slf4j;
 public class JWTFilter extends OncePerRequestFilter {
 
     private final JWTUtil jwtUtil;
+    private final UserRepository userRepository;
 
-    public JWTFilter(JWTUtil jwtUtil) {
+    public JWTFilter(JWTUtil jwtUtil, UserRepository userRepository) {
         this.jwtUtil = jwtUtil;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -77,17 +80,22 @@ public class JWTFilter extends OncePerRequestFilter {
 
         log.debug("Processing authenticated request for user: {}", username);
 
-        // Create UserDTO with token information
-        UserDTO userDTO = new UserDTO();
-        userDTO.setUsername(username);
-        userDTO.setRoles(Collections.singletonList(role));
+        // Find user in database
+        User user = userRepository.findByEmail(username)
+                .orElse(null);
+                
+        if (user == null) {
+            log.debug("User not found with email: {}", username);
+            filterChain.doFilter(request, response);
+            return;
+        }
 
-        // Create custom OAuth2 user
-        CustomOAuth2User customOAuth2User = new CustomOAuth2User(userDTO);
+        // Create custom user details
+        CustomUserDetails customUserDetails = new CustomUserDetails(user);
 
         // Create authentication token
-        Authentication authToken = new UsernamePasswordAuthenticationToken(customOAuth2User, null,
-                customOAuth2User.getAuthorities());
+        Authentication authToken = new UsernamePasswordAuthenticationToken(
+                customUserDetails, null, customUserDetails.getAuthorities());
 
         // Set authentication in security context
         SecurityContextHolder.getContext().setAuthentication(authToken);

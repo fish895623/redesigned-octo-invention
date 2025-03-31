@@ -1,11 +1,32 @@
+import { useState } from "react";
 import { useAuth } from "../hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 
 export const LogoutButton = () => {
   const { logout } = useAuth();
+  const navigate = useNavigate();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
+    try {
+      await logout();
+      navigate("/login");
+    } catch (error) {
+      console.error("Logout failed:", error);
+    } finally {
+      setIsLoggingOut(false);
+    }
+  };
 
   return (
-    <button onClick={logout} className="logout-button" aria-label="Logout">
-      <span>Logout</span>
+    <button 
+      onClick={handleLogout} 
+      className="logout-button" 
+      aria-label="Logout"
+      disabled={isLoggingOut}
+    >
+      <span>{isLoggingOut ? "Logging out..." : "Logout"}</span>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="16"

@@ -33,9 +33,8 @@ public class UserMapper {
                 .id(user.getId())
                 .username(user.getUsername())
                 .email(user.getEmail())
-                .fullName(user.getName())
-                .avatarUrl(user.getPicture())
-                .isActive(true) // Assuming all users are active by default
+                .name(user.getName())
+                .picture(user.getPicture())
                 .roles(user.getRole() != null ? Collections.singletonList(user.getRole()) : Collections.emptyList())
                 .build();
     }
@@ -55,8 +54,8 @@ public class UserMapper {
                 .id(userDTO.getId())
                 .username(userDTO.getUsername())
                 .email(userDTO.getEmail())
-                .name(userDTO.getFullName())
-                .picture(userDTO.getAvatarUrl())
+                .name(userDTO.getName())
+                .picture(userDTO.getPicture())
                 .role(userDTO.getRoles() != null && !userDTO.getRoles().isEmpty() ? userDTO.getRoles().get(0) : null)
                 .build();
     }
@@ -94,12 +93,12 @@ public class UserMapper {
             user.setUsername(userDTO.getUsername());
         }
 
-        if (userDTO.getFullName() != null) {
-            user.setName(userDTO.getFullName());
+        if (userDTO.getName() != null) {
+            user.setName(userDTO.getName());
         }
 
-        if (userDTO.getAvatarUrl() != null) {
-            user.setPicture(userDTO.getAvatarUrl());
+        if (userDTO.getPicture() != null) {
+            user.setPicture(userDTO.getPicture());
         }
 
         // Roles are typically managed separately for security reasons

@@ -1,6 +1,7 @@
 import { useState, useEffect, ReactNode } from "react";
+import { LoginRequest, RegisterRequest } from "../services/oauth2Service";
 import { User } from "../types/auth";
-import { getCurrentUser, loginWithGoogle, logout as apiLogout } from "../api/auth";
+import { getCurrentUser, login as apiLogin, logout as apiLogout, register as apiRegister } from "../api/auth";
 import { AuthContext } from "./AuthContextDefinition";
 import { useLocation } from "react-router-dom";
 
@@ -30,12 +31,34 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     fetchUser();
   }, []);
 
-  // Refresh user data when redirected from OAuth
+  // Refresh user data when redirected from authentication
   useEffect(() => {
     if (location.pathname === "/oauth/callback") {
       fetchUser();
     }
   }, [location.pathname]);
+
+  const login = async (credentials: LoginRequest) => {
+    try {
+      const userData = await apiLogin(credentials);
+      setUser(userData);
+      return userData;
+    } catch (error) {
+      console.error("Login failed:", error);
+      return { authenticated: false };
+    }
+  };
+
+  const register = async (userData: RegisterRequest) => {
+    try {
+      const newUser = await apiRegister(userData);
+      setUser(newUser);
+      return newUser;
+    } catch (error) {
+      console.error("Registration failed:", error);
+      return { authenticated: false };
+    }
+  };
 
   const logout = async () => {
     await apiLogout();
@@ -45,7 +68,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const value = {
     user,
     loading,
-    loginWithGoogle,
+    login,
+    register,
     logout,
   };
 

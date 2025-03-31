@@ -26,12 +26,12 @@ public class CustomOAuth2User implements OAuth2User {
         // Create and return a map with essential user attributes
         Map<String, Object> attributes = new HashMap<>();
         attributes.put("email", userDTO.getEmail());
-        attributes.put("name", userDTO.getFullName());
+        attributes.put("name", userDTO.getName());
         attributes.put("sub", userDTO.getUsername());
 
         // Add avatar URL if available
-        if (userDTO.getAvatarUrl() != null) {
-            attributes.put("picture", userDTO.getAvatarUrl());
+        if (userDTO.getPicture() != null) {
+            attributes.put("picture", userDTO.getPicture());
         }
 
         return attributes;
@@ -54,7 +54,7 @@ public class CustomOAuth2User implements OAuth2User {
 
     @Override
     public String getName() {
-        return userDTO.getFullName();
+        return userDTO.getName();
     }
 
     public String getUsername() {
@@ -62,6 +62,6 @@ public class CustomOAuth2User implements OAuth2User {
     }
 
     public String getAvatarUrl() {
-        return userDTO.getAvatarUrl();
+        return userDTO.getPicture();
     }
 }
