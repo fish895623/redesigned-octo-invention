@@ -11,7 +11,7 @@ class ApiClient {
   private token: string | null = null;
 
   private constructor() {
-    this.token = localStorage.getItem("jwt_token");
+    this.token = localStorage.getItem("token");
   }
 
   public static getInstance(): ApiClient {
@@ -21,20 +21,29 @@ class ApiClient {
     return ApiClient.instance;
   }
 
-  public setToken(token: string) {
+  public setToken(token: string): void {
     this.token = token;
-    localStorage.setItem("jwt_token", token);
+    localStorage.setItem("token", token);
   }
 
-  public removeToken() {
+  public removeToken(): void {
     this.token = null;
-    localStorage.removeItem("jwt_token");
+    localStorage.removeItem("token");
   }
 
   private async request<T>(
     endpoint: string,
     options: RequestInit = {}
   ): Promise<ApiResponse<T>> {
+    // Only check token for non-auth endpoints
+    if (
+      !this.token &&
+      endpoint !== API_ENDPOINTS.auth.login &&
+      endpoint !== API_ENDPOINTS.auth.register
+    ) {
+      throw new Error("No authentication token available");
+    }
+
     const headers = {
       ...createHeaders(),
       ...(this.token ? { Authorization: `Bearer ${this.token}` } : {}),
@@ -46,14 +55,19 @@ class ApiClient {
       headers,
     });
 
+    // Handle authentication errors
     if (response.status === 401) {
       this.removeToken();
       window.location.href = "/login";
       throw new Error("Unauthorized");
     }
 
+    // Handle other errors
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const errorData = await response.json().catch(() => null);
+      throw new Error(
+        errorData?.message || `HTTP error! status: ${response.status}`
+      );
     }
 
     const data = await response.json();
