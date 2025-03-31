@@ -24,6 +24,9 @@ public class User {
     private String name;
     
     private String picture;
+
+	private String role;
+	private String username;
     
     @Column(nullable = false, unique = true)
     private String providerId;

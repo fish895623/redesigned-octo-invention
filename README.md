@@ -1,81 +1,64 @@
-# Project Management System
+# Project Management Application
 
-## About the Project
+A full-stack project management application with Google OAuth2 authentication.
 
-This is a comprehensive project management web application built with Spring Boot and React. It allows teams to effectively manage projects, milestones, and tasks to streamline workflow and enhance collaboration.
+## Tech Stack
 
-### Key Features
+- Backend: Spring Boot, Spring Security, OAuth2, JPA, PostgreSQL
+- Frontend: React, TypeScript, Vite
 
-- **User Management**: Register, authenticate, and manage user profiles with both traditional login and OAuth2 integration (Google) 
-- **Project Management**: Create, view, and manage multiple projects
-- **Milestone Tracking**: Define and monitor project milestones for better progress tracking
-- **Task Management**: Create, assign, and track tasks within projects
-- **Responsive UI**: Modern React frontend with a responsive design
+## Setting Up Google OAuth2
 
-### Technology Stack
+1. Go to the [Google Cloud Console](https://console.cloud.google.com/)
+2. Create a new project or select an existing one
+3. Go to "APIs & Services" > "Credentials"
+4. Click "Create Credentials" > "OAuth client ID"
+5. Set up the consent screen if prompted
+6. Select "Web application" as the application type
+7. Add authorized JavaScript origins: `http://localhost:8080`
+8. Add authorized redirect URIs:
+   - `http://localhost:8080/login/oauth2/code/google`
+9. Copy the Client ID and Client Secret
 
-**Backend:**
-- Java Spring Boot
-- Spring Security with OAuth2
-- JPA/Hibernate
-- PostgreSQL Database
-- RESTful API architecture
+## Environment Variables
 
-**Frontend:**
-- React with TypeScript
-- React Router for navigation
-- Context API for state management
-- Lazy loading for performance optimization
-- Modern CSS styling
+Create a `.env` file in the root folder with the following variables (copy from `.env.example`):
 
-## How to Run the Application
+```
+SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/projectmanage
+SPRING_DATASOURCE_USERNAME=postgres
+SPRING_DATASOURCE_PASSWORD=yourpassword
 
-### Backend (Spring Boot)
+GOOGLE_CLIENT_ID=your-google-client-id
+GOOGLE_CLIENT_SECRET=your-google-client-secret
 
-1. Navigate to the project root directory
-2. Run the Spring Boot application using Gradle:
+SPRING_MAIL_USERNAME=your-email@gmail.com
+SPRING_MAIL_PASSWORD=your-app-password
+```
 
-   ```
-   ./gradlew bootRun
-   ```
+## Running the Application
 
-The backend server will start on port 8080 (default Spring Boot port).
+### Backend
 
-### Frontend (React/Vite)
+```bash
+./mvnw spring-boot:run
+```
 
-1. Navigate to the frontend directory:
+### Frontend
 
-   ```
-   cd frontend
-   ```
+```bash
+cd frontend
+npm install
+npm run dev
+```
 
-2. Install dependencies (if not already installed):
+## OAuth2 Flow
 
-   ```
-   npm install
-   ```
-
-   Or using pnpm (recommended):
-
-   ```
-   pnpm install
-   ```
-
-3. Start the development server:
-
-   ```
-   npm run dev
-   ```
-
-   Or with pnpm:
-
-   ```
-   pnpm dev
-   ```
-
-The frontend development server will start on port 5173 (Vite's default).
-
-## Accessing the Application
-
-Once both servers are running, you can access the application in your browser at:
-http://localhost:5173
+1. User clicks "Login with Google" button on frontend
+2. Frontend redirects to `/oauth2/authorization/google`
+3. Spring Security handles redirect to Google
+4. User authenticates with Google
+5. Google redirects back to `/login/oauth2/code/google`
+6. Spring Security processes the OAuth2 token
+7. User is redirected back to the frontend
+8. Frontend fetches user info from backend API
