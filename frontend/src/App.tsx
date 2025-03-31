@@ -3,6 +3,8 @@ import { AuthProvider } from "./context/AuthContext";
 import NavigationBar from "./components/NavigationBar";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { lazy, Suspense } from "react";
+import { LoadingSpinner } from "./components/LoadingSpinner";
+import { ProtectedRoute } from "./components/ProtectedRoute";
 
 // Lazy load page components for better performance
 const Profile = lazy(() => import("./ProfilePage"));
@@ -16,7 +18,11 @@ const TaskListPage = lazy(() => import("./pages/TaskListPage"));
 const TaskPage = lazy(() => import("./pages/TaskPage"));
 
 // Loading fallback component
-const LoadingFallback = () => <div className="loading">Loading...</div>;
+const LoadingFallback = () => (
+  <div className="min-h-screen flex items-center justify-center">
+    <LoadingSpinner />
+  </div>
+);
 
 function App() {
   return (
@@ -24,15 +30,69 @@ function App() {
       <NavigationBar />
       <Suspense fallback={<LoadingFallback />}>
         <Routes>
-          <Route path="/profile" element={<Profile />} />
+          {/* Public routes */}
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegistrationPage />} />
-          <Route path="/project" element={<ProjectListPage />} />
-          <Route path="/project/:projectId" element={<ProjectPage />} />
-          <Route path="/project/:projectId/milestone" element={<MilestoneListPage />} />
-          <Route path="/project/:projectId/milestone/:milestoneId" element={<MilestonePage />} />
-          <Route path="/project/:projectId/task" element={<TaskListPage />} />
-          <Route path="/project/:projectId/task/:taskId" element={<TaskPage />} />
+
+          {/* Protected routes */}
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/project"
+            element={
+              <ProtectedRoute>
+                <ProjectListPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/project/:projectId"
+            element={
+              <ProtectedRoute>
+                <ProjectPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/project/:projectId/milestone"
+            element={
+              <ProtectedRoute>
+                <MilestoneListPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/project/:projectId/milestone/:milestoneId"
+            element={
+              <ProtectedRoute>
+                <MilestonePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/project/:projectId/task"
+            element={
+              <ProtectedRoute>
+                <TaskListPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/project/:projectId/task/:taskId"
+            element={
+              <ProtectedRoute>
+                <TaskPage />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Redirect root to projects */}
           <Route path="*" element={<Navigate to="/project" />} />
         </Routes>
       </Suspense>
