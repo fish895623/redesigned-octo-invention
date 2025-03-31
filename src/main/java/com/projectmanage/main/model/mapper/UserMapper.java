@@ -22,7 +22,6 @@ public class UserMapper {
                 .name(user.getName())
                 .picture(user.getPicture())
                 .providerId(user.getProviderId())
-                .provider(user.getProvider())
                 .build();
     }
 
@@ -43,7 +42,6 @@ public class UserMapper {
                 .name(userDTO.getName())
                 .picture(userDTO.getPicture())
                 .providerId(userDTO.getProviderId())
-                .provider(userDTO.getProvider())
                 .build();
     }
 }

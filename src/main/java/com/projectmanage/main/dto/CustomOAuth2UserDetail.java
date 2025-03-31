@@ -1,10 +1,7 @@
 package com.projectmanage.main.dto;
 
-import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import com.projectmanage.main.model.User;
@@ -30,13 +27,7 @@ public class CustomOAuth2UserDetail implements OAuth2User {
     }
 
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(() -> "ROLE_USER");
-    }
-
-    @Override
     public String getName() {
         return user.getEmail();
     }
-
 }

@@ -1,7 +1,5 @@
 package com.projectmanage.main.model.dto;
 
-import com.projectmanage.main.model.User;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,5 +16,4 @@ public class UserDTO {
     private String name;
     private String picture;
     private String providerId;
-    private User.Provider provider;
 }
