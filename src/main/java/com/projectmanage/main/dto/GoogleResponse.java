@@ -2,7 +2,7 @@ package com.projectmanage.main.dto;
 
 import java.util.Map;
 
-public class GoogleResponse implements OAuth2Response{
+public class GoogleResponse implements OAuth2Response {
 
     private final Map<String, Object> attribute;
 
@@ -33,5 +33,12 @@ public class GoogleResponse implements OAuth2Response{
     public String getName() {
 
         return attribute.get("name").toString();
+    }
+
+    @Override
+    public String getPicture() {
+        // Google OAuth response includes "picture" attribute for profile image
+        Object picture = attribute.get("picture");
+        return picture != null ? picture.toString() : null;
     }
 }

@@ -10,6 +10,9 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import com.projectmanage.main.model.dto.UserDTO;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class CustomOAuth2User implements OAuth2User {
 
     private final UserDTO userDTO;
@@ -25,6 +28,12 @@ public class CustomOAuth2User implements OAuth2User {
         attributes.put("email", userDTO.getEmail());
         attributes.put("name", userDTO.getFullName());
         attributes.put("sub", userDTO.getUsername());
+
+        // Add avatar URL if available
+        if (userDTO.getAvatarUrl() != null) {
+            attributes.put("picture", userDTO.getAvatarUrl());
+        }
+
         return attributes;
     }
 
@@ -47,5 +56,9 @@ public class CustomOAuth2User implements OAuth2User {
 
     public String getUsername() {
         return userDTO.getUsername();
+    }
+
+    public String getAvatarUrl() {
+        return userDTO.getAvatarUrl();
     }
 }

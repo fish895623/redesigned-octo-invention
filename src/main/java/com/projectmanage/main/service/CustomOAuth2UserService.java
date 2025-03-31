@@ -30,9 +30,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-
         OAuth2User oAuth2User = super.loadUser(userRequest);
-        log.info("OAuth2User: {}", oAuth2User.toString());
+        log.debug("OAuth2User attributes: {}", oAuth2User.getAttributes());
 
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
         OAuth2Response oAuth2Response = null;
@@ -41,10 +40,12 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         } else {
             return null;
         }
+
         String username = oAuth2Response.getProvider() + " " + oAuth2Response.getProviderId();
         User existData = userRepository.findByUsername(username);
 
         if (existData == null) {
+            // Create new user
             User user = new User();
             user.setUsername(username);
             user.setEmail(oAuth2Response.getEmail());
@@ -53,27 +54,45 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             user.setProviderId(oAuth2Response.getProviderId());
             user.setProvider(Provider.GOOGLE);
 
+            // Set profile picture if available
+            String picture = oAuth2Response.getPicture();
+            if (picture != null && !picture.isEmpty()) {
+                user.setPicture(picture);
+            }
+
             userRepository.save(user);
 
+            // Create UserDTO with avatar URL
             UserDTO userDTO = new UserDTO();
             userDTO.setUsername(username);
             userDTO.setEmail(oAuth2Response.getEmail());
             userDTO.setFullName(oAuth2Response.getName());
             userDTO.setRoles(Collections.singletonList("ROLE_USER"));
+            userDTO.setAvatarUrl(picture);
 
             return new CustomOAuth2User(userDTO);
         } else {
+            // Update existing user
             existData.setEmail(oAuth2Response.getEmail());
             existData.setName(oAuth2Response.getName());
             existData.setProviderId(oAuth2Response.getProviderId());
             existData.setProvider(Provider.GOOGLE);
 
+            // Update profile picture if available
+            String picture = oAuth2Response.getPicture();
+            if (picture != null && !picture.isEmpty()) {
+                existData.setPicture(picture);
+            }
+
             userRepository.save(existData);
 
+            // Create UserDTO with avatar URL
             UserDTO userDTO = new UserDTO();
             userDTO.setUsername(existData.getUsername());
+            userDTO.setEmail(existData.getEmail());
             userDTO.setFullName(oAuth2Response.getName());
             userDTO.setRoles(Collections.singletonList(existData.getRole()));
+            userDTO.setAvatarUrl(existData.getPicture());
 
             return new CustomOAuth2User(userDTO);
         }
