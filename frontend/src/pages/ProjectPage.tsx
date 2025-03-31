@@ -1,4 +1,4 @@
-import { useParams, Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { ProjectProvider } from "../context/ProjectContext";
 import ProjectDetail from "../components/ProjectDetail";
 import { useAuth } from "../hooks/useAuth";
