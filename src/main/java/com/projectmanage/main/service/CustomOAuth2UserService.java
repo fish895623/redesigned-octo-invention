@@ -1,17 +1,12 @@
 package com.projectmanage.main.service;
 
-import java.util.Map;
-import java.util.UUID;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
+import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
-import com.projectmanage.main.dto.CustomOAuth2UserDetail;
-import com.projectmanage.main.entity.User;
+import com.projectmanage.main.model.User;
 import com.projectmanage.main.repository.UserRepository;
 
 import lombok.extern.slf4j.Slf4j;
@@ -20,34 +15,45 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
-    @Autowired
-    private UserRepository repository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    public BCryptPasswordEncoder bCryptPasswordEncoder;
+    public CustomOAuth2UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @Override
-    public OAuth2User loadUser(OAuth2UserRequest userRequest) {
-
+    public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = super.loadUser(userRequest);
-        Map<String, Object> oAuthAttributes = oAuth2User.getAttributes();
 
+        // Process the OAuth2User and save/update user in database
+        String provider = userRequest.getClientRegistration().getRegistrationId();
+        log.info("Provider: {}", provider);
+        String providerId = oAuth2User.getAttribute("sub");
         String email = oAuth2User.getAttribute("email");
         String name = oAuth2User.getAttribute("name");
+        String picture = oAuth2User.getAttribute("picture");
 
-        User user = repository.findByUserEmail(email).orElse(null);
-        String userNameAttributeName = userRequest.getClientRegistration().getProviderDetails()
-                .getUserInfoEndpoint().getUserNameAttributeName();
-        if (user == null) {
-            User OAuth2User = new User();
-            OAuth2User.setLoginId(email);
-            OAuth2User.setUserEmail(email);
-            OAuth2User.setUserName(name);
-            OAuth2User.setUserPhone("00000000000");
-            OAuth2User.setPassword(bCryptPasswordEncoder.encode(UUID.randomUUID().toString()));
+        // Find existing user or create new one
+        User user = userRepository.findByProviderId(providerId)
+                .orElse(User.builder()
+                        .providerId(providerId)
+                        .provider(User.Provider.GOOGLE)
+                        .email(email)
+                        .name(name)
+                        .picture(picture)
+                        .build());
 
-            user = repository.save(OAuth2User);
+        // Update user information if it has changed
+        if (!user.getName().equals(name) ||
+                !user.getEmail().equals(email) ||
+                (user.getPicture() != null && !user.getPicture().equals(picture))) {
+            user.setName(name);
+            user.setEmail(email);
+            user.setPicture(picture);
         }
-        return new CustomOAuth2UserDetail(oAuthAttributes, userNameAttributeName, user);
+
+        userRepository.save(user);
+
+        return oAuth2User;
     }
 }

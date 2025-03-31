@@ -3,15 +3,13 @@ package com.projectmanage.main.repository;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-import com.projectmanage.main.entity.User;
+import com.projectmanage.main.model.User;
 
+@Repository
 public interface UserRepository extends JpaRepository<User, Long> {
-    Optional<User> findByLoginId(String loginId);
+    Optional<User> findByEmail(String email);
 
-    Optional<User> findByUserEmail(String UserEmail);
-
-    boolean existsByLoginId(String LoginId);
-
-    boolean existsByUserEmail(String UserEmail);
+    Optional<User> findByProviderId(String providerId);
 }
