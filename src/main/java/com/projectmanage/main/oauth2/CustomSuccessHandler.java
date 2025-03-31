@@ -43,8 +43,13 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         String token = jwtUtil.createJwt(username, role, 60 * 60 * 60 * 60L);
 
+        // Add necessary headers for CORS
+        response.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+        response.setHeader("Access-Control-Allow-Credentials", "true");
+        response.setHeader("Access-Control-Expose-Headers", "Authorization, Set-Cookie");
+
         response.addCookie(createCookie("Authorization", token));
-        response.sendRedirect("http://localhost:5173/");
+        response.sendRedirect("http://localhost:5173/oauth/callback");
     }
 
     private Cookie createCookie(String key, String value) {
@@ -54,6 +59,8 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         // cookie.setSecure(true);
         cookie.setPath("/");
         cookie.setHttpOnly(true);
+        // Add SameSite attribute to None for cross-origin requests
+        cookie.setAttribute("SameSite", "None");
 
         return cookie;
     }

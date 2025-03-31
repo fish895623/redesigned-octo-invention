@@ -28,7 +28,7 @@ export const getCurrentUser = async (): Promise<User> => {
 };
 
 export const loginWithGoogle = () => {
-  window.location.href = "/oauth2/authorization/google";
+  window.location.assign("/oauth2/authorization/google");
 };
 
 export const logout = async (): Promise<void> => {
