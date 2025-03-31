@@ -56,8 +56,8 @@ const LoginPage = () => {
 
         <form onSubmit={handleSubmit} className="auth-form">
           {error && <div className="auth-error">{error}</div>}
-          
-          <div className="form-group">
+
+          <div className="form-group aligned-form-group">
             <label htmlFor="email">Email</label>
             <input
               type="email"
@@ -68,8 +68,8 @@ const LoginPage = () => {
               autoComplete="email"
             />
           </div>
-          
-          <div className="form-group">
+
+          <div className="form-group aligned-form-group">
             <label htmlFor="password">Password</label>
             <input
               type="password"
@@ -80,7 +80,7 @@ const LoginPage = () => {
               autoComplete="current-password"
             />
           </div>
-          
+
           <button
             type="submit"
             className="primary-button"
