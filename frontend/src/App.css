@@ -1,0 +1,768 @@
+#root {
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 80vh;
+}
+
+.dashboard-actions .logout-button,
+.profile-actions .logout-button {
+  padding: 10px 20px;
+  font-size: 1rem;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-actions .logout-button:hover,
+.profile-actions .logout-button:hover {
+  background-color: #c82333;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Project styles */
+
+.project-form,
+.milestone-form,
+.task-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+  max-width: 500px;
+}
+
+.project-form input,
+.milestone-form input,
+.task-form input,
+.project-form textarea,
+.milestone-form textarea,
+.task-form textarea,
+.project-form select,
+.milestone-form select,
+.task-form select {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.project-form button,
+.milestone-form button,
+.task-form button {
+  padding: 8px 16px;
+  background-color: #4285f4;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.project-form button:hover,
+.milestone-form button:hover,
+.task-form button:hover {
+  background-color: #3367d6;
+}
+
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.project-item {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.project-item:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.project-stats {
+  display: flex;
+  gap: 15px;
+  margin-top: 10px;
+  font-size: 0.9em;
+  color: #666;
+}
+
+.project-detail {
+  width: 100%;
+}
+
+.project-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.project-actions,
+.milestone-actions,
+.task-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.project-actions button,
+.milestone-actions button,
+.task-actions button {
+  padding: 4px 8px;
+  background-color: #f1f1f1;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* Add styling for project edit button */
+
+.edit-project-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.form-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* Project Tabs */
+.project-tabs {
+  display: flex;
+  margin-top: 1.5rem;
+  border-bottom: 1px solid #ddd;
+  position: relative;
+}
+
+.project-tabs button {
+  background: none;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: all 0.3s;
+}
+
+.project-tabs button.active {
+  border-bottom: 3px solid #2196f3;
+  font-weight: 600;
+  color: #2196f3;
+}
+
+.project-tabs button:hover:not(.active) {
+  background-color: #616161;
+}
+
+.project-tabs .add-milestone-button {
+  margin-left: auto;
+  color: #4caf50;
+  font-weight: 600;
+}
+
+.project-tabs .add-milestone-button:hover {
+  background-color: #f0fff0;
+}
+
+/* Milestone styles */
+.milestone-items {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.milestone-item {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.milestone-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  position: relative;
+  transition: background-color 0.2s ease;
+}
+
+.milestone-header:hover {
+  background-color: transparent;
+}
+
+.milestone-item.expanded .milestone-header::after {
+  content: "▲";
+}
+
+.milestone-info {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.milestone-tasks-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.milestone-tasks-header h4 {
+  margin: 0;
+  color: #666;
+  font-size: 14px;
+}
+
+.milestone-tasks .task-items {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.milestone-tasks .task-items li {
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-size: 14px;
+  color: #495057;
+}
+
+.milestone-tasks .task-items li.completed {
+  background-color: #e9ecef;
+  color: #adb5bd;
+  text-decoration: line-through;
+}
+
+.milestone-tasks p {
+  color: #6c757d;
+  font-size: 14px;
+  margin: 0;
+  font-style: italic;
+}
+
+.add-task-button {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 5px 10px;
+  font-size: 13px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.add-task-button:hover {
+  background-color: #45a049;
+}
+
+.add-task-button .plus-icon {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.edit-milestone {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.edit-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* Task styles */
+.task-filters {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.task-filters button {
+  padding: 8px 15px;
+  background-color: #f1f1f1;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.task-filters button.active {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+.task-items {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.task-item {
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 15px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.task-item.completed {
+  border-left: 4px solid #4caf50;
+  opacity: 0.8;
+}
+
+.task-item.completed h3 {
+  text-decoration: line-through;
+  color: #888;
+}
+
+.task-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.task-info {
+  display: flex;
+  gap: 15px;
+  align-items: flex-start;
+  flex: 1;
+}
+
+.task-info input[type="checkbox"] {
+  margin-top: 5px;
+}
+
+.task-info h3 {
+  margin: 0 0 5px 0;
+  font-size: 16px;
+}
+
+.task-info p {
+  margin: 0 0 10px 0;
+  color: #666;
+  font-size: 14px;
+}
+
+.task-milestone {
+  font-size: 12px;
+  color: #888;
+  margin-top: 5px;
+}
+
+.task-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.task-actions button {
+  padding: 5px 10px;
+  background-color: #f1f1f1;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.task-actions button:hover {
+  background-color: #e5e5e5;
+}
+
+/* Add specific styling for edit and delete buttons */
+.task-actions button:first-child {
+  background-color: #2196f3; /* Blue for Edit button */
+  color: white;
+  border: none;
+}
+
+.task-actions button:last-child {
+  background-color: #f44336; /* Red for Delete button */
+  color: white;
+  border: none;
+}
+
+.edit-task {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.edit-task input,
+.edit-task textarea,
+.edit-task select {
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.edit-task textarea {
+  min-height: 80px;
+}
+
+.edit-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.edit-actions button {
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.edit-actions button:first-child {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+}
+
+.edit-actions button:last-child {
+  background-color: #f1f1f1;
+  border: 1px solid #ddd;
+}
+
+/* Create Project Button styles */
+.create-project-container {
+  margin-bottom: 20px;
+}
+
+.create-project-button {
+  background-color: #3b82f6;
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+.create-project-button:hover {
+  background-color: #2563eb;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.create-project-button .plus-icon {
+  margin-right: 8px;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 0;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  font-size: 26px;
+  cursor: pointer;
+  color: #6b7280;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  transition: all 0.2s;
+  margin-right: -8px;
+}
+
+.close-button:hover {
+  color: #111827;
+}
+
+.cancel-button {
+  background-color: white;
+  border: 1px solid #d1d5db;
+  color: #4b5563;
+}
+
+.cancel-button:hover {
+  background-color: #f3f4f6;
+  border-color: #9ca3af;
+}
+
+.submit-button {
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+}
+
+.submit-button:hover {
+  background-color: #2563eb;
+}
+
+/* Project list header styles */
+.project-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.project-list-header h2 {
+  margin: 0;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  color: #666;
+}
+
+.milestone-header-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
+}
+
+/* Renamed from todo-form to task-form */
+.task-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+  background-color: #f5f5f5;
+  padding: 15px;
+  border-radius: 5px;
+}
+
+.task-form input,
+.task-form textarea,
+.task-form select {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.task-form button {
+  padding: 10px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.task-form button:hover {
+  background-color: #45a049;
+}
+
+/* Renamed from todo-filters to task-filters */
+.task-filters {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.task-filters button {
+  padding: 8px 15px;
+  background-color: #f1f1f1;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.task-filters button.active {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+/* Renamed from todo-items to task-items */
+.task-items {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Renamed from todo-item to task-item */
+.task-item {
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 15px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.task-item.completed {
+  border-left: 4px solid #4caf50;
+  opacity: 0.8;
+}
+
+.task-item.completed h3 {
+  text-decoration: line-through;
+  color: #888;
+}
+
+/* Renamed from todo-content to task-content */
+.task-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+/* Renamed from todo-info to task-info */
+.task-info {
+  display: flex;
+  gap: 15px;
+  align-items: flex-start;
+  flex: 1;
+}
+
+.task-info input[type="checkbox"] {
+  margin-top: 5px;
+}
+
+.task-info h3 {
+  margin: 0 0 5px 0;
+  font-size: 16px;
+}
+
+.task-info p {
+  margin: 0 0 10px 0;
+  color: #666;
+  font-size: 14px;
+}
+
+/* Renamed from todo-milestone to task-milestone */
+.task-milestone {
+  font-size: 12px;
+  color: #888;
+  margin-top: 5px;
+}
+
+/* Renamed from todo-actions to task-actions */
+.task-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.task-actions button {
+  padding: 5px 10px;
+  background-color: #f1f1f1;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.task-actions button:hover {
+  background-color: #e5e5e5;
+}
+
+/* Renamed from edit-todo to edit-task */
+.edit-task {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.edit-task input,
+.edit-task textarea,
+.edit-task select {
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.edit-task textarea {
+  min-height: 80px;
+}
+
+.edit-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.edit-actions button {
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.edit-actions button:first-child {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+}
+
+.edit-actions button:last-child {
+  background-color: #f1f1f1;
+  border: 1px solid #ddd;
+}
+
+/* Milestone actions button styles */
+.milestone-actions button {
+  padding: 4px 8px;
+  background-color: #f1f1f1;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* Add specific styling for milestone edit and delete buttons */
+.milestone-actions button:first-child {
+  background-color: #2196f3; /* Blue for Edit button */
+  color: white;
+  border: none;
+}
+
+.milestone-actions button:last-child {
+  background-color: #f44336; /* Red for Delete button */
+  color: white;
+  border: none;
+}

@@ -1,0 +1,315 @@
+/* Base layout */
+.milestone-page {
+  margin: 0 auto;
+  max-width: 1200px;
+  padding: 20px;
+}
+
+/* Status containers */
+.loading-container,
+.error-container,
+.not-found-container {
+  align-items: center;
+  color: #666;
+  display: flex;
+  font-size: 18px;
+  justify-content: center;
+  min-height: 300px;
+}
+
+.error-container {
+  color: #e74c3c;
+}
+
+/* Header section */
+.milestone-header {
+  border-bottom: 1px solid #eee;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+}
+
+.milestone-title {
+  font-size: 28px;
+  margin: 10px 0;
+}
+
+.milestone-description {
+  color: #333;
+  line-height: 1.5;
+  margin-top: 15px;
+}
+
+/* Navigation */
+.back-button {
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-bottom: 15px;
+  padding: 8px 16px;
+}
+
+.back-button:hover {
+  background: #e9ecef;
+}
+
+/* Metadata */
+.milestone-meta-container {
+  margin: 10px 0;
+  max-width: 300px;
+}
+
+.milestone-meta {
+  color: #666;
+  display: flex;
+  font-size: 14px;
+  justify-content: space-between;
+  margin: 10px 0;
+}
+
+.milestone-meta.vertical {
+  flex-direction: column;
+  gap: 10px;
+}
+
+.milestone-meta-item {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.meta-label {
+  font-weight: 600;
+}
+
+.meta-value,
+.status-badge {
+  text-align: right;
+}
+
+.status-badge {
+  border-radius: 4px;
+  font-size: 12px;
+  padding: 3px 8px;
+}
+
+.status-badge.completed {
+  background-color: #d4edda;
+  color: #28a745;
+}
+
+.status-badge.in-progress {
+  background-color: #cce5ff;
+  color: #007bff;
+}
+
+/* Progress section */
+.milestone-progress {
+  background: #f8f9fa;
+  border-radius: 6px;
+  margin-bottom: 30px;
+  padding: 20px;
+}
+
+.progress-bar {
+  background: #e9ecef;
+  border-radius: 6px;
+  height: 12px;
+  margin: 10px 0;
+  overflow: hidden;
+}
+
+.progress-fill {
+  background: #4caf50;
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+.progress-stats {
+  color: #666;
+  font-size: 14px;
+  text-align: right;
+}
+
+/* Tasks section */
+.milestone-tasks {
+  background: #fff;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  padding: 20px;
+}
+
+.milestone-task-header {
+  align-items: center;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+}
+
+.milestone-task-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+/* Task cards */
+.milestone-task {
+  background: #f8f9fa;
+  border-left: 3px solid #007bff;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  padding: 15px;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.milestone-task:hover {
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.milestone-task.completed {
+  background: #f0f9f0;
+  border-left-color: #28a745;
+}
+
+.milestone-task-title {
+  color: #333;
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 8px;
+  text-align: left;
+  align-self: flex-start;
+}
+
+.milestone-task.completed .milestone-task-title {
+  color: #666;
+  text-decoration: line-through;
+}
+
+.milestone-task-description {
+  color: #666;
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 10px 0;
+  text-align: left;
+  align-self: flex-start;
+  width: 100%;
+}
+
+.milestone-task-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.milestone-task-button {
+  padding: 4px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* Task controls */
+.task-checkbox {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+}
+
+.task-checkbox input {
+  cursor: pointer;
+  height: 18px;
+  width: 18px;
+}
+
+.delete-task-button {
+  background: none;
+  border: none;
+  color: #dc3545;
+  cursor: pointer;
+  font-size: 14px;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+
+.delete-task-button:hover {
+  opacity: 1;
+}
+
+/* Add task form */
+.add-task-form {
+  background: #f8f9fa;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  padding: 15px;
+}
+
+.add-task-form input,
+.add-task-form textarea {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  padding: 10px;
+  width: 100%;
+}
+
+.add-task-form textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.add-task-form button {
+  background: #28a745;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+  padding: 8px 16px;
+}
+
+.add-task-form button:hover {
+  background: #218838;
+}
+
+.add-task-button {
+  background: #007bff;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+  padding: 8px 16px;
+}
+
+.add-task-button:hover {
+  background: #0069d9;
+}
+
+/* Task list */
+.tasks-header {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.tasks-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.no-tasks-message {
+  color: #666;
+  padding: 20px;
+  text-align: center;
+}
