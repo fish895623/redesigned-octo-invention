@@ -1,9 +1,9 @@
-import { defineConfig, loadEnv } from "vite";
+import { defineConfig, loadEnv, type ConfigEnv, type UserConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { visualizer } from "rollup-plugin-visualizer";
 
 // https://vite.dev/config/
-export default defineConfig(({ mode }) => {
+export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
   // Load env variables but don't store them since we don't use them
   loadEnv(mode, process.cwd(), "");
 
@@ -14,14 +14,17 @@ export default defineConfig(({ mode }) => {
     plugins: [
       react(),
       // Add visualizer plugin in analyze mode
-      isAnalyze &&
-        visualizer({
-          open: true,
-          filename: "dist/stats.html",
-          gzipSize: true,
-          brotliSize: true,
-        }),
-    ].filter(Boolean),
+      ...(isAnalyze
+        ? [
+            visualizer({
+              open: true,
+              filename: "dist/stats.html",
+              gzipSize: true,
+              brotliSize: true,
+            }),
+          ]
+        : []),
+    ] as any,
 
     server: {
       port: 5173,
