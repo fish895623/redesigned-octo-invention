@@ -25,12 +25,10 @@ import com.projectmanage.main.service.TaskService;
 import com.projectmanage.main.service.UserService;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/api/projects/{projectId}")
 @RequiredArgsConstructor
-@Slf4j
 public class TaskController {
 
     private final TaskService taskService;

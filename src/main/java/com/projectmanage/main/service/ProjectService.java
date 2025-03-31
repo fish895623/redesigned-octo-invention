@@ -24,40 +24,17 @@ public class ProjectService {
     private final UserRepository userRepository;
     private final ProjectMapper projectMapper;
 
-    @Transactional(readOnly = true)
     public List<ProjectDTO> getProjectsByUserId(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
-
-        // Using the non-EntityGraph method to avoid MultipleBagFetchException
         List<Project> projects = projectRepository.findByUserOrderByCreatedAtDesc(user);
         return projectMapper.toDTOList(projects);
     }
 
-    @Transactional(readOnly = true)
     public ProjectDTO getProjectById(Long projectId) {
-        // Fetch the project first without eager loading collections
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new EntityNotFoundException("Project not found with id: " + projectId));
-
-        // If milestones or tasks are needed in the DTO, you can individually load them
-        // This depends on what ProjectMapper.toDTO requires
-
         return projectMapper.toDTO(project);
-    }
-
-    // Helper method to get project with milestones
-    @Transactional(readOnly = true)
-    public Project getProjectWithMilestones(Long projectId) {
-        return projectRepository.findWithMilestonesById(projectId)
-                .orElseThrow(() -> new EntityNotFoundException("Project not found with id: " + projectId));
-    }
-
-    // Helper method to get project with tasks
-    @Transactional(readOnly = true)
-    public Project getProjectWithTasks(Long projectId) {
-        return projectRepository.findWithTasksById(projectId)
-                .orElseThrow(() -> new EntityNotFoundException("Project not found with id: " + projectId));
     }
 
     @Transactional

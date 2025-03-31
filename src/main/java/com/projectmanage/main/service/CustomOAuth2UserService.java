@@ -37,6 +37,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         User user = userRepository.findByProviderId(providerId)
                 .orElse(User.builder()
                         .providerId(providerId)
+                        .provider(User.Provider.GOOGLE)
                         .email(email)
                         .name(name)
                         .picture(picture)

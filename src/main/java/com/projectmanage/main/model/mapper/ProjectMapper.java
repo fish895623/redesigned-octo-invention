@@ -73,7 +73,8 @@ public class ProjectMapper {
         }
 
         if (projectDTO.getUserId() != null) {
-            userRepository.findById(projectDTO.getUserId());
+            userRepository.findById(projectDTO.getUserId())
+                    .ifPresent(builder::user);
         }
 
         return builder.build();
