@@ -1,5 +1,6 @@
 import { useAuth } from "../hooks/useAuth";
 import { LoginButton } from "./LoginButton";
+import { RegisterButton } from "./RegisterButton";
 import { UserProfile } from "./UserProfile";
 import { Link } from "react-router-dom";
 import "../css/NavigationBar.css";
@@ -36,6 +37,7 @@ const NavigationBar = () => {
         ) : (
           <div className="auth-nav-buttons">
             <LoginButton label="Login" />
+            <RegisterButton label="Register" />
           </div>
         )}
       </div>
