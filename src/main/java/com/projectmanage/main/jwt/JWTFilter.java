@@ -16,13 +16,14 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class JWTFilter extends OncePerRequestFilter {
 
     private final JWTUtil jwtUtil;
 
     public JWTFilter(JWTUtil jwtUtil) {
-
         this.jwtUtil = jwtUtil;
     }
 
@@ -32,52 +33,63 @@ public class JWTFilter extends OncePerRequestFilter {
 
         String authorization = null;
         Cookie[] cookies = request.getCookies();
-        for (Cookie cookie : cookies) {
 
-            if (cookie.getName().equals("Authorization")) {
+        // Check if cookies exist
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("Authorization")) {
+                    authorization = cookie.getValue();
+                    break;
+                }
+            }
+        } else {
+            log.debug("No cookies found in the request");
+        }
 
-                authorization = cookie.getValue();
+        // Check Authorization header if cookie not found
+        if (authorization == null) {
+            String authHeader = request.getHeader("Authorization");
+            if (authHeader != null && authHeader.startsWith("Bearer ")) {
+                authorization = authHeader.substring(7);
+                log.debug("Found token in Authorization header");
             }
         }
 
-        // Authorization 헤더 검증
+        // If no token found in cookies or header, continue filter chain
         if (authorization == null) {
-
-            System.out.println("token null");
+            log.debug("No token found in request");
             filterChain.doFilter(request, response);
-
-            // 조건이 해당되면 메소드 종료 (필수)
             return;
         }
 
-        // 토큰
+        // Token validation
         String token = authorization;
 
         if (jwtUtil.isExpired(token)) {
-
-            System.out.println("token expired");
+            log.debug("Token is expired");
             filterChain.doFilter(request, response);
-
-            // 조건이 해당되면 메소드 종료 (필수)
             return;
         }
 
-        // 토큰에서 username과 role 획득
+        // Extract user details from token
         String username = jwtUtil.getUsername(token);
         String role = jwtUtil.getRole(token);
 
-        // userDTO를 생성하여 값 set
+        log.debug("Processing authenticated request for user: {}", username);
+
+        // Create UserDTO with token information
         UserDTO userDTO = new UserDTO();
         userDTO.setUsername(username);
         userDTO.setRoles(Collections.singletonList(role));
 
-        // UserDetails에 회원 정보 객체 담기
+        // Create custom OAuth2 user
         CustomOAuth2User customOAuth2User = new CustomOAuth2User(userDTO);
 
-        // 스프링 시큐리티 인증 토큰 생성
+        // Create authentication token
         Authentication authToken = new UsernamePasswordAuthenticationToken(customOAuth2User, null,
                 customOAuth2User.getAuthorities());
-        // 세션에 사용자 등록
+
+        // Set authentication in security context
         SecurityContextHolder.getContext().setAuthentication(authToken);
 
         filterChain.doFilter(request, response);

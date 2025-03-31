@@ -12,6 +12,7 @@ import com.projectmanage.main.dto.CustomOAuth2User;
 import com.projectmanage.main.dto.GoogleResponse;
 import com.projectmanage.main.dto.OAuth2Response;
 import com.projectmanage.main.model.User;
+import com.projectmanage.main.model.User.Provider;
 import com.projectmanage.main.model.dto.UserDTO;
 import com.projectmanage.main.repository.UserRepository;
 
@@ -24,7 +25,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private final UserRepository userRepository;
 
     public CustomOAuth2UserService(UserRepository userRepository) {
-
         this.userRepository = userRepository;
     }
 
@@ -32,7 +32,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
 
         OAuth2User oAuth2User = super.loadUser(userRequest);
-        System.out.println(oAuth2User);
+        log.info("OAuth2User: {}", oAuth2User.toString());
 
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
         OAuth2Response oAuth2Response = null;
@@ -50,6 +50,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             user.setEmail(oAuth2Response.getEmail());
             user.setName(oAuth2Response.getName());
             user.setRole("ROLE_USER");
+            user.setProviderId(oAuth2Response.getProviderId());
+            user.setProvider(Provider.GOOGLE);
 
             userRepository.save(user);
 
@@ -61,9 +63,10 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
             return new CustomOAuth2User(userDTO);
         } else {
-
             existData.setEmail(oAuth2Response.getEmail());
             existData.setName(oAuth2Response.getName());
+            existData.setProviderId(oAuth2Response.getProviderId());
+            existData.setProvider(Provider.GOOGLE);
 
             userRepository.save(existData);
 
