@@ -1,1 +1,3 @@
-/ @fish895623
+* @fish895623
+*.ts,*.tsx @fish895623
+*.java @somecreator
