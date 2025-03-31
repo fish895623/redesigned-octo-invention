@@ -15,10 +15,17 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
 
     List<Project> findByUser(User user);
 
-    @EntityGraph(attributePaths = { "milestones", "tasks" })
+    @EntityGraph(attributePaths = { "milestones" })
+    List<Project> findWithMilestonesByUserOrderByCreatedAtDesc(User user);
+
+    @EntityGraph(attributePaths = { "tasks" })
+    List<Project> findWithTasksByUserOrderByCreatedAtDesc(User user);
+
     List<Project> findByUserOrderByCreatedAtDesc(User user);
 
-    @EntityGraph(attributePaths = { "milestones", "tasks" })
-    @Override
-    Optional<Project> findById(Long id);
+    @EntityGraph(attributePaths = { "milestones" })
+    Optional<Project> findWithMilestonesById(Long id);
+
+    @EntityGraph(attributePaths = { "tasks" })
+    Optional<Project> findWithTasksById(Long id);
 }
