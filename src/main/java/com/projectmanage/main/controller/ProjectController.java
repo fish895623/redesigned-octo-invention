@@ -33,8 +33,8 @@ public class ProjectController {
 
     @GetMapping
     public ResponseEntity<List<ProjectDTO>> getAllProjects(@AuthenticationPrincipal CustomUserDetails principal) {
-        User user = userService.getUserFromPrincipal(principal);
-        List<ProjectDTO> projects = projectService.getProjectsByUserId(user.getId());
+        List<ProjectDTO> projects = projectService.getAllProjects();
+
         return ResponseEntity.ok(projects);
     }
 

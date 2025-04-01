@@ -24,10 +24,8 @@ public class ProjectService {
     private final UserRepository userRepository;
     private final ProjectMapper projectMapper;
 
-    public List<ProjectDTO> getProjectsByUserId(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
-        List<Project> projects = projectRepository.findByUserOrderByCreatedAtDesc(user);
+    public List<ProjectDTO> getAllProjects() {
+        List<Project> projects = projectRepository.findAll();
         return projectMapper.toDTOList(projects);
     }
 
