@@ -156,27 +156,6 @@ public class AuthController {
                         "Refresh token is not in database!"));
     }
 
-    @PostMapping("/logout")
-    public ResponseEntity<?> logoutUser(@RequestBody Map<String, String> logoutRequest,
-            HttpServletResponse response) {
-        try {
-            String username = logoutRequest.get("email");
-            refreshTokenService.deleteByUserId(username);
-
-            // Clear auth cookie
-            Cookie cookie = new Cookie("Authorization", null);
-            cookie.setHttpOnly(true);
-            cookie.setPath("/");
-            cookie.setMaxAge(0);
-            response.addCookie(cookie);
-
-            return ResponseEntity.ok(Map.of("message", "Logout successful"));
-        } catch (Exception e) {
-            log.error("Logout failed: {}", e.getMessage());
-            return ResponseEntity.badRequest().body(Map.of("message", "Logout failed"));
-        }
-    }
-
     @GetMapping("/user")
     public ResponseEntity<Map<String, Object>> getUser(@AuthenticationPrincipal CustomUserDetails principal) {
         if (principal == null) {

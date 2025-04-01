@@ -35,7 +35,6 @@ public class ProjectController {
     public ResponseEntity<List<ProjectDTO>> getAllProjects(@AuthenticationPrincipal CustomUserDetails principal) {
         log.trace("ProjectController.getAllProjects");
         List<ProjectDTO> projects = projectService.getAllProjects();
-
         return ResponseEntity.ok(projects);
     }
 
@@ -44,14 +43,7 @@ public class ProjectController {
             @PathVariable Long id,
             @AuthenticationPrincipal CustomUserDetails principal) {
         log.trace("ProjectController.getProjectById");
-        User user = userService.getUserFromPrincipal(principal);
         ProjectDTO project = projectService.getProjectById(id);
-
-        // Ensure the user owns this project
-        if (!project.getUserId().equals(user.getId())) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
-
         return ResponseEntity.ok(project);
     }
 
@@ -70,15 +62,6 @@ public class ProjectController {
             @RequestBody ProjectDTO projectDTO,
             @AuthenticationPrincipal CustomUserDetails principal) {
         log.trace("ProjectController.updateProject");
-
-        User user = userService.getUserFromPrincipal(principal);
-        ProjectDTO existingProject = projectService.getProjectById(id);
-
-        // Ensure the user owns this project
-        if (!existingProject.getUserId().equals(user.getId())) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
-
         ProjectDTO updatedProject = projectService.updateProject(id, projectDTO);
         return ResponseEntity.ok(updatedProject);
     }
@@ -87,15 +70,6 @@ public class ProjectController {
     public ResponseEntity<Void> deleteProject(@PathVariable Long id,
             @AuthenticationPrincipal CustomUserDetails principal) {
         log.trace("deleteProject");
-
-        User user = userService.getUserFromPrincipal(principal);
-        ProjectDTO project = projectService.getProjectById(id);
-
-        // Ensure the user owns this project
-        if (!project.getUserId().equals(user.getId())) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
-
         projectService.deleteProject(id);
         return ResponseEntity.noContent().build();
     }

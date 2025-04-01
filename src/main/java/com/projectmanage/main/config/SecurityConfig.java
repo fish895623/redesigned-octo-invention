@@ -54,12 +54,13 @@ public class SecurityConfig {
         http.addFilterBefore(new JWTFilter(jwtUtil, userRepository), UsernamePasswordAuthenticationFilter.class);
         http.authorizeHttpRequests((auth) -> {
             auth.requestMatchers("/").permitAll()
-                    .requestMatchers("/api/projects").permitAll()
                     .requestMatchers("/api/auth/login").permitAll()
                     .requestMatchers("/api/auth/register").permitAll()
                     .requestMatchers("/api/auth/status").permitAll()
                     .requestMatchers("/api/auth/user").permitAll()
-                    .requestMatchers("/my").hasRole("USER");
+                    .requestMatchers("/api/projects/**").authenticated()
+                    .requestMatchers("/my").hasRole("USER")
+                    .anyRequest().authenticated();
         });
         http.sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         return http.build();
