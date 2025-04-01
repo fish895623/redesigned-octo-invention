@@ -2,8 +2,6 @@ import { useState, useCallback, useMemo } from "react";
 import { useProject } from "../../context/ProjectContextDefinition";
 import { Project, Milestone } from "../../types/project";
 import CreateMilestoneModal from "../modals/CreateMilestoneModal";
-import { Link } from "react-router-dom";
-import CreateMilestoneModal from "../modals/CreateMilestoneModal";
 
 interface MilestoneListProps {
   onSelectMilestone?: (id: string) => void;
@@ -14,53 +12,9 @@ const MilestoneList = ({
   onSelectMilestone,
   projectId,
 }: MilestoneListProps) => {
-  const { projects, updateProject, deleteProject } = useProject();
-  const [editingMilestoneId, setEditingMilestoneId] = useState<string | null>(
-    null
-  );
-  const [editTitle, setEditTitle] = useState("");
-  const [editDescription, setEditDescription] = useState("");
+  const { milestones } = useProject();
   const [showMilestoneModal, setShowMilestoneModal] = useState(false);
   const [sortBy, setSortBy] = useState<"created" | "updated">("updated");
-
-  const handleEditMilestone = useCallback((milestone: Milestone) => {
-    setEditingMilestoneId(milestone.id);
-    setEditTitle(milestone.title);
-    setEditDescription(milestone.description || "");
-  }, []);
-
-  const handleSaveEdit = useCallback(
-    (project: Project) => {
-      if (editTitle.trim()) {
-        updateProject({
-          ...project,
-          title: editTitle.trim(),
-          description: editDescription.trim() || undefined,
-          updatedAt: new Date(),
-        });
-        setEditingMilestoneId(null);
-      }
-    },
-    [editTitle, editDescription, updateProject]
-  );
-
-  const handleDeleteProject = useCallback(
-    (projectId: string) => {
-      if (window.confirm("Are you sure you want to delete this project?")) {
-        deleteProject(projectId);
-      }
-    },
-    [deleteProject]
-  );
-
-  // Sort projects by either created or updated time
-  const sortedProjects = useMemo(() => {
-    return [...projects].sort((a, b) => {
-      const dateA = sortBy === "created" ? a.createdAt : a.updatedAt;
-      const dateB = sortBy === "created" ? b.createdAt : b.updatedAt;
-      return dateB.getTime() - dateA.getTime();
-    });
-  }, [projects, sortBy]);
 
   return (
     <div className="w-full max-w-7xl mx-auto bg-gray-900 rounded-lg shadow-md overflow-hidden">
@@ -70,7 +24,7 @@ const MilestoneList = ({
           <div className="text-sm text-blue-400 font-medium mt-1">
             Total Milestones:{" "}
             <span className="bg-blue-600 text-white px-2 py-0.5 rounded-full ml-1">
-              {projects.length}
+              {milestones.length}
             </span>
           </div>
         </div>

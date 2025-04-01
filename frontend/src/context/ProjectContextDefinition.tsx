@@ -10,6 +10,8 @@ import { API_ENDPOINTS, createHeaders } from "../config/api";
 
 export interface ProjectContextType {
   projects: Project[];
+  milestones: Milestone[];
+  tasks: Task[];
   loading: boolean;
   error: string | null;
   addProject: (
@@ -52,6 +54,11 @@ interface ProjectProviderProps {
 
 export const ProjectProvider = ({ children }: ProjectProviderProps) => {
   const [projects, setProjects] = useState<Project[]>([]);
+  // return milestones for project
+  const [milestones, setMilestones] = useState<Milestone[]>([]);
+  // return tasks for milestone
+  const [tasks, setTasks] = useState<Task[]>([]);
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -503,6 +510,8 @@ export const ProjectProvider = ({ children }: ProjectProviderProps) => {
     <ProjectContext.Provider
       value={{
         projects,
+        milestones,
+        tasks,
         loading,
         error,
         addProject,
