@@ -1,8 +1,7 @@
-package com.projectmanage.main.model.builder;
+package com.projectmanage.main.model.mapper;
 
 
 import com.projectmanage.main.model.Project;
-import com.projectmanage.main.model.User;
 import com.projectmanage.main.model.dto.ProjectDTO;
 import com.projectmanage.main.repository.MilestoneRepository;
 import com.projectmanage.main.repository.TaskRepository;
@@ -12,10 +11,10 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class ProjectBuilder {
+public class ProjectMapper {
 
-    private final MilestoneBuilder milestoneBuilder;
-    private final TaskBuilder taskBuilder;
+    private final MilestoneMapper milestoneBuilder;
+    private final TaskMapper taskBuilder;
 
     private final UserRepository userRepository;
     private final MilestoneRepository milestoneRepository;

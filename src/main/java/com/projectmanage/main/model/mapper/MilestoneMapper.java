@@ -1,4 +1,4 @@
-package com.projectmanage.main.model.builder;
+package com.projectmanage.main.model.mapper;
 
 import com.projectmanage.main.model.Milestone;
 import com.projectmanage.main.model.dto.MilestoneDTO;
@@ -9,8 +9,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class MilestoneBuilder {
-    public final TaskBuilder taskBuilder;
+public class MilestoneMapper {
+    public final TaskMapper taskBuilder;
     public final ProjectRepository projectRepository;
     public final TaskRepository taskRepository;
 
