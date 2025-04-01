@@ -5,6 +5,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { lazy, Suspense } from "react";
 import { LoadingSpinner } from "./components/ui/Loading/LoadingSpinner";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
+import { ProjectProvider } from "./context/ProjectContext";
 
 // Lazy load page components for better performance
 const Profile = lazy(() => import("./ProfilePage"));
@@ -43,11 +44,15 @@ function App() {
               </ProtectedRoute>
             }
           />
+
+          {/* Project routes with ProjectProvider */}
           <Route
             path="/project"
             element={
               <ProtectedRoute>
-                <ProjectListPage />
+                <ProjectProvider>
+                  <ProjectListPage />
+                </ProjectProvider>
               </ProtectedRoute>
             }
           />
@@ -55,7 +60,9 @@ function App() {
             path="/project/:projectId"
             element={
               <ProtectedRoute>
-                <ProjectPage />
+                <ProjectProvider>
+                  <ProjectPage />
+                </ProjectProvider>
               </ProtectedRoute>
             }
           />
@@ -63,7 +70,9 @@ function App() {
             path="/project/:projectId/milestone"
             element={
               <ProtectedRoute>
-                <MilestoneListPage />
+                <ProjectProvider>
+                  <MilestoneListPage />
+                </ProjectProvider>
               </ProtectedRoute>
             }
           />
@@ -71,7 +80,9 @@ function App() {
             path="/project/:projectId/milestone/:milestoneId"
             element={
               <ProtectedRoute>
-                <MilestonePage />
+                <ProjectProvider>
+                  <MilestonePage />
+                </ProjectProvider>
               </ProtectedRoute>
             }
           />
@@ -79,7 +90,9 @@ function App() {
             path="/project/:projectId/task"
             element={
               <ProtectedRoute>
-                <TaskListPage />
+                <ProjectProvider>
+                  <TaskListPage />
+                </ProjectProvider>
               </ProtectedRoute>
             }
           />
@@ -87,7 +100,9 @@ function App() {
             path="/project/:projectId/task/:taskId"
             element={
               <ProtectedRoute>
-                <TaskPage />
+                <ProjectProvider>
+                  <TaskPage />
+                </ProjectProvider>
               </ProtectedRoute>
             }
           />
