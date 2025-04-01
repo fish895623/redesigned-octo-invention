@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useProjects } from "../../hooks/useProjects";
-import "../../css/Modal.css";
 import { Project } from "../../types/project";
+
 interface EditProjectModalProps {
   project: Project;
   onClose: () => void;
@@ -41,47 +41,69 @@ const EditProjectModal: React.FC<EditProjectModalProps> = ({
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-header">
-          <h2>Edit Project</h2>
+    <div
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+      onClick={onClose}
+    >
+      <div
+        className="bg-gray-800 rounded-lg shadow-xl max-w-lg w-full mx-4 overflow-hidden"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex justify-between items-center px-6 py-4 bg-gray-900 border-b border-gray-700">
+          <h2 className="text-xl font-semibold text-white">Edit Project</h2>
           <button
-            className="close-button"
+            className="text-gray-400 hover:text-white text-2xl font-bold focus:outline-none"
             onClick={onClose}
             aria-label="Close modal"
           >
             &times;
           </button>
         </div>
-        <form className="edit-project-form" onSubmit={handleSubmit}>
-          <div className="form-field">
-            <h3>Project Title</h3>
+        <form className="px-6 py-4" onSubmit={handleSubmit}>
+          <div className="mb-4">
+            <h3 className="text-sm font-medium text-gray-300 mb-2">
+              Project Title
+            </h3>
             <input
               type="text"
               value={title}
               onChange={handleTitleChange}
               placeholder="Enter project title"
               autoFocus
-              className={titleError ? "input-error" : ""}
+              className={`w-full px-3 py-2 bg-gray-700 border rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                titleError ? "border-red-500" : "border-gray-600"
+              }`}
             />
-            {titleError && <div className="error-tooltip">{titleError}</div>}
+            {titleError && (
+              <div className="mt-1 text-sm text-red-500">{titleError}</div>
+            )}
           </div>
 
-          <div className="form-field">
-            <h3>Description</h3>
+          <div className="mb-4">
+            <h3 className="text-sm font-medium text-gray-300 mb-2">
+              Description
+            </h3>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Enter project description (optional)"
               rows={4}
+              className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
             />
           </div>
 
-          <div className="modal-actions">
-            <button type="button" className="cancel-button" onClick={onClose}>
+          <div className="flex justify-end gap-3 mt-6">
+            <button
+              type="button"
+              className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white font-medium rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500"
+              onClick={onClose}
+            >
               Cancel
             </button>
-            <button type="submit" className="submit-button">
+            <button
+              type="submit"
+              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
               Save Changes
             </button>
           </div>
