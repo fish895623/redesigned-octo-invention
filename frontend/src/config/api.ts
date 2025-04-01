@@ -7,6 +7,7 @@ export const API_ENDPOINTS = {
     login: `${API_BASE_URL}/api/auth/login`,
     register: `${API_BASE_URL}/api/auth/register`,
     logout: `${API_BASE_URL}/api/auth/logout`,
+    refresh: `${API_BASE_URL}/api/auth/refresh`,
   },
   projects: {
     list: `${API_BASE_URL}/api/projects`,

@@ -5,15 +5,13 @@ import { apiClient } from "./apiClient";
 export const getCurrentUser = async (): Promise<User> => {
   try {
     const response = await apiClient.get<User>(API_ENDPOINTS.auth.user);
-    if (response.data.authenticated && response.data.token) {
-      apiClient.setToken(response.data.token);
+    if (response.data.authenticated) {
+      return response.data;
     } else {
-      apiClient.removeToken();
+      return { authenticated: false };
     }
-    return response.data;
   } catch (err) {
     console.error("Failed to check authentication status", err);
-    apiClient.removeToken();
     return { authenticated: false };
   }
 };
@@ -24,15 +22,22 @@ export const login = async (credentials: LoginRequest): Promise<User> => {
       API_ENDPOINTS.auth.login,
       credentials
     );
-    if (response.data.authenticated && response.data.token) {
-      apiClient.setToken(response.data.token);
+    if (
+      response.data.authenticated &&
+      response.data.accessToken &&
+      response.data.refreshToken
+    ) {
+      apiClient.setTokens(
+        response.data.accessToken,
+        response.data.refreshToken
+      );
     } else {
-      apiClient.removeToken();
+      apiClient.removeTokens();
     }
     return response.data;
   } catch (err) {
     console.error("Login failed:", err);
-    apiClient.removeToken();
+    apiClient.removeTokens();
     throw err;
   }
 };
@@ -43,15 +48,22 @@ export const register = async (userData: RegisterRequest): Promise<User> => {
       API_ENDPOINTS.auth.register,
       userData
     );
-    if (response.data.authenticated && response.data.token) {
-      apiClient.setToken(response.data.token);
+    if (
+      response.data.authenticated &&
+      response.data.accessToken &&
+      response.data.refreshToken
+    ) {
+      apiClient.setTokens(
+        response.data.accessToken,
+        response.data.refreshToken
+      );
     } else {
-      apiClient.removeToken();
+      apiClient.removeTokens();
     }
     return response.data;
   } catch (err) {
     console.error("Registration failed:", err);
-    apiClient.removeToken();
+    apiClient.removeTokens();
     throw err;
   }
 };
@@ -59,11 +71,10 @@ export const register = async (userData: RegisterRequest): Promise<User> => {
 export const logout = async (): Promise<void> => {
   try {
     await apiClient.post(API_ENDPOINTS.auth.logout, {});
-    apiClient.removeToken();
-    window.location.href = "/login";
+    apiClient.removeTokens();
   } catch (err) {
     console.error("Logout failed:", err);
-    apiClient.removeToken();
-    throw err;
+    // Still remove tokens on the client side even if server request fails
+    apiClient.removeTokens();
   }
 };

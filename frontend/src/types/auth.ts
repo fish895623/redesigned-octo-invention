@@ -3,7 +3,9 @@ export interface User {
   name?: string;
   email?: string;
   picture?: string;
-  token?: string;
+  accessToken?: string;
+  refreshToken?: string;
+  tokenType?: string;
 }
 
 export interface LoginRequest {
