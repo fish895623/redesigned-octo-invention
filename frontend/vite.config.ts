@@ -1,6 +1,7 @@
 import { defineConfig, loadEnv, type ConfigEnv, type UserConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { visualizer } from "rollup-plugin-visualizer";
+import tailwindcss from "@tailwindcss/vite";
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
@@ -24,6 +25,7 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
             }),
           ]
         : []),
+      tailwindcss(),
     ] as any,
 
     server: {
