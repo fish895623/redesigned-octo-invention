@@ -3,23 +3,26 @@
  * This requests to /api/projects/:projectId/milestones.
  * Authentication is requested.
  */
-import { useState, useCallback, useMemo } from "react";
+import { useState } from "react";
 import { useProject } from "../../context/ProjectContextDefinition";
-import { Project, Milestone } from "../../types/project";
+import { Milestone } from "../../types/project";
 import CreateMilestoneModal from "../modals/CreateMilestoneModal";
 
 interface MilestoneListProps {
-  onSelectMilestone?: (id: string) => void;
-  projectId: string;
+  projectId: number;
+  milestones: Milestone[];
 }
 
-const MilestoneList = ({
-  onSelectMilestone,
-  projectId,
-}: MilestoneListProps) => {
-  const { milestones } = useProject();
+const MilestoneList = ({ projectId, milestones }: MilestoneListProps) => {
   const [showMilestoneModal, setShowMilestoneModal] = useState(false);
   const [sortBy, setSortBy] = useState<"created" | "updated">("updated");
+
+  const sortedMilestones = [...milestones].sort((a, b) => {
+    if (sortBy === "updated") {
+      return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
+    }
+    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+  });
 
   return (
     <div className="w-full max-w-7xl mx-auto bg-gray-900 rounded-lg shadow-md overflow-hidden">
@@ -29,7 +32,7 @@ const MilestoneList = ({
           <div className="text-sm text-blue-400 font-medium mt-1">
             Total Milestones:{" "}
             <span className="bg-blue-600 text-white px-2 py-0.5 rounded-full ml-1">
-              {/* {milestones.length} */}
+              {milestones.length}
             </span>
           </div>
         </div>
@@ -50,7 +53,52 @@ const MilestoneList = ({
           </button>
         </div>
       </div>
-      <div className="p-4 flex flex-col gap-4"></div>
+      <div className="p-4 flex flex-col gap-4">
+        {sortedMilestones.map((milestone) => (
+          <div
+            key={milestone.id}
+            className="bg-gray-800 rounded-lg p-4 border border-gray-700"
+          >
+            <div className="flex justify-between items-start">
+              <div>
+                <h3 className="text-lg font-semibold text-white">
+                  {milestone.title}
+                </h3>
+                {milestone.description && (
+                  <p className="text-gray-400 mt-1">{milestone.description}</p>
+                )}
+              </div>
+              <div
+                className={`px-3 py-1 rounded-full text-sm font-medium ${
+                  milestone.completed
+                    ? "bg-green-600 text-green-100"
+                    : "bg-yellow-600 text-yellow-100"
+                }`}
+              >
+                {milestone.completed ? "Completed" : "In Progress"}
+              </div>
+            </div>
+            <div className="mt-4 flex flex-wrap gap-4 text-sm text-gray-400">
+              {milestone.startDate && (
+                <div>
+                  Start: {new Date(milestone.startDate).toLocaleDateString()}
+                </div>
+              )}
+              {milestone.dueDate && (
+                <div>
+                  Due: {new Date(milestone.dueDate).toLocaleDateString()}
+                </div>
+              )}
+              <div>Tasks: {milestone.tasks.length}</div>
+            </div>
+          </div>
+        ))}
+        {sortedMilestones.length === 0 && (
+          <div className="text-center text-gray-400 py-8">
+            No milestones found. Create one to get started!
+          </div>
+        )}
+      </div>
       {showMilestoneModal && (
         <CreateMilestoneModal
           onClose={() => setShowMilestoneModal(false)}

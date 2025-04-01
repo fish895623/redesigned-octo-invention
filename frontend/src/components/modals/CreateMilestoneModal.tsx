@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useProject } from "../../context/ProjectContextDefinition";
 
 interface CreateMilestoneModalProps {
-  projectId: string;
+  projectId: number;
   onClose: () => void;
 }
 
