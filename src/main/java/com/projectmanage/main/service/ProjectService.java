@@ -24,11 +24,13 @@ public class ProjectService {
     private final UserRepository userRepository;
     private final ProjectMapper projectMapper;
 
+    @Transactional(readOnly = true)
     public List<ProjectDTO> getAllProjects() {
         List<Project> projects = projectRepository.findAll();
         return projectMapper.toDTOList(projects);
     }
 
+    @Transactional(readOnly = true)
     public ProjectDTO getProjectById(Long projectId) {
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new EntityNotFoundException("Project not found with id: " + projectId));
