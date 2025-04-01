@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import { ProjectProvider } from "../context/ProjectContext";
-import MilestoneList from "../components/lists/MilestoneList";
 import { useAuth } from "../hooks/useAuth";
+import MilestoneList from "../components/lists/MilestoneList";
 
 const MilestoneListPage = () => {
   const { loading } = useAuth();
@@ -17,7 +17,8 @@ const MilestoneListPage = () => {
 
   return (
     <ProjectProvider>
-      <div className="app-container">
+      {/* Container with no padding on mobile and minimal padding on larger screens */}
+      <div className="w-full p-0 md:p-2 mt-16">
         <MilestoneList projectId={projectId} />
       </div>
     </ProjectProvider>
