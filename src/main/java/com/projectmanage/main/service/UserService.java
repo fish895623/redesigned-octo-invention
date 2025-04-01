@@ -1,7 +1,6 @@
 package com.projectmanage.main.service;
 
 import java.util.Optional;
-import java.util.UUID;
 
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import com.projectmanage.main.dto.CustomUserDetails;
 import com.projectmanage.main.model.User;
-import com.projectmanage.main.model.User.Provider;
 import com.projectmanage.main.model.dto.UserDTO;
 import com.projectmanage.main.repository.UserRepository;
 
@@ -62,8 +60,6 @@ public class UserService implements UserDetailsService {
                 .password(passwordEncoder.encode(userDTO.getPassword()))
                 .role("USER")
                 .username(userDTO.getEmail())
-                .provider(Provider.EMAIL)
-                .providerId(UUID.randomUUID().toString())
                 .build();
 
         return userRepository.save(user);
