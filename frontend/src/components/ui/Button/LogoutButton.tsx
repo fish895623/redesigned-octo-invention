@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { useAuth } from "../hooks/useAuth";
+import { useAuth } from "../../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
-import { useTheme } from "../context/ThemeContext";
+import { useTheme } from "../../../context/ThemeContextDefinition";
 
 export const LogoutButton = () => {
   const { logout } = useAuth();

@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import { ProjectProvider } from "../context/ProjectContext";
-import MilestoneList from "../components/MilestoneList";
+import MilestoneList from "../components/lists/MilestoneList";
 import { useAuth } from "../hooks/useAuth";
 
 const MilestoneListPage = () => {

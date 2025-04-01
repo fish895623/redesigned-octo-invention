@@ -1,10 +1,10 @@
 import "./App.css";
 import { AuthProvider } from "./context/AuthContext";
-import NavigationBar from "./components/NavigationBar";
+import NavigationBar from "./components/ui/Navigation/NavigationBar";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { lazy, Suspense } from "react";
-import { LoadingSpinner } from "./components/LoadingSpinner";
-import { ProtectedRoute } from "./components/ProtectedRoute";
+import { LoadingSpinner } from "./components/ui/Loading/LoadingSpinner";
+import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 
 // Lazy load page components for better performance
 const Profile = lazy(() => import("./ProfilePage"));

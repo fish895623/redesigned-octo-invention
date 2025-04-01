@@ -1,7 +1,7 @@
 import { useState, useCallback, useMemo } from "react";
-import { useProject } from "../context/ProjectContextDefinition";
-import { Project } from "../types/project";
-import CreateProjectModal from "./modal/CreateProjectModal";
+import { useProject } from "../../context/ProjectContextDefinition";
+import { Project } from "../../types/project";
+import CreateProjectModal from "../modals/CreateProjectModal";
 import { Link } from "react-router-dom";
 
 interface ProjectListProps {

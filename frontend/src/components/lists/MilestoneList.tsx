@@ -1,8 +1,8 @@
 import { useState, useCallback, useMemo, useEffect } from "react";
-import { useProject } from "../context/ProjectContextDefinition";
-import { Milestone } from "../types/project";
-import CreateMilestoneModal from "./modal/CreateMilestoneModal";
-import { API_BASE_URL, createHeaders } from "../config/api";
+import { useProject } from "../../context/ProjectContextDefinition";
+import { Milestone } from "../../types/project";
+import CreateMilestoneModal from "../modals/CreateMilestoneModal";
+import { API_BASE_URL, createHeaders } from "../../config/api";
 
 // Define date array type from backend
 type DateArray =

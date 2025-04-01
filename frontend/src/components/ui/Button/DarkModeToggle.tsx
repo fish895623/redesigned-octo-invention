@@ -1,5 +1,5 @@
-import { useTheme } from "../context/ThemeContextDefinition";
 import { Button } from "@material-tailwind/react";
+import { useTheme } from "../../../context/ThemeContextDefinition";
 
 export default function DarkModeToggle() {
   const { isDarkMode, toggleDarkMode } = useTheme();

@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import { ProjectProvider } from "../context/ProjectContext";
-import ProjectDetail from "../components/ProjectDetail";
+import ProjectDetail from "../components/details/ProjectDetail";
 import { useAuth } from "../hooks/useAuth";
 
 const ProjectPage = () => {

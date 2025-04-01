@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { useProjects } from "../hooks/useProjects";
-import { Task } from "../types/project";
+import { useProjects } from "../../hooks/useProjects";
+import { Task } from "../../types/project";
 
 interface TaskDetailProps {
   projectId: string;

@@ -1,5 +1,5 @@
 import { ProjectProvider } from "../context/ProjectContext";
-import ProjectList from "../components/ProjectList";
+import ProjectList from "../components/lists/ProjectList";
 
 const ProjectListPage = () => {
   return (

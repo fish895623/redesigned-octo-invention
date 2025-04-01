@@ -1,8 +1,8 @@
-import { useAuth } from "../hooks/useAuth";
-import { UserProfile } from "./UserProfile";
+import { useAuth } from "../../../hooks/useAuth";
+import { UserProfile } from "../User/UserProfile";
 import { Link } from "react-router-dom";
-import DarkModeToggle from "./DarkModeToggle";
-import { useTheme } from "../context/ThemeContextDefinition";
+import DarkModeToggle from "../Button/DarkModeToggle";
+import { useTheme } from "../../../context/ThemeContextDefinition";
 import { useState } from "react";
 
 const NavigationBar = () => {

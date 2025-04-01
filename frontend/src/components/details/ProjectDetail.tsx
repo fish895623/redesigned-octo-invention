@@ -1,22 +1,22 @@
-import { useState, useEffect } from "react";
-import { useProjects } from "../hooks/useProjects";
-import { Project } from "../types/project";
-import MilestoneList from "./MilestoneList";
-import TaskList from "./TaskList";
-import CreateMilestoneModal from "./modal/CreateMilestoneModal";
+import React, { useState, useEffect } from "react";
+import { useProject } from "../../context/ProjectContextDefinition";
+import { Project } from "../../types/project";
+import MilestoneList from "../lists/MilestoneList";
+import TaskList from "../lists/TaskList";
+import CreateMilestoneModal from "../modals/CreateMilestoneModal";
 
 interface ProjectDetailProps {
   projectId: string;
 }
 
 const ProjectDetail = ({ projectId }: ProjectDetailProps) => {
-  const { projects, updateProject, deleteProject } = useProjects();
+  const { projects, updateProject, deleteProject } = useProject();
   const [project, setProject] = useState<Project | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [activeTab, setActiveTab] = useState<"milestones" | "tasks">(
-    "milestones",
+    "milestones"
   );
   const [showMilestoneModal, setShowMilestoneModal] = useState(false);
   const [loading, setLoading] = useState(true);

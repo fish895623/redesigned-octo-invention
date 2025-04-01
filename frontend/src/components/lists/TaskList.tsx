@@ -1,7 +1,7 @@
 import { useState, useCallback, useMemo } from "react";
-import { useProjects } from "../hooks/useProjects";
-import { Task, Milestone } from "../types/project";
-import CreateTaskModal from "../components/modal/CreateTaskModal";
+import { useProjects } from "../../hooks/useProjects";
+import { Task, Milestone } from "../../types/project";
+import CreateTaskModal from "../modals/CreateTaskModal";
 
 interface TaskListProps {
   projectId: string;
@@ -20,7 +20,7 @@ const TaskList = ({
   const [editTitle, setEditTitle] = useState("");
   const [editDescription, setEditDescription] = useState("");
   const [editMilestoneId, setEditMilestoneId] = useState<string | undefined>(
-    undefined,
+    undefined
   );
   const [filter, setFilter] = useState<"all" | "active" | "completed">("all");
   const [showTaskModal, setShowTaskModal] = useState(false);
@@ -34,7 +34,7 @@ const TaskList = ({
         updatedAt: new Date(),
       });
     },
-    [updateTask],
+    [updateTask]
   );
 
   const handleEditTask = useCallback((task: Task) => {
@@ -57,7 +57,7 @@ const TaskList = ({
         setEditingTaskId(null);
       }
     },
-    [editTitle, editDescription, editMilestoneId, updateTask],
+    [editTitle, editDescription, editMilestoneId, updateTask]
   );
 
   const handleDeleteTask = useCallback(
@@ -66,7 +66,7 @@ const TaskList = ({
         deleteTask(projectId, taskId);
       }
     },
-    [deleteTask, projectId],
+    [deleteTask, projectId]
   );
 
   // Sort tasks by update time

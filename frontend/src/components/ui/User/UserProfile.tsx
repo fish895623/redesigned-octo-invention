@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect } from "react";
-import { useAuth } from "../hooks/useAuth";
+import { useAuth } from "../../../hooks/useAuth";
 import { Link } from "react-router-dom";
-import { LogoutButton } from "./LogoutButton";
-import { useTheme } from "../context/ThemeContext";
+import { LogoutButton } from "../Button/LogoutButton";
+import { useTheme } from "../../../context/ThemeContextDefinition";
 
 export const UserProfile = () => {
   const { user } = useAuth();
