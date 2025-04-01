@@ -78,7 +78,7 @@ public class MilestoneController {
 
     @PostMapping
     public ResponseEntity<MilestoneDTO> createMilestone(
-            @PathVariable Long projectId,
+            @PathVariable(name = "projectId") Long projectId,
             @RequestBody MilestoneDTO milestoneDTO,
             @AuthenticationPrincipal CustomUserDetails principal) {
 

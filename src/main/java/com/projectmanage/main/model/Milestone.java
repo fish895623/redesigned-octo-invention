@@ -38,19 +38,20 @@ public class Milestone {
     @Column(nullable = false)
     private String title;
 
+    @Column(name = "description", nullable = true)
     private String description;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id", nullable = false)
     private Project project;
 
-    @Column(name = "start_date")
+    @Column(name = "start_date", nullable = true)
     private LocalDate startDate;
 
-    @Column(name = "due_date")
+    @Column(name = "due_date", nullable = true)
     private LocalDate dueDate;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     @Builder.Default
     private boolean completed = false;
 
@@ -58,10 +59,10 @@ public class Milestone {
     @Builder.Default
     private List<Task> tasks = new ArrayList<>();
 
-    @Column(name = "created_at", nullable = false)
+    @Column(name = "created_at", nullable = true)
     private LocalDateTime createdAt;
 
-    @Column(name = "updated_at", nullable = false)
+    @Column(name = "updated_at", nullable = true)
     private LocalDateTime updatedAt;
 
     @PrePersist
