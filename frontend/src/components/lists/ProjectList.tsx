@@ -118,14 +118,16 @@ const ProjectList = ({ onSelectProject }: ProjectListProps) => {
                 to={`/project/${project.id}/milestone`}
                 className="flex-1 cursor-pointer no-underline text-inherit"
               >
-                <div className="font-semibold mb-2 text-white">
-                  {project.title}
+                <div className="flex-1">
+                  <h3 className="text-lg font-semibold text-white mb-2 text-left">
+                    {project.title}
+                  </h3>
+                  {project.description && (
+                    <p className="text-gray-400 text-sm whitespace-pre-wrap text-left">
+                      {project.description}
+                    </p>
+                  )}
                 </div>
-                {project.description && (
-                  <div className="text-gray-400 mb-2">
-                    {project.description}
-                  </div>
-                )}
                 <div className="flex gap-4 mb-2 text-sm text-gray-300">
                   <span>Milestones: {project.milestones.length}</span>
                   <span>Tasks: {project.tasks.length}</span>
