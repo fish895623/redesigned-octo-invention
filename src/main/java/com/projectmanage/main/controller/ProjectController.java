@@ -33,14 +33,17 @@ public class ProjectController {
 
     @GetMapping
     public ResponseEntity<List<ProjectDTO>> getAllProjects(@AuthenticationPrincipal CustomUserDetails principal) {
+        log.trace("ProjectController.getAllProjects");
         List<ProjectDTO> projects = projectService.getAllProjects();
 
         return ResponseEntity.ok(projects);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProjectDTO> getProjectById(@PathVariable Long id,
+    public ResponseEntity<ProjectDTO> getProjectById(
+            @PathVariable Long id,
             @AuthenticationPrincipal CustomUserDetails principal) {
+        log.trace("ProjectController.getProjectById");
         User user = userService.getUserFromPrincipal(principal);
         ProjectDTO project = projectService.getProjectById(id);
 
@@ -55,7 +58,7 @@ public class ProjectController {
     @PostMapping
     public ResponseEntity<ProjectDTO> createProject(@RequestBody ProjectDTO projectDTO,
             @AuthenticationPrincipal CustomUserDetails principal) {
-        log.info("Creating project: {}", projectDTO);
+        log.trace("ProjectController.createProject");
         User user = userService.getUserFromPrincipal(principal);
         ProjectDTO createdProject = projectService.createProject(projectDTO, user.getId());
         return ResponseEntity.status(HttpStatus.CREATED).body(createdProject);
@@ -66,6 +69,7 @@ public class ProjectController {
             @PathVariable Long id,
             @RequestBody ProjectDTO projectDTO,
             @AuthenticationPrincipal CustomUserDetails principal) {
+        log.trace("ProjectController.updateProject");
 
         User user = userService.getUserFromPrincipal(principal);
         ProjectDTO existingProject = projectService.getProjectById(id);
@@ -82,6 +86,8 @@ public class ProjectController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProject(@PathVariable Long id,
             @AuthenticationPrincipal CustomUserDetails principal) {
+        log.trace("deleteProject");
+
         User user = userService.getUserFromPrincipal(principal);
         ProjectDTO project = projectService.getProjectById(id);
 
