@@ -1,5 +1,6 @@
-import React, { useState } from "react";
-import { useProjects } from "../../hooks/useProjects";
+import { useState } from "react";
+import { useProject } from "../../context/ProjectContextDefinition";
+import { v4 as uuidv4 } from "uuid";
 
 interface CreateMilestoneModalProps {
   projectId: string;
@@ -10,154 +11,106 @@ const CreateMilestoneModal = ({
   projectId,
   onClose,
 }: CreateMilestoneModalProps) => {
+  const { projects, updateProject } = useProject();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [startDate, setStartDate] = useState("");
-  const [dueDate, setDueDate] = useState("");
-  const [titleError, setTitleError] = useState("");
-  const { addMilestone } = useProjects();
+  const [error, setError] = useState<string | null>(null);
 
-  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setTitle(e.target.value);
-    if (titleError) setTitleError("");
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!title.trim()) {
-      setTitleError("Milestone title is required");
+      setError("Title is required");
       return;
     }
 
-    // Call the context method to add milestone
-    addMilestone(projectId, {
+    const project = projects.find((p) => p.id === projectId);
+    if (!project) {
+      setError("Project not found");
+      return;
+    }
+
+    const newMilestone = {
+      id: uuidv4(),
       title: title.trim(),
       description: description.trim() || undefined,
-      startDate: startDate ? new Date(startDate) : undefined,
-      dueDate: dueDate ? new Date(dueDate) : undefined,
+      tasks: [],
+      projectId,
       completed: false,
-    });
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
 
-    // Also make the direct API call
-    try {
-      await fetch(`/api/projects/${projectId}/milestones`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({
-          title: title.trim(),
-          description: description.trim() || undefined,
-          startDate: startDate || undefined,
-          dueDate: dueDate || undefined,
-          completed: false,
-        }),
-      });
-    } catch (error) {
-      console.error("Error creating milestone:", error);
-    }
+    // Add milestone to project
+    updateProject({
+      ...project,
+      milestones: [...project.milestones, newMilestone],
+    });
 
     onClose();
   };
 
   return (
-    <div
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-      onClick={onClose}
-    >
-      <div
-        className="bg-gray-800 rounded-lg shadow-xl max-w-lg w-full mx-4 overflow-hidden"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="flex justify-between items-center px-6 py-4 bg-gray-900 border-b border-gray-700">
-          <h2 className="text-xl font-semibold text-white">
+    <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
+      <div className="bg-gray-800 rounded-lg shadow-xl max-w-md w-full">
+        <div className="p-6">
+          <h2 className="text-xl font-bold text-white mb-4">
             Create New Milestone
           </h2>
-          <button
-            className="text-gray-400 hover:text-white text-2xl font-bold focus:outline-none"
-            onClick={onClose}
-            aria-label="Close modal"
-          >
-            &times;
-          </button>
-        </div>
-        <form className="px-6 py-4" onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <h3 className="text-sm font-medium text-gray-300 mb-2">
-              Milestone Title
-            </h3>
-            <input
-              type="text"
-              value={title}
-              onChange={handleTitleChange}
-              placeholder="Enter milestone title"
-              autoFocus
-              className={`w-full px-3 py-2 bg-gray-700 border rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                titleError ? "border-red-500" : "border-gray-600"
-              }`}
-            />
-            {titleError && (
-              <div className="mt-1 text-sm text-red-500">{titleError}</div>
+          <form onSubmit={handleSubmit}>
+            {error && (
+              <div className="mb-4 p-2 bg-red-600 bg-opacity-25 border border-red-700 rounded text-red-100">
+                {error}
+              </div>
             )}
-          </div>
-
-          <div className="mb-4">
-            <h3 className="text-sm font-medium text-gray-300 mb-2">
-              Description
-            </h3>
-            <textarea
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="Enter milestone description (optional)"
-              rows={4}
-              className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-            />
-          </div>
-
-          <div className="mb-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <h3 className="text-sm font-medium text-gray-300 mb-2">
-                Start Date (optional)
-              </h3>
+            <div className="mb-4">
+              <label
+                htmlFor="title"
+                className="block text-sm font-medium text-gray-300 mb-1"
+              >
+                Title
+              </label>
               <input
-                type="date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                type="text"
+                id="title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                className="w-full p-2 bg-gray-700 border border-gray-600 rounded text-white"
+                placeholder="Milestone title"
               />
             </div>
-            <div>
-              <h3 className="text-sm font-medium text-gray-300 mb-2">
-                Due Date (optional)
-              </h3>
-              <input
-                type="date"
-                value={dueDate}
-                onChange={(e) => setDueDate(e.target.value)}
-                className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            <div className="mb-6">
+              <label
+                htmlFor="description"
+                className="block text-sm font-medium text-gray-300 mb-1"
+              >
+                Description (optional)
+              </label>
+              <textarea
+                id="description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                className="w-full p-2 bg-gray-700 border border-gray-600 rounded text-white min-h-[100px]"
+                placeholder="Milestone description"
               />
             </div>
-          </div>
-
-          <div className="flex justify-end gap-3 mt-6">
-            <button
-              type="button"
-              className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white font-medium rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500"
-              onClick={onClose}
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              Create Milestone
-            </button>
-          </div>
-        </form>
+            <div className="flex justify-end space-x-3">
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-600"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+              >
+                Create
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );
