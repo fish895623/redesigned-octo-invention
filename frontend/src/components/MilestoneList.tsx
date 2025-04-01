@@ -2,7 +2,6 @@ import { useState, useCallback, useMemo, useEffect } from "react";
 import { useProject } from "../context/ProjectContext";
 import { Milestone } from "../types/project";
 import CreateMilestoneModal from "./modal/CreateMilestoneModal";
-import "../css/MilestoneList.css";
 import { API_BASE_URL, createHeaders } from "../config/api";
 
 interface MilestoneListProps {
@@ -16,7 +15,9 @@ const MilestoneList = ({ projectId }: MilestoneListProps) => {
   const [milestones, setMilestones] = useState<Milestone[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [editingMilestoneId, setEditingMilestoneId] = useState<string | null>(null);
+  const [editingMilestoneId, setEditingMilestoneId] = useState<string | null>(
+    null
+  );
   const [editTitle, setEditTitle] = useState("");
   const [editDescription, setEditDescription] = useState("");
   const [showMilestoneModal, setShowMilestoneModal] = useState(false);
@@ -86,10 +87,13 @@ const MilestoneList = ({ projectId }: MilestoneListProps) => {
       setLoading(true);
       setError(null);
       try {
-        const response = await fetch(`${API_BASE_URL}/api/projects/${projectId}/milestones`, {
-          credentials: "include",
-          headers: createHeaders(),
-        });
+        const response = await fetch(
+          `${API_BASE_URL}/api/projects/${projectId}/milestones`,
+          {
+            credentials: "include",
+            headers: createHeaders(),
+          }
+        );
         const data = await response.json();
         console.log("Raw milestone data from API:", data);
 
@@ -124,7 +128,9 @@ const MilestoneList = ({ projectId }: MilestoneListProps) => {
 
         setMilestones(processedData);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "An unknown error occurred");
+        setError(
+          err instanceof Error ? err.message : "An unknown error occurred"
+        );
         console.error("Error fetching milestones:", err);
       } finally {
         setLoading(false);
@@ -140,10 +146,13 @@ const MilestoneList = ({ projectId }: MilestoneListProps) => {
   const refreshMilestones = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await fetch(`${API_BASE_URL}/api/projects/${projectId}/milestones`, {
-        credentials: "include",
-        headers: createHeaders(),
-      });
+      const response = await fetch(
+        `${API_BASE_URL}/api/projects/${projectId}/milestones`,
+        {
+          credentials: "include",
+          headers: createHeaders(),
+        }
+      );
       const data = await response.json();
       console.log("Refresh: Raw milestone data from API:", data);
 
@@ -195,18 +204,23 @@ const MilestoneList = ({ projectId }: MilestoneListProps) => {
     async (milestone: Milestone) => {
       if (editTitle.trim()) {
         try {
-          const response = await fetch(`${API_BASE_URL}/api/projects/${projectId}/milestones/${milestone.id}`, {
-            method: "PUT",
-            credentials: "include",
-            headers: createHeaders(),
-            body: JSON.stringify({
-              title: editTitle.trim(),
-              description: editDescription.trim() || undefined,
-            }),
-          });
+          const response = await fetch(
+            `${API_BASE_URL}/api/projects/${projectId}/milestones/${milestone.id}`,
+            {
+              method: "PUT",
+              credentials: "include",
+              headers: createHeaders(),
+              body: JSON.stringify({
+                title: editTitle.trim(),
+                description: editDescription.trim() || undefined,
+              }),
+            }
+          );
 
           if (!response.ok) {
-            throw new Error(`Failed to update milestone: ${response.statusText}`);
+            throw new Error(
+              `Failed to update milestone: ${response.statusText}`
+            );
           }
 
           // Update local state optimistically
@@ -233,11 +247,14 @@ const MilestoneList = ({ projectId }: MilestoneListProps) => {
     async (milestoneId: string) => {
       if (window.confirm("Are you sure you want to delete this milestone?")) {
         try {
-          await fetch(`${API_BASE_URL}/api/projects/${projectId}/milestones/${milestoneId}`, {
-            method: "DELETE",
-            credentials: "include",
-            headers: createHeaders(),
-          });
+          await fetch(
+            `${API_BASE_URL}/api/projects/${projectId}/milestones/${milestoneId}`,
+            {
+              method: "DELETE",
+              credentials: "include",
+              headers: createHeaders(),
+            }
+          );
 
           // Update local state
           deleteMilestone(projectId, milestoneId);
@@ -313,12 +330,15 @@ const MilestoneList = ({ projectId }: MilestoneListProps) => {
         console.log("Sending update to server:", requestBody);
 
         // Backend uses PUT for updates
-        const response = await fetch(`${API_BASE_URL}/api/projects/${projectId}/milestones/${milestone.id}`, {
-          method: "PUT",
-          credentials: "include",
-          headers: createHeaders(),
-          body: JSON.stringify(requestBody),
-        });
+        const response = await fetch(
+          `${API_BASE_URL}/api/projects/${projectId}/milestones/${milestone.id}`,
+          {
+            method: "PUT",
+            credentials: "include",
+            headers: createHeaders(),
+            body: JSON.stringify(requestBody),
+          }
+        );
 
         if (!response.ok) {
           throw new Error(`Failed to toggle milestone: ${response.statusText}`);
@@ -375,83 +395,136 @@ const MilestoneList = ({ projectId }: MilestoneListProps) => {
   }, [milestones, sortBy, convertArrayToDate]);
 
   return (
-    <div className="milestone-list">
-      <div className="milestone-list-header">
-        <h2>Milestones</h2>
-        <div className="milestone-list-controls">
-          <select value={sortBy} onChange={(e) => setSortBy(e.target.value as typeof sortBy)}>
+    <div className="w-full p-4 bg-gray-900 rounded-lg shadow-md">
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-xl font-bold text-white">Milestones</h2>
+        <div className="flex gap-4 items-center">
+          <select
+            className="p-2 border border-gray-700 rounded-md bg-gray-800 text-white"
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
+          >
             <option value="updated">Sort by Updated</option>
             <option value="created">Sort by Created</option>
           </select>
-          <button onClick={() => setShowMilestoneModal(true)}>Add Milestone</button>
+          <button
+            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+            onClick={() => setShowMilestoneModal(true)}
+          >
+            Add Milestone
+          </button>
         </div>
       </div>
-      <div className="milestone-list-content">
+      <div className="flex flex-col gap-4">
         {loading ? (
-          <div className="loading-message">Loading milestones...</div>
+          <div className="p-4 text-center text-gray-400">
+            Loading milestones...
+          </div>
         ) : error ? (
-          <div className="error-message">{error}</div>
+          <div className="p-4 text-center text-red-500 bg-red-900/20 rounded-md">
+            {error}
+          </div>
         ) : sortedMilestones.length === 0 ? (
-          <div className="empty-message">No milestones found for this project.</div>
+          <div className="p-4 text-center text-gray-400">
+            No milestones found for this project.
+          </div>
         ) : (
           sortedMilestones.map((milestone) => (
-            <div key={milestone.id} className="milestone-item">
+            <div
+              key={milestone.id}
+              className="p-4 border border-gray-700 rounded-md bg-gray-800"
+            >
               {editingMilestoneId === milestone.id ? (
-                <div className="milestone-edit">
+                <div className="flex flex-col gap-3">
                   <input
                     type="text"
                     value={editTitle}
                     onChange={(e) => setEditTitle(e.target.value)}
                     onBlur={() => handleSaveEdit(milestone)}
-                    onKeyDown={(e) => e.key === "Enter" && handleSaveEdit(milestone)}
+                    onKeyDown={(e) =>
+                      e.key === "Enter" && handleSaveEdit(milestone)
+                    }
+                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                   <textarea
                     value={editDescription}
                     onChange={(e) => setEditDescription(e.target.value)}
                     onBlur={() => handleSaveEdit(milestone)}
                     placeholder="Add description..."
+                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[100px] resize-y"
                   />
                 </div>
               ) : (
-                <div className="milestone-content">
-                  <div className="milestone-header">
-                    <div className="milestone-info">
+                <div className="space-y-3">
+                  <div className="flex justify-between flex-wrap gap-3">
+                    <div className="space-y-2">
                       <div>
-                        <div className={`milestone-title ${milestone.completed ? "completed" : ""}`}>
-                          <span className="milestone-id">(ID: {milestone.id}) </span>
+                        <div
+                          className={`font-semibold text-lg ${
+                            milestone.completed
+                              ? "text-green-400"
+                              : "text-white"
+                          }`}
+                        >
+                          <span className="text-xs text-gray-400 font-normal">
+                            (ID: {milestone.id}){" "}
+                          </span>
                           {milestone.title}
                         </div>
-                        {milestone.description && <div className="milestone-description">{milestone.description}</div>}
+                        {milestone.description && (
+                          <div className="text-gray-400 mt-1">
+                            {milestone.description}
+                          </div>
+                        )}
                       </div>
                     </div>
-                    <div className="milestone-actions">
+                    <div className="flex flex-wrap gap-2">
                       <button
-                        className={`toggle ${milestone.completed ? "complete" : "incomplete"}`}
+                        className={`px-3 py-1 rounded text-sm font-medium ${
+                          milestone.completed
+                            ? "bg-green-700 hover:bg-green-800 text-white"
+                            : "bg-gray-700 hover:bg-gray-600 text-white"
+                        } transition-colors`}
                         onClick={() => handleToggleMilestone(milestone)}
                       >
                         {milestone.completed ? "Completed" : "Mark Complete"}
                       </button>
                       <button
-                        onClick={() => (window.location.href = `/project/${projectId}/milestone/${milestone.id}`)}
-                        className="more-info-button"
+                        onClick={() =>
+                          (window.location.href = `/project/${projectId}/milestone/${milestone.id}`)
+                        }
+                        className="px-3 py-1 bg-purple-600 hover:bg-purple-700 text-white rounded text-sm font-medium transition-colors"
                       >
                         More Info
                       </button>
-                      <button className="edit" onClick={() => handleEditMilestone(milestone)}>
+                      <button
+                        className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded text-sm font-medium transition-colors"
+                        onClick={() => handleEditMilestone(milestone)}
+                      >
                         Edit
                       </button>
-                      <button className="delete" onClick={() => handleDeleteMilestone(milestone.id)}>
+                      <button
+                        className="px-3 py-1 bg-red-600 hover:bg-red-700 text-white rounded text-sm font-medium transition-colors"
+                        onClick={() => handleDeleteMilestone(milestone.id)}
+                      >
                         Delete
                       </button>
                     </div>
                   </div>
-                  <div className="milestone-stats">
+                  <div className="flex gap-4 text-sm text-gray-300">
                     <span>Tasks: {milestone.tasks.length}</span>
-                    <span>Status: {milestone.completed ? "Completed" : "In Progress"}</span>
+                    <span>
+                      Status:{" "}
+                      {milestone.completed ? "Completed" : "In Progress"}
+                    </span>
                   </div>
-                  <div className="milestone-meta">
-                    <span className="milestone-date">Updated: {formatDate(milestone.updatedAt)}</span>
-                    <span className="milestone-date">Created: {formatDate(milestone.createdAt)}</span>
+                  <div className="flex gap-4 text-sm text-gray-500">
+                    <span className="flex items-center gap-1">
+                      Updated: {formatDate(milestone.updatedAt)}
+                    </span>
+                    <span className="flex items-center gap-1">
+                      Created: {formatDate(milestone.createdAt)}
+                    </span>
                   </div>
                 </div>
               )}
