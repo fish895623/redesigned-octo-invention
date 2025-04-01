@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.projectmanage.main.dto.CustomUserDetails;
 import com.projectmanage.main.model.User;
 import com.projectmanage.main.model.dto.MilestoneDTO;
 import com.projectmanage.main.model.dto.ProjectDTO;
@@ -25,10 +25,12 @@ import com.projectmanage.main.service.TaskService;
 import com.projectmanage.main.service.UserService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/api/projects/{projectId}")
 @RequiredArgsConstructor
+@Slf4j
 public class TaskController {
 
     private final TaskService taskService;
@@ -39,7 +41,7 @@ public class TaskController {
     @GetMapping("/tasks")
     public ResponseEntity<List<TaskDTO>> getTasksByProjectId(
             @PathVariable(name = "projectId") Long projectId,
-            @AuthenticationPrincipal OAuth2User principal) {
+            @AuthenticationPrincipal CustomUserDetails principal) {
 
         User user = userService.getUserFromPrincipal(principal);
         ProjectDTO project = projectService.getProjectById(projectId);
@@ -57,7 +59,7 @@ public class TaskController {
     public ResponseEntity<List<TaskDTO>> getTasksByMilestoneId(
             @PathVariable(name = "projectId") Long projectId,
             @PathVariable(name = "milestoneId") Long milestoneId,
-            @AuthenticationPrincipal OAuth2User principal) {
+            @AuthenticationPrincipal CustomUserDetails principal) {
 
         User user = userService.getUserFromPrincipal(principal);
         ProjectDTO project = projectService.getProjectById(projectId);
@@ -82,7 +84,7 @@ public class TaskController {
     public ResponseEntity<TaskDTO> getTaskById(
             @PathVariable(name = "projectId") Long projectId,
             @PathVariable(name = "taskId") Long taskId,
-            @AuthenticationPrincipal OAuth2User principal) {
+            @AuthenticationPrincipal CustomUserDetails principal) {
 
         User user = userService.getUserFromPrincipal(principal);
         ProjectDTO project = projectService.getProjectById(projectId);
@@ -106,7 +108,7 @@ public class TaskController {
     public ResponseEntity<TaskDTO> createTask(
             @PathVariable(name = "projectId") Long projectId,
             @RequestBody TaskDTO taskDTO,
-            @AuthenticationPrincipal OAuth2User principal) {
+            @AuthenticationPrincipal CustomUserDetails principal) {
 
         User user = userService.getUserFromPrincipal(principal);
         ProjectDTO project = projectService.getProjectById(projectId);
@@ -134,7 +136,7 @@ public class TaskController {
             @PathVariable(name = "projectId") Long projectId,
             @PathVariable(name = "taskId") Long taskId,
             @RequestBody TaskDTO taskDTO,
-            @AuthenticationPrincipal OAuth2User principal) {
+            @AuthenticationPrincipal CustomUserDetails principal) {
 
         User user = userService.getUserFromPrincipal(principal);
         ProjectDTO project = projectService.getProjectById(projectId);
@@ -168,7 +170,7 @@ public class TaskController {
     public ResponseEntity<Void> deleteTask(
             @PathVariable(name = "projectId") Long projectId,
             @PathVariable(name = "taskId") Long taskId,
-            @AuthenticationPrincipal OAuth2User principal) {
+            @AuthenticationPrincipal CustomUserDetails principal) {
 
         User user = userService.getUserFromPrincipal(principal);
         ProjectDTO project = projectService.getProjectById(projectId);

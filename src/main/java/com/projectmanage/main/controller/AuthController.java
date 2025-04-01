@@ -34,28 +34,44 @@ public class AuthController {
 
     private final JWTUtil jwtUtil;
     private final UserService userService;
-    
+
     // JWT expiration: 24 hours
     private static final Long JWT_EXPIRATION = 1000L * 60 * 60 * 24;
 
+    @GetMapping("/status")
+    public ResponseEntity<Map<String, Object>> getAuthStatus(@AuthenticationPrincipal CustomUserDetails principal) {
+        Map<String, Object> response = new HashMap<>();
+
+        if (principal != null) {
+            response.put("authenticated", true);
+            response.put("name", principal.getName());
+            response.put("email", principal.getUsername());
+            response.put("picture", principal.getPicture());
+            return ResponseEntity.ok(response);
+        } else {
+            response.put("authenticated", false);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        }
+    }
+
     @PostMapping("/login")
-    public ResponseEntity<Map<String, Object>> login(@RequestBody Map<String, String> loginRequest, 
-                                                     HttpServletResponse response) {
+    public ResponseEntity<Map<String, Object>> login(@RequestBody Map<String, String> loginRequest,
+            HttpServletResponse response) {
         String email = loginRequest.get("email");
         String password = loginRequest.get("password");
-        
+
         try {
             User user = userService.authenticateUser(email, password);
-            
+
             String token = jwtUtil.createJwt(user.getUsername(), user.getRole(), JWT_EXPIRATION);
-            
+
             // Set cookie
             Cookie cookie = new Cookie("Authorization", token);
             cookie.setHttpOnly(true);
             cookie.setPath("/");
             cookie.setMaxAge(24 * 60 * 60); // 24 hours in seconds
             response.addCookie(cookie);
-            
+
             // Also return token in response for client-side storage
             Map<String, Object> result = new HashMap<>();
             result.put("token", token);
@@ -63,7 +79,7 @@ public class AuthController {
             result.put("name", user.getName());
             result.put("email", user.getEmail());
             result.put("picture", user.getPicture());
-            
+
             return ResponseEntity.ok(result);
         } catch (Exception e) {
             log.error("Authentication failed: {}", e.getMessage());
@@ -71,29 +87,29 @@ public class AuthController {
                     .body(Map.of("authenticated", false, "message", "Invalid email or password"));
         }
     }
-    
+
     @PostMapping("/register")
-    public ResponseEntity<Map<String, Object>> register(@RequestBody UserDTO userDTO, 
-                                                       HttpServletResponse response) {
+    public ResponseEntity<Map<String, Object>> register(@RequestBody UserDTO userDTO,
+            HttpServletResponse response) {
         try {
             User user = userService.registerUser(userDTO);
-            
+
             String token = jwtUtil.createJwt(user.getUsername(), user.getRole(), JWT_EXPIRATION);
-            
+
             // Set cookie
             Cookie cookie = new Cookie("Authorization", token);
             cookie.setHttpOnly(true);
             cookie.setPath("/");
             cookie.setMaxAge(24 * 60 * 60); // 24 hours in seconds
             response.addCookie(cookie);
-            
+
             // Also return token in response for client-side storage
             Map<String, Object> result = new HashMap<>();
             result.put("token", token);
             result.put("authenticated", true);
             result.put("name", user.getName());
             result.put("email", user.getEmail());
-            
+
             return ResponseEntity.status(HttpStatus.CREATED).body(result);
         } catch (Exception e) {
             log.error("Registration failed: {}", e.getMessage());

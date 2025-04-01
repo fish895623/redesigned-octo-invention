@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.projectmanage.main.dto.CustomUserDetails;
 import com.projectmanage.main.model.User;
 import com.projectmanage.main.model.dto.ProjectDTO;
 import com.projectmanage.main.service.ProjectService;
@@ -32,17 +32,17 @@ public class ProjectController {
     private final UserService userService;
 
     @GetMapping
-    public ResponseEntity<List<ProjectDTO>> getAllProjects(@AuthenticationPrincipal OAuth2User principal) {
+    public ResponseEntity<List<ProjectDTO>> getAllProjects(@AuthenticationPrincipal CustomUserDetails principal) {
         User user = userService.getUserFromPrincipal(principal);
         List<ProjectDTO> projects = projectService.getProjectsByUserId(user.getId());
         return ResponseEntity.ok(projects);
     }
 
-    @GetMapping("/{projectId}")
-    public ResponseEntity<ProjectDTO> getProjectById(@PathVariable Long projectId,
-            @AuthenticationPrincipal OAuth2User principal) {
+    @GetMapping("/{id}")
+    public ResponseEntity<ProjectDTO> getProjectById(@PathVariable Long id,
+            @AuthenticationPrincipal CustomUserDetails principal) {
         User user = userService.getUserFromPrincipal(principal);
-        ProjectDTO project = projectService.getProjectById(projectId);
+        ProjectDTO project = projectService.getProjectById(id);
 
         // Ensure the user owns this project
         if (!project.getUserId().equals(user.getId())) {
@@ -54,43 +54,43 @@ public class ProjectController {
 
     @PostMapping
     public ResponseEntity<ProjectDTO> createProject(@RequestBody ProjectDTO projectDTO,
-            @AuthenticationPrincipal OAuth2User principal) {
+            @AuthenticationPrincipal CustomUserDetails principal) {
         log.info("Creating project: {}", projectDTO);
         User user = userService.getUserFromPrincipal(principal);
         ProjectDTO createdProject = projectService.createProject(projectDTO, user.getId());
         return ResponseEntity.status(HttpStatus.CREATED).body(createdProject);
     }
 
-    @PutMapping("/{projectId}")
+    @PutMapping("/{id}")
     public ResponseEntity<ProjectDTO> updateProject(
-            @PathVariable Long projectId,
+            @PathVariable Long id,
             @RequestBody ProjectDTO projectDTO,
-            @AuthenticationPrincipal OAuth2User principal) {
+            @AuthenticationPrincipal CustomUserDetails principal) {
 
         User user = userService.getUserFromPrincipal(principal);
-        ProjectDTO existingProject = projectService.getProjectById(projectId);
+        ProjectDTO existingProject = projectService.getProjectById(id);
 
         // Ensure the user owns this project
         if (!existingProject.getUserId().equals(user.getId())) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        ProjectDTO updatedProject = projectService.updateProject(projectId, projectDTO);
+        ProjectDTO updatedProject = projectService.updateProject(id, projectDTO);
         return ResponseEntity.ok(updatedProject);
     }
 
-    @DeleteMapping("/{projectId}")
-    public ResponseEntity<Void> deleteProject(@PathVariable Long projectId,
-            @AuthenticationPrincipal OAuth2User principal) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteProject(@PathVariable Long id,
+            @AuthenticationPrincipal CustomUserDetails principal) {
         User user = userService.getUserFromPrincipal(principal);
-        ProjectDTO project = projectService.getProjectById(projectId);
+        ProjectDTO project = projectService.getProjectById(id);
 
         // Ensure the user owns this project
         if (!project.getUserId().equals(user.getId())) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
-        projectService.deleteProject(projectId);
+        projectService.deleteProject(id);
         return ResponseEntity.noContent().build();
     }
 }

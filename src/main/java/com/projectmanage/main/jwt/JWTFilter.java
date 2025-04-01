@@ -1,7 +1,6 @@
 package com.projectmanage.main.jwt;
 
 import java.io.IOException;
-import java.util.Collections;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -83,7 +82,7 @@ public class JWTFilter extends OncePerRequestFilter {
         // Find user in database
         User user = userRepository.findByEmail(username)
                 .orElse(null);
-                
+
         if (user == null) {
             log.debug("User not found with email: {}", username);
             filterChain.doFilter(request, response);

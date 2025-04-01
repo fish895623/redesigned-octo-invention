@@ -61,8 +61,8 @@ public class SecurityConfig {
                 .requestMatchers("/").permitAll()
                 .requestMatchers("/api/auth/login").permitAll()
                 .requestMatchers("/api/auth/register").permitAll()
+                .requestMatchers("/api/auth/status").permitAll()
                 .requestMatchers("/api/auth/user").permitAll()
-                .requestMatchers("/login/**").permitAll()
                 .requestMatchers("/my").hasRole("USER")
                 .anyRequest().authenticated());
 
@@ -70,12 +70,12 @@ public class SecurityConfig {
 
         return http.build();
     }
-    
+
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
-    
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
