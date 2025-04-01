@@ -4,7 +4,7 @@ import { Task, Milestone } from "../../types/project";
 import CreateTaskModal from "../modals/CreateTaskModal";
 
 interface TaskListProps {
-  projectId: string;
+  projectId: number;
   tasks?: Task[];
   milestones?: Milestone[];
 }
@@ -16,10 +16,10 @@ const TaskList = ({
   milestones = [],
 }: TaskListProps) => {
   const { updateTask, deleteTask } = useProjects();
-  const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
+  const [editingTaskId, setEditingTaskId] = useState<number | null>(null);
   const [editTitle, setEditTitle] = useState("");
   const [editDescription, setEditDescription] = useState("");
-  const [editMilestoneId, setEditMilestoneId] = useState<string | undefined>(
+  const [editMilestoneId, setEditMilestoneId] = useState<number | undefined>(
     undefined
   );
   const [filter, setFilter] = useState<"all" | "active" | "completed">("all");
@@ -61,7 +61,7 @@ const TaskList = ({
   );
 
   const handleDeleteTask = useCallback(
-    (taskId: string) => {
+    (taskId: number) => {
       if (window.confirm("Are you sure you want to delete this task?")) {
         deleteTask(projectId, taskId);
       }
@@ -127,7 +127,9 @@ const TaskList = ({
                 <select
                   value={editMilestoneId || ""}
                   onChange={(e) =>
-                    setEditMilestoneId(e.target.value || undefined)
+                    setEditMilestoneId(
+                      e.target.value ? Number(e.target.value) : undefined
+                    )
                   }
                   onBlur={() => handleSaveEdit(task)}
                 >

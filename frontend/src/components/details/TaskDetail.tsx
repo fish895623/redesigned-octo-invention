@@ -3,8 +3,8 @@ import { useProjects } from "../../hooks/useProjects";
 import { Task } from "../../types/project";
 
 interface TaskDetailProps {
-  projectId: string;
-  taskId: string;
+  projectId: number;
+  taskId: number;
 }
 
 const TaskDetail = ({ projectId, taskId }: TaskDetailProps) => {

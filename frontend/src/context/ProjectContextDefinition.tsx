@@ -21,19 +21,22 @@ export interface ProjectContextType {
     >
   ) => Promise<Project>;
   updateProject: (project: Project) => Promise<void>;
-  deleteProject: (projectId: string) => Promise<void>;
+  deleteProject: (projectId: number) => Promise<void>;
   addMilestone: (
-    projectId: string,
-    milestone: Omit<Milestone, "id" | "createdAt" | "updatedAt" | "tasks">
+    projectId: number,
+    milestone: Omit<
+      Milestone,
+      "id" | "projectId" | "createdAt" | "updatedAt" | "tasks"
+    >
   ) => Promise<Milestone>;
   updateMilestone: (milestone: Milestone) => Promise<void>;
-  deleteMilestone: (projectId: string, milestoneId: string) => Promise<void>;
+  deleteMilestone: (projectId: number, milestoneId: number) => Promise<void>;
   addTask: (
-    projectId: string,
+    projectId: number,
     task: Omit<Task, "id" | "projectId" | "createdAt" | "updatedAt">
   ) => Promise<Task>;
   updateTask: (task: Task) => Promise<void>;
-  deleteTask: (projectId: string, taskId: string) => Promise<void>;
+  deleteTask: (projectId: number, taskId: number) => Promise<void>;
 }
 
 export const ProjectContext = createContext<ProjectContextType | undefined>(
@@ -54,11 +57,6 @@ interface ProjectProviderProps {
 
 export const ProjectProvider = ({ children }: ProjectProviderProps) => {
   const [projects, setProjects] = useState<Project[]>([]);
-  // return milestones for project
-  const [milestones, setMilestones] = useState<Milestone[]>([]);
-  // return tasks for milestone
-  const [tasks, setTasks] = useState<Task[]>([]);
-
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -150,7 +148,7 @@ export const ProjectProvider = ({ children }: ProjectProviderProps) => {
   };
 
   // Delete a project
-  const deleteProject = async (projectId: string): Promise<void> => {
+  const deleteProject = async (projectId: number): Promise<void> => {
     try {
       setLoading(true);
       const response = await fetch(
@@ -166,7 +164,7 @@ export const ProjectProvider = ({ children }: ProjectProviderProps) => {
       }
 
       setProjects((prevProjects) =>
-        prevProjects.filter((p) => p.id !== projectId)
+        prevProjects.filter((p) => p.id !== Number(projectId))
       );
       setError(null);
     } catch (err) {
@@ -179,8 +177,11 @@ export const ProjectProvider = ({ children }: ProjectProviderProps) => {
 
   // Add a milestone to a project
   const addMilestone = async (
-    projectId: string,
-    milestone: Omit<Milestone, "id" | "createdAt" | "updatedAt" | "tasks">
+    projectId: number,
+    milestone: Omit<
+      Milestone,
+      "id" | "projectId" | "createdAt" | "updatedAt" | "tasks"
+    >
   ): Promise<Milestone> => {
     try {
       setLoading(true);
@@ -202,7 +203,7 @@ export const ProjectProvider = ({ children }: ProjectProviderProps) => {
       // Update the projects state with the new milestone
       setProjects((prevProjects) =>
         prevProjects.map((project) => {
-          if (project.id === projectId) {
+          if (project.id === Number(projectId)) {
             return {
               ...project,
               milestones: [...project.milestones, createdMilestone],
@@ -270,8 +271,8 @@ export const ProjectProvider = ({ children }: ProjectProviderProps) => {
 
   // Delete a milestone
   const deleteMilestone = async (
-    projectId: string,
-    milestoneId: string
+    projectId: number,
+    milestoneId: number
   ): Promise<void> => {
     try {
       setLoading(true);
@@ -290,11 +291,11 @@ export const ProjectProvider = ({ children }: ProjectProviderProps) => {
       // Update the projects state by removing the deleted milestone
       setProjects((prevProjects) =>
         prevProjects.map((project) => {
-          if (project.id === projectId) {
+          if (project.id === Number(projectId)) {
             return {
               ...project,
               milestones: project.milestones.filter(
-                (m) => m.id !== milestoneId
+                (m) => m.id !== Number(milestoneId)
               ),
             };
           }
@@ -313,7 +314,7 @@ export const ProjectProvider = ({ children }: ProjectProviderProps) => {
 
   // Add a task to a project
   const addTask = async (
-    projectId: string,
+    projectId: number,
     task: Omit<Task, "id" | "projectId" | "createdAt" | "updatedAt">
   ): Promise<Task> => {
     try {
@@ -341,7 +342,7 @@ export const ProjectProvider = ({ children }: ProjectProviderProps) => {
       // Update the projects state with the new task
       setProjects((prevProjects) =>
         prevProjects.map((project) => {
-          if (project.id === projectId) {
+          if (project.id === Number(projectId)) {
             // Add to project tasks
             const updatedProject = {
               ...project,
@@ -456,8 +457,8 @@ export const ProjectProvider = ({ children }: ProjectProviderProps) => {
 
   // Delete a task
   const deleteTask = async (
-    projectId: string,
-    taskId: string
+    projectId: number,
+    taskId: number
   ): Promise<void> => {
     try {
       setLoading(true);
@@ -476,18 +477,18 @@ export const ProjectProvider = ({ children }: ProjectProviderProps) => {
       // Update the projects state by removing the deleted task
       setProjects((prevProjects) =>
         prevProjects.map((project) => {
-          if (project.id === projectId) {
+          if (project.id === Number(projectId)) {
             // Remove from project tasks
             const updatedProject = {
               ...project,
-              tasks: project.tasks.filter((t) => t.id !== taskId),
+              tasks: project.tasks.filter((t) => t.id !== Number(taskId)),
             };
 
             // Remove from milestone tasks if applicable
             updatedProject.milestones = project.milestones.map((milestone) => {
               return {
                 ...milestone,
-                tasks: milestone.tasks.filter((t) => t.id !== taskId),
+                tasks: milestone.tasks.filter((t) => t.id !== Number(taskId)),
               };
             });
 
@@ -510,8 +511,8 @@ export const ProjectProvider = ({ children }: ProjectProviderProps) => {
     <ProjectContext.Provider
       value={{
         projects,
-        milestones,
-        tasks,
+        milestones: [],
+        tasks: [],
         loading,
         error,
         addProject,

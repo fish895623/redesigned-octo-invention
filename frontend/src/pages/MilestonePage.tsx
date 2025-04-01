@@ -23,7 +23,10 @@ const MilestonePage = () => {
   return (
     <ProjectProvider>
       <div className="app-container">
-        <MilestoneDetail projectId={projectId} milestoneId={milestoneId} />
+        <MilestoneDetail
+          projectId={Number(projectId)}
+          milestoneId={Number(milestoneId)}
+        />
       </div>
     </ProjectProvider>
   );

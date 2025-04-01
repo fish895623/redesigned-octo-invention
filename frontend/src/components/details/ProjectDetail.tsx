@@ -6,7 +6,7 @@ import TaskList from "../lists/TaskList";
 import CreateMilestoneModal from "../modals/CreateMilestoneModal";
 
 interface ProjectDetailProps {
-  projectId: string;
+  projectId: number;
 }
 
 const ProjectDetail = ({ projectId }: ProjectDetailProps) => {

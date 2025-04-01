@@ -5,13 +5,13 @@ import CreateProjectModal from "../modals/CreateProjectModal";
 import { Link } from "react-router-dom";
 
 interface ProjectListProps {
-  onSelectProject?: (id: string) => void;
+  onSelectProject?: (id: number) => void;
 }
 
 // Main ProjectList component
 const ProjectList = ({ onSelectProject }: ProjectListProps) => {
   const { projects, updateProject, deleteProject } = useProject();
-  const [editingProjectId, setEditingProjectId] = useState<string | null>(null);
+  const [editingProjectId, setEditingProjectId] = useState<number | null>(null);
   const [editTitle, setEditTitle] = useState("");
   const [editDescription, setEditDescription] = useState("");
   const [showProjectModal, setShowProjectModal] = useState(false);
@@ -40,7 +40,7 @@ const ProjectList = ({ onSelectProject }: ProjectListProps) => {
   );
 
   const handleDeleteProject = useCallback(
-    (projectId: string) => {
+    (projectId: number) => {
       if (window.confirm("Are you sure you want to delete this project?")) {
         deleteProject(projectId);
       }

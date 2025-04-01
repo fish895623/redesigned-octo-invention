@@ -13,7 +13,7 @@ export function ProjectProvider({ children }: ProjectProviderProps) {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { user, loading: authLoading } = useAuth();
+  const { user } = useAuth();
 
   // Fetch projects only when authenticated
   useEffect(() => {
@@ -60,7 +60,7 @@ export function ProjectProvider({ children }: ProjectProviderProps) {
   const updateProject = async (updatedProject: Project) => {
     try {
       await apiClient.put<Project>(
-        `${API_ENDPOINTS.projects.update}/${updatedProject.id}`,
+        API_ENDPOINTS.projects.update(updatedProject.id),
         updatedProject
       );
       setProjects(
@@ -75,9 +75,9 @@ export function ProjectProvider({ children }: ProjectProviderProps) {
     }
   };
 
-  const deleteProject = async (projectId: string) => {
+  const deleteProject = async (projectId: number) => {
     try {
-      await apiClient.delete(`${API_ENDPOINTS.projects.delete}/${projectId}`);
+      await apiClient.delete(API_ENDPOINTS.projects.delete(projectId));
       setProjects(projects.filter((project) => project.id !== projectId));
     } catch (error) {
       console.error("Error deleting project:", error);
@@ -87,7 +87,7 @@ export function ProjectProvider({ children }: ProjectProviderProps) {
   };
 
   const addMilestone = async (
-    projectId: string,
+    projectId: number,
     milestone: Omit<
       Milestone,
       "id" | "projectId" | "createdAt" | "updatedAt" | "tasks"
@@ -95,7 +95,7 @@ export function ProjectProvider({ children }: ProjectProviderProps) {
   ) => {
     try {
       const response = await apiClient.post<Milestone>(
-        `${API_ENDPOINTS.milestones.create}/${projectId}`,
+        API_ENDPOINTS.milestones.create(projectId),
         milestone
       );
       setProjects(
@@ -120,7 +120,10 @@ export function ProjectProvider({ children }: ProjectProviderProps) {
   const updateMilestone = async (updatedMilestone: Milestone) => {
     try {
       await apiClient.put<Milestone>(
-        `${API_ENDPOINTS.milestones.update}/${updatedMilestone.projectId}/${updatedMilestone.id}`,
+        API_ENDPOINTS.milestones.update(
+          updatedMilestone.projectId,
+          updatedMilestone.id
+        ),
         updatedMilestone
       );
       setProjects(
@@ -145,10 +148,10 @@ export function ProjectProvider({ children }: ProjectProviderProps) {
     }
   };
 
-  const deleteMilestone = async (projectId: string, milestoneId: string) => {
+  const deleteMilestone = async (projectId: number, milestoneId: number) => {
     try {
       await apiClient.delete(
-        `${API_ENDPOINTS.milestones.delete}/${projectId}/${milestoneId}`
+        API_ENDPOINTS.milestones.delete(projectId, milestoneId)
       );
       setProjects(
         projects.map((project) => {
@@ -171,7 +174,7 @@ export function ProjectProvider({ children }: ProjectProviderProps) {
   };
 
   const addTask = async (
-    projectId: string,
+    projectId: number,
     task: Omit<Task, "id" | "projectId" | "createdAt" | "updatedAt">
   ) => {
     try {
@@ -224,7 +227,7 @@ export function ProjectProvider({ children }: ProjectProviderProps) {
     }
   };
 
-  const deleteTask = async (projectId: string, taskId: string) => {
+  const deleteTask = async (projectId: number, taskId: number) => {
     try {
       await apiClient.delete(
         `${API_ENDPOINTS.tasks.delete}/${projectId}/${taskId}`
@@ -247,9 +250,15 @@ export function ProjectProvider({ children }: ProjectProviderProps) {
     }
   };
 
+  // Calculate milestones and tasks from all projects
+  const milestones = projects.flatMap((project) => project.milestones);
+  const tasks = projects.flatMap((project) => project.tasks);
+
   const value = {
     projects,
-    loading: loading || authLoading,
+    milestones,
+    tasks,
+    loading,
     error,
     addProject,
     updateProject,

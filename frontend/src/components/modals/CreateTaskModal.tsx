@@ -4,10 +4,10 @@ import { Milestone } from "../../types/project";
 import { API_BASE_URL, createHeaders } from "../../config/api";
 
 interface CreateTaskModalProps {
-  projectId: string;
+  projectId: number;
   milestones: Milestone[];
   onClose: () => void;
-  selectedMilestoneId?: string | null;
+  selectedMilestoneId?: number | null;
 }
 
 const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
@@ -18,7 +18,7 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
 }) => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [milestoneId, setMilestoneId] = useState<string | undefined>(undefined);
+  const [milestoneId, setMilestoneId] = useState<number | undefined>(undefined);
   const [titleError, setTitleError] = useState("");
   const { addTask } = useProjects();
 
@@ -121,7 +121,11 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
             </h3>
             <select
               value={milestoneId || ""}
-              onChange={(e) => setMilestoneId(e.target.value || undefined)}
+              onChange={(e) =>
+                setMilestoneId(
+                  e.target.value ? Number(e.target.value) : undefined
+                )
+              }
               className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">No Milestone</option>

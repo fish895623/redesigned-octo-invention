@@ -26,7 +26,7 @@ const TaskPage = () => {
             Back to Tasks
           </Link>
         </div>
-        <TaskDetail projectId={projectId} taskId={taskId} />
+        <TaskDetail projectId={Number(projectId)} taskId={Number(taskId)} />
       </div>
     </ProjectProvider>
   );

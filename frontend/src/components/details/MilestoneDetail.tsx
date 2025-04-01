@@ -5,8 +5,8 @@ import TaskList from "../lists/TaskList";
 import { Link } from "react-router-dom";
 
 interface MilestoneDetailProps {
-  projectId: string;
-  milestoneId: string;
+  projectId: number;
+  milestoneId: number;
 }
 
 const MilestoneDetail = ({ projectId, milestoneId }: MilestoneDetailProps) => {

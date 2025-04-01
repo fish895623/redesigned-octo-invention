@@ -31,7 +31,6 @@ const CreateMilestoneModal = ({
     }
 
     addMilestone(projectId, {
-      projectId,
       title: title.trim(),
       description: description.trim() || undefined,
       startDate: startDate ? new Date(startDate) : undefined,

@@ -45,7 +45,7 @@ export const API_ENDPOINTS = {
 } as const;
 
 export const createHeaders = () => {
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("accessToken");
   return {
     "Content-Type": "application/json",
     ...(token && { Authorization: `Bearer ${token}` }),

@@ -23,7 +23,7 @@ const TaskListPage = () => {
             Back to Project
           </Link>
         </div>
-        <TaskList projectId={projectId} />
+        <TaskList projectId={Number(projectId)} />
       </div>
     </ProjectProvider>
   );

@@ -13,7 +13,7 @@ export function ProjectProvider({ children }: ProjectProviderProps) {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { user, loading: authLoading } = useAuth();
+  const { user } = useAuth();
 
   // Fetch projects only when authenticated
   useEffect(() => {
@@ -75,7 +75,7 @@ export function ProjectProvider({ children }: ProjectProviderProps) {
     }
   };
 
-  const deleteProject = async (projectId: string) => {
+  const deleteProject = async (projectId: number) => {
     try {
       await apiClient.delete(`${API_ENDPOINTS.projects.delete}/${projectId}`);
       setProjects(projects.filter((project) => project.id !== projectId));
@@ -87,7 +87,7 @@ export function ProjectProvider({ children }: ProjectProviderProps) {
   };
 
   const addMilestone = async (
-    projectId: string,
+    projectId: number,
     milestone: Omit<
       Milestone,
       "id" | "projectId" | "createdAt" | "updatedAt" | "tasks"
@@ -145,7 +145,7 @@ export function ProjectProvider({ children }: ProjectProviderProps) {
     }
   };
 
-  const deleteMilestone = async (projectId: string, milestoneId: string) => {
+  const deleteMilestone = async (projectId: number, milestoneId: number) => {
     try {
       await apiClient.delete(
         `${API_ENDPOINTS.milestones.delete}/${projectId}/${milestoneId}`
@@ -171,7 +171,7 @@ export function ProjectProvider({ children }: ProjectProviderProps) {
   };
 
   const addTask = async (
-    projectId: string,
+    projectId: number,
     task: Omit<Task, "id" | "projectId" | "createdAt" | "updatedAt">
   ) => {
     try {
@@ -224,7 +224,7 @@ export function ProjectProvider({ children }: ProjectProviderProps) {
     }
   };
 
-  const deleteTask = async (projectId: string, taskId: string) => {
+  const deleteTask = async (projectId: number, taskId: number) => {
     try {
       await apiClient.delete(
         `${API_ENDPOINTS.tasks.delete}/${projectId}/${taskId}`
@@ -247,9 +247,15 @@ export function ProjectProvider({ children }: ProjectProviderProps) {
     }
   };
 
+  // Calculate milestones and tasks from all projects
+  const milestones = projects.flatMap((project) => project.milestones);
+  const tasks = projects.flatMap((project) => project.tasks);
+
   const value = {
     projects,
-    loading: loading || authLoading,
+    milestones,
+    tasks,
+    loading,
     error,
     addProject,
     updateProject,

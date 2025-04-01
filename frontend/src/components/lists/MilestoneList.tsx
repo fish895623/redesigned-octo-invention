@@ -4,7 +4,6 @@
  * Authentication is requested.
  */
 import { useState } from "react";
-import { useProject } from "../../context/ProjectContextDefinition";
 import { Milestone } from "../../types/project";
 import CreateMilestoneModal from "../modals/CreateMilestoneModal";
 

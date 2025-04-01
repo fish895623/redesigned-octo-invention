@@ -18,7 +18,7 @@ const ProjectPage = () => {
   return (
     <ProjectProvider>
       <div className="app-container">
-        <ProjectDetail projectId={projectId} />
+        <ProjectDetail projectId={Number(projectId)} />
       </div>
     </ProjectProvider>
   );
