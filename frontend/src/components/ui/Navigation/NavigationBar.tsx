@@ -24,7 +24,7 @@ const NavigationBar = () => {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 w-full flex flex-wrap justify-between items-center px-4 sm:px-6 md:px-8 py-3 shadow-md z-10 ${
+      className={`fixed top-0 left-0 right-0 w-full flex flex-wrap justify-between items-center px-2 sm:px-4 md:px-6 py-2 shadow-md z-10 ${
         isDarkMode ? "bg-gray-800 text-white" : "bg-white text-gray-800"
       }`}
     >

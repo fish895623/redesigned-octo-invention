@@ -58,8 +58,8 @@ const ProjectList = ({ onSelectProject }: ProjectListProps) => {
   }, [projects, sortBy]);
 
   return (
-    <div className="w-full p-4 bg-gray-900 rounded-lg shadow-md">
-      <div className="flex justify-between items-center mb-4">
+    <div className="w-full max-w-7xl mx-auto bg-gray-900 rounded-lg shadow-md overflow-hidden">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center p-4 border-b border-gray-700">
         <div>
           <h2 className="text-xl font-bold text-white">Projects</h2>
           <div className="text-sm text-blue-400 font-medium mt-1">
@@ -69,7 +69,7 @@ const ProjectList = ({ onSelectProject }: ProjectListProps) => {
             </span>
           </div>
         </div>
-        <div className="flex gap-4 items-center">
+        <div className="flex gap-4 items-center mt-4 sm:mt-0">
           <select
             className="p-2 border border-gray-700 rounded-md bg-gray-800 text-white"
             value={sortBy}
@@ -86,7 +86,7 @@ const ProjectList = ({ onSelectProject }: ProjectListProps) => {
           </button>
         </div>
       </div>
-      <div className="flex flex-col gap-4">
+      <div className="p-4 flex flex-col gap-4">
         {sortedProjects.map((project) => (
           <div
             key={project.id}

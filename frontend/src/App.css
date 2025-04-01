@@ -20,15 +20,21 @@ body {
       rgb(var(--background-end-rgb))
     )
     rgb(var(--background-start-rgb));
+  /* Full-height body with no margin to prevent scrollbars */
+  min-height: 100vh;
+  margin: 0;
 }
 
 #root {
   max-width: 100%;
   margin: 0 auto;
-  padding: 0rem;
+  /* Remove default padding to let components control their own spacing */
+  padding: 0;
   text-align: center;
   width: 100%;
   overflow-x: hidden;
+  /* Add box-sizing to prevent unexpected layouts */
+  box-sizing: border-box;
 }
 
 /* Rest of the existing styles... */
