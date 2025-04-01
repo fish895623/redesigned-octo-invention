@@ -21,6 +21,9 @@ public class ProjectMapper {
     private final TaskRepository taskRepository;
 
     public ProjectDTO toDTO(Project project){
+
+        if(project == null) return null;
+
         ProjectDTO dto = new ProjectDTO();
         dto.setId(project.getId());
         dto.setTitle(project.getTitle());
@@ -40,6 +43,9 @@ public class ProjectMapper {
     }
 
     public Project toEntity(ProjectDTO projectDTO){
+
+        if(projectDTO == null) return null;
+
         Project entity=new Project();
         entity.setId(projectDTO.getId());
         entity.setTitle(projectDTO.getTitle());
