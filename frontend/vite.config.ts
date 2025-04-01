@@ -58,7 +58,7 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
             vendor: ["react", "react-dom", "react-router-dom"],
             // Group components with similar functionality
             auth: ["./src/context/AuthContext.tsx"],
-            ui: ["./src/components/NavigationBar.tsx"],
+            ui: ["./src/components/ui/Navigation/NavigationBar.tsx"],
           },
           // Generate chunk filenames with content hashes for better caching
           chunkFileNames: "assets/[name]-[hash].js",
