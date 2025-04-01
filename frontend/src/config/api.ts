@@ -11,19 +11,36 @@ export const API_ENDPOINTS = {
   },
   projects: {
     list: `${API_BASE_URL}/api/projects`,
+    detail: (id: number) => `${API_BASE_URL}/api/projects/${id}`,
     create: `${API_BASE_URL}/api/projects`,
-    update: `${API_BASE_URL}/api/projects`,
-    delete: `${API_BASE_URL}/api/projects`,
+    update: (id: number) => `${API_BASE_URL}/api/projects/${id}`,
+    delete: (id: number) => `${API_BASE_URL}/api/projects/${id}`,
   },
   milestones: {
-    create: `${API_BASE_URL}/api/projects`,
-    update: `${API_BASE_URL}/api/projects`,
-    delete: `${API_BASE_URL}/api/projects`,
+    list: (projectId: number) =>
+      `${API_BASE_URL}/api/projects/${projectId}/milestones`,
+    detail: (projectId: number, milestoneId: number) =>
+      `${API_BASE_URL}/api/projects/${projectId}/milestones/${milestoneId}`,
+    create: (projectId: number) =>
+      `${API_BASE_URL}/api/projects/${projectId}/milestones`,
+    update: (projectId: number, milestoneId: number) =>
+      `${API_BASE_URL}/api/projects/${projectId}/milestones/${milestoneId}`,
+    delete: (projectId: number, milestoneId: number) =>
+      `${API_BASE_URL}/api/projects/${projectId}/milestones/${milestoneId}`,
   },
   tasks: {
-    create: `${API_BASE_URL}/api/projects`,
-    update: `${API_BASE_URL}/api/projects`,
-    delete: `${API_BASE_URL}/api/projects`,
+    list: (projectId: number) =>
+      `${API_BASE_URL}/api/projects/${projectId}/tasks`,
+    listByMilestone: (projectId: number, milestoneId: number) =>
+      `${API_BASE_URL}/api/projects/${projectId}/milestones/${milestoneId}/tasks`,
+    detail: (projectId: number, taskId: number) =>
+      `${API_BASE_URL}/api/projects/${projectId}/tasks/${taskId}`,
+    create: (projectId: number) =>
+      `${API_BASE_URL}/api/projects/${projectId}/tasks`,
+    update: (projectId: number, taskId: number) =>
+      `${API_BASE_URL}/api/projects/${projectId}/tasks/${taskId}`,
+    delete: (projectId: number, taskId: number) =>
+      `${API_BASE_URL}/api/projects/${projectId}/tasks/${taskId}`,
   },
 } as const;
 
