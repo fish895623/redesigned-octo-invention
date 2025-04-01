@@ -1,3 +1,8 @@
+/**
+ * This component is used to display a list of milestones under the projects.
+ * This requests to /api/projects/:projectId/milestones.
+ * Authentication is requested.
+ */
 import { useState, useCallback, useMemo } from "react";
 import { useProject } from "../../context/ProjectContextDefinition";
 import { Project, Milestone } from "../../types/project";
@@ -24,7 +29,7 @@ const MilestoneList = ({
           <div className="text-sm text-blue-400 font-medium mt-1">
             Total Milestones:{" "}
             <span className="bg-blue-600 text-white px-2 py-0.5 rounded-full ml-1">
-              {milestones.length}
+              {/* {milestones.length} */}
             </span>
           </div>
         </div>
