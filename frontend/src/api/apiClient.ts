@@ -48,29 +48,38 @@ class ApiClient {
         return this.refreshPromise;
       }
 
-      this.refreshPromise = new Promise(async (resolve) => {
+      this.refreshPromise = new Promise((resolve) => {
         try {
-          const response = await fetch(API_ENDPOINTS.auth.refresh, {
+          fetch(API_ENDPOINTS.auth.refresh, {
             method: "POST",
             headers: {
               ...createHeaders(),
             },
             body: JSON.stringify({ refreshToken: this.refreshToken }),
-          });
-
-          if (!response.ok) {
-            throw new Error("Failed to refresh token");
-          }
-
-          const data = await response.json();
-          this.accessToken = data.accessToken;
-          localStorage.setItem("accessToken", data.accessToken);
-          resolve(true);
+          })
+            .then((response) => {
+              if (!response.ok) {
+                throw new Error("Failed to refresh token");
+              }
+              return response.json();
+            })
+            .then((data) => {
+              this.accessToken = data.accessToken;
+              localStorage.setItem("accessToken", data.accessToken);
+              resolve(true);
+            })
+            .catch((error) => {
+              console.error("Token refresh failed:", error);
+              this.removeTokens();
+              resolve(false);
+            })
+            .finally(() => {
+              this.refreshPromise = null;
+            });
         } catch (error) {
           console.error("Token refresh failed:", error);
           this.removeTokens();
           resolve(false);
-        } finally {
           this.refreshPromise = null;
         }
       });

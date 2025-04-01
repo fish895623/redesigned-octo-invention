@@ -1,4 +1,10 @@
-import { defineConfig, loadEnv, type ConfigEnv, type UserConfig } from "vite";
+import {
+  defineConfig,
+  loadEnv,
+  type ConfigEnv,
+  type UserConfig,
+  type PluginOption,
+} from "vite";
 import react from "@vitejs/plugin-react";
 import { visualizer } from "rollup-plugin-visualizer";
 import tailwindcss from "@tailwindcss/vite";
@@ -26,7 +32,7 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
           ]
         : []),
       tailwindcss(),
-    ] as any,
+    ] as PluginOption[],
 
     server: {
       port: 5173,

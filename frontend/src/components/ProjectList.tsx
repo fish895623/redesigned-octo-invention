@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo } from "react";
-import { useProject } from "../context/ProjectContext";
+import { useProject } from "../context/ProjectContextDefinition";
 import { Project } from "../types/project";
 import CreateProjectModal from "./modal/CreateProjectModal";
 import { Link } from "react-router-dom";
@@ -9,7 +9,7 @@ interface ProjectListProps {
 }
 
 // Main ProjectList component
-const ProjectList = ({}: ProjectListProps) => {
+const ProjectList = ({ onSelectProject }: ProjectListProps) => {
   const { projects, updateProject, deleteProject } = useProject();
   const [editingProjectId, setEditingProjectId] = useState<string | null>(null);
   const [editTitle, setEditTitle] = useState("");
@@ -91,6 +91,7 @@ const ProjectList = ({}: ProjectListProps) => {
           <div
             key={project.id}
             className="flex items-start gap-4 p-4 border border-gray-700 rounded-md bg-gray-800"
+            onClick={() => onSelectProject && onSelectProject(project.id)}
           >
             {editingProjectId === project.id ? (
               <div className="flex-1 flex flex-col gap-2">
@@ -142,21 +143,28 @@ const ProjectList = ({}: ProjectListProps) => {
             <div className="flex gap-2">
               <button
                 className="inline-block px-2 py-1 bg-purple-600 text-white rounded hover:bg-purple-700 transition-colors"
-                onClick={() =>
-                  (window.location.href = `/project/${project.id}`)
-                }
+                onClick={(e) => {
+                  e.stopPropagation();
+                  window.location.href = `/project/${project.id}`;
+                }}
               >
                 More
               </button>
               <button
                 className="px-2 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
-                onClick={() => handleEditProject(project)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleEditProject(project);
+                }}
               >
                 Edit
               </button>
               <button
                 className="px-2 py-1 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
-                onClick={() => handleDeleteProject(project.id)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDeleteProject(project.id);
+                }}
               >
                 Delete
               </button>

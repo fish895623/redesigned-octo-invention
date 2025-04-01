@@ -1,20 +1,6 @@
-import { createContext, useState, useMemo, useContext, ReactNode } from "react";
+import { useState, useMemo, ReactNode } from "react";
 import { ThemeProvider as MaterialTailwindThemeProvider } from "@material-tailwind/react";
-
-type ThemeContextType = {
-  isDarkMode: boolean;
-  toggleDarkMode: () => void;
-};
-
-const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
-
-export const useTheme = () => {
-  const context = useContext(ThemeContext);
-  if (!context) {
-    throw new Error("useTheme must be used within a ThemeProvider");
-  }
-  return context;
-};
+import { ThemeContext } from "./ThemeContextDefinition";
 
 type ThemeProviderProps = {
   children: ReactNode;

@@ -1,8 +1,14 @@
 import { useState, useCallback, useMemo, useEffect } from "react";
-import { useProject } from "../context/ProjectContext";
+import { useProject } from "../context/ProjectContextDefinition";
 import { Milestone } from "../types/project";
 import CreateMilestoneModal from "./modal/CreateMilestoneModal";
 import { API_BASE_URL, createHeaders } from "../config/api";
+
+// Define date array type from backend
+type DateArray =
+  | [number, number, number, number?, number?, number?, number?]
+  | null;
+type DateValue = Date | DateArray | string | null;
 
 interface MilestoneListProps {
   projectId: string;
@@ -24,56 +30,59 @@ const MilestoneList = ({ projectId }: MilestoneListProps) => {
   const [sortBy, setSortBy] = useState<"created" | "updated">("updated");
 
   // Helper function to convert array date format to JavaScript Date
-  const convertArrayToDate = useCallback((dateArray: any): Date | null => {
-    if (!dateArray) return null;
+  const convertArrayToDate = useCallback(
+    (dateValue: DateValue): Date | null => {
+      if (!dateValue) return null;
 
-    // Check if it's an array format from the server
-    if (Array.isArray(dateArray)) {
-      try {
-        // Handle full datetime array [year, month, day, hour, minute, second, nano]
-        if (dateArray.length >= 3) {
-          // Note: JavaScript months are 0-indexed, but the server sends 1-indexed months
-          const year = dateArray[0];
-          const month = dateArray[1] - 1; // Subtract 1 to convert to JS month (0-11)
-          const day = dateArray[2];
+      // Check if it's an array format from the server
+      if (Array.isArray(dateValue)) {
+        try {
+          // Handle full datetime array [year, month, day, hour, minute, second, nano]
+          if (dateValue.length >= 3) {
+            // Note: JavaScript months are 0-indexed, but the server sends 1-indexed months
+            const year = dateValue[0];
+            const month = dateValue[1] - 1; // Subtract 1 to convert to JS month (0-11)
+            const day = dateValue[2];
 
-          // If we have time components
-          if (dateArray.length >= 6) {
-            const hour = dateArray[3];
-            const minute = dateArray[4];
-            const second = dateArray[5];
-            return new Date(year, month, day, hour, minute, second);
+            // If we have time components
+            if (dateValue.length >= 6) {
+              const hour = dateValue[3] || 0;
+              const minute = dateValue[4] || 0;
+              const second = dateValue[5] || 0;
+              return new Date(year, month, day, hour, minute, second);
+            }
+
+            // If we only have date components
+            return new Date(year, month, day);
           }
-
-          // If we only have date components
-          return new Date(year, month, day);
+        } catch (e) {
+          console.error("Error converting date array:", dateValue, e);
         }
-      } catch (e) {
-        console.error("Error converting date array:", dateArray, e);
       }
-    }
 
-    // If it's already a Date object
-    if (dateArray instanceof Date) {
-      return dateArray;
-    }
-
-    // If it's a string or timestamp
-    if (dateArray) {
-      try {
-        const date = new Date(dateArray);
-        return isNaN(date.getTime()) ? null : date;
-      } catch (e) {
-        console.error("Error converting date value:", dateArray, e);
+      // If it's already a Date object
+      if (dateValue instanceof Date) {
+        return dateValue;
       }
-    }
 
-    return null;
-  }, []);
+      // If it's a string or timestamp
+      if (typeof dateValue === "string") {
+        try {
+          const date = new Date(dateValue);
+          return isNaN(date.getTime()) ? null : date;
+        } catch (e) {
+          console.error("Error converting date value:", dateValue, e);
+        }
+      }
+
+      return null;
+    },
+    []
+  );
 
   // Helper function to safely format dates
   const formatDate = useCallback(
-    (dateValue: any): string => {
+    (dateValue: DateValue): string => {
       const date = convertArrayToDate(dateValue);
       if (!date) return "N/A";
       return date.toLocaleString();
@@ -98,7 +107,7 @@ const MilestoneList = ({ projectId }: MilestoneListProps) => {
         console.log("Raw milestone data from API:", data);
 
         // Process the data to ensure dates are properly formatted
-        const processedData = data.map((milestone: any) => {
+        const processedData = data.map((milestone: Milestone) => {
           console.log("Processing milestone:", milestone.id, {
             createdAt: milestone.createdAt,
             updatedAt: milestone.updatedAt,
@@ -157,7 +166,7 @@ const MilestoneList = ({ projectId }: MilestoneListProps) => {
       console.log("Refresh: Raw milestone data from API:", data);
 
       // Process the data to ensure dates are properly formatted
-      const processedData = data.map((milestone: any) => {
+      const processedData = data.map((milestone: Milestone) => {
         console.log("Refresh: Processing milestone:", milestone.id, {
           createdAt: milestone.createdAt,
           updatedAt: milestone.updatedAt,
@@ -308,8 +317,8 @@ const MilestoneList = ({ projectId }: MilestoneListProps) => {
           description?: string;
           completed: boolean;
           // Server expects dates in their original format when updating
-          startDate?: any;
-          dueDate?: any;
+          startDate?: DateValue;
+          dueDate?: DateValue;
         }
 
         const requestBody: MilestoneUpdateRequest = {

@@ -6,10 +6,10 @@ interface CreateMilestoneModalProps {
   onClose: () => void;
 }
 
-const CreateMilestoneModal: React.FC<CreateMilestoneModalProps> = ({
+const CreateMilestoneModal = ({
   projectId,
   onClose,
-}) => {
+}: CreateMilestoneModalProps) => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [startDate, setStartDate] = useState("");
@@ -22,7 +22,7 @@ const CreateMilestoneModal: React.FC<CreateMilestoneModalProps> = ({
     if (titleError) setTitleError("");
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!title.trim()) {
@@ -30,6 +30,7 @@ const CreateMilestoneModal: React.FC<CreateMilestoneModalProps> = ({
       return;
     }
 
+    // Call the context method to add milestone
     addMilestone(projectId, {
       title: title.trim(),
       description: description.trim() || undefined,
@@ -37,6 +38,27 @@ const CreateMilestoneModal: React.FC<CreateMilestoneModalProps> = ({
       dueDate: dueDate ? new Date(dueDate) : undefined,
       completed: false,
     });
+
+    // Also make the direct API call
+    try {
+      await fetch(`/api/projects/${projectId}/milestones`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          title: title.trim(),
+          description: description.trim() || undefined,
+          startDate: startDate || undefined,
+          dueDate: dueDate || undefined,
+          completed: false,
+        }),
+      });
+    } catch (error) {
+      console.error("Error creating milestone:", error);
+    }
 
     onClose();
   };
@@ -131,26 +153,6 @@ const CreateMilestoneModal: React.FC<CreateMilestoneModalProps> = ({
             <button
               type="submit"
               className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
-              onClick={async () => {
-                if (!title.trim()) {
-                  return; // Don't proceed if title is empty (handled by form submit)
-                }
-                await fetch(`/api/projects/${projectId}/milestones`, {
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                    Accept: "application/json",
-                  },
-                  credentials: "include",
-                  body: JSON.stringify({
-                    title: title.trim(),
-                    description: description.trim() || undefined,
-                    startDate: startDate || undefined,
-                    dueDate: dueDate || undefined,
-                    completed: false,
-                  }),
-                });
-              }}
             >
               Create Milestone
             </button>
