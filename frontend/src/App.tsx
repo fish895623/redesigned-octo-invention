@@ -9,7 +9,7 @@ import { ProtectedRoute } from "./components/ProtectedRoute";
 // Lazy load page components for better performance
 const Profile = lazy(() => import("./ProfilePage"));
 const LoginPage = lazy(() => import("./pages/LoginPage"));
-const RegistrationPage = lazy(() => import("./pages/RegistrationPage"));
+const UserRegister = lazy(() => import("./pages/UserRegister"));
 const ProjectListPage = lazy(() => import("./pages/ProjectListPage"));
 const ProjectPage = lazy(() => import("./pages/ProjectPage"));
 const MilestoneListPage = lazy(() => import("./pages/MilestoneListPage"));
@@ -32,7 +32,7 @@ function App() {
         <Routes>
           {/* Public routes */}
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegistrationPage />} />
+          <Route path="/register" element={<UserRegister />} />
 
           {/* Protected routes */}
           <Route
