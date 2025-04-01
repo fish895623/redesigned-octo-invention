@@ -2,6 +2,7 @@ package com.projectmanage.main.jwt;
 
 import java.io.IOException;
 
+import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -26,9 +27,9 @@ public class JWTFilter extends OncePerRequestFilter {
     private final UserRepository userRepository;
 
     protected void doFilterInternal(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            FilterChain filterChain) throws ServletException, IOException {
+            @NonNull HttpServletRequest request,
+            @NonNull HttpServletResponse response,
+            @NonNull FilterChain filterChain) throws ServletException, IOException {
 
         // Skip token processing for token refresh endpoint
         if (request.getRequestURI().equals("/api/auth/refresh")) {

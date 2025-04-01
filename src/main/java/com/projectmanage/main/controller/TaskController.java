@@ -40,7 +40,7 @@ public class TaskController {
 
     @GetMapping("/tasks")
     public ResponseEntity<List<TaskDTO>> getTasksByProjectId(
-            @PathVariable(name = "projectId") Long projectId,
+            @PathVariable Long projectId,
             @AuthenticationPrincipal CustomUserDetails principal) {
 
         User user = userService.getUserFromPrincipal(principal);
@@ -57,8 +57,8 @@ public class TaskController {
 
     @GetMapping("/milestones/{milestoneId}/tasks")
     public ResponseEntity<List<TaskDTO>> getTasksByMilestoneId(
-            @PathVariable(name = "projectId") Long projectId,
-            @PathVariable(name = "milestoneId") Long milestoneId,
+            @PathVariable Long projectId,
+            @PathVariable Long milestoneId,
             @AuthenticationPrincipal CustomUserDetails principal) {
 
         User user = userService.getUserFromPrincipal(principal);
@@ -82,8 +82,8 @@ public class TaskController {
 
     @GetMapping("/tasks/{taskId}")
     public ResponseEntity<TaskDTO> getTaskById(
-            @PathVariable(name = "projectId") Long projectId,
-            @PathVariable(name = "taskId") Long taskId,
+            @PathVariable Long projectId,
+            @PathVariable Long taskId,
             @AuthenticationPrincipal CustomUserDetails principal) {
 
         User user = userService.getUserFromPrincipal(principal);
@@ -106,7 +106,7 @@ public class TaskController {
 
     @PostMapping("/tasks")
     public ResponseEntity<TaskDTO> createTask(
-            @PathVariable(name = "projectId") Long projectId,
+            @PathVariable Long projectId,
             @RequestBody TaskDTO taskDTO,
             @AuthenticationPrincipal CustomUserDetails principal) {
 
@@ -133,8 +133,8 @@ public class TaskController {
 
     @PutMapping("/tasks/{taskId}")
     public ResponseEntity<TaskDTO> updateTask(
-            @PathVariable(name = "projectId") Long projectId,
-            @PathVariable(name = "taskId") Long taskId,
+            @PathVariable Long projectId,
+            @PathVariable Long taskId,
             @RequestBody TaskDTO taskDTO,
             @AuthenticationPrincipal CustomUserDetails principal) {
 
@@ -168,8 +168,8 @@ public class TaskController {
 
     @DeleteMapping("/tasks/{taskId}")
     public ResponseEntity<Void> deleteTask(
-            @PathVariable(name = "projectId") Long projectId,
-            @PathVariable(name = "taskId") Long taskId,
+            @PathVariable Long projectId,
+            @PathVariable Long taskId,
             @AuthenticationPrincipal CustomUserDetails principal) {
 
         User user = userService.getUserFromPrincipal(principal);

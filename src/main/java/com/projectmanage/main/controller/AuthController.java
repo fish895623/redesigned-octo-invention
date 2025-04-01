@@ -98,7 +98,8 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Map<String, Object>> register(@RequestBody UserDTO userDTO,
+    public ResponseEntity<Map<String, Object>> register(
+            @RequestBody UserDTO userDTO,
             HttpServletResponse response) {
         try {
             User user = userService.registerUser(userDTO);

@@ -37,7 +37,7 @@ public class MilestoneController {
 
     @GetMapping
     public ResponseEntity<List<MilestoneDTO>> getMilestonesByProjectId(
-            @PathVariable(name = "projectId") Long projectId,
+            @PathVariable Long projectId,
             @AuthenticationPrincipal CustomUserDetails principal) {
 
         User user = userService.getUserFromPrincipal(principal);
@@ -54,8 +54,8 @@ public class MilestoneController {
 
     @GetMapping("/{milestoneId}")
     public ResponseEntity<MilestoneDTO> getMilestoneById(
-            @PathVariable(name = "projectId") Long projectId,
-            @PathVariable(name = "milestoneId") Long milestoneId,
+            @PathVariable Long projectId,
+            @PathVariable Long milestoneId,
             @AuthenticationPrincipal CustomUserDetails principal) {
 
         User user = userService.getUserFromPrincipal(principal);
@@ -78,7 +78,7 @@ public class MilestoneController {
 
     @PostMapping
     public ResponseEntity<MilestoneDTO> createMilestone(
-            @PathVariable(name = "projectId") Long projectId,
+            @PathVariable Long projectId,
             @RequestBody MilestoneDTO milestoneDTO,
             @AuthenticationPrincipal CustomUserDetails principal) {
 
@@ -96,8 +96,8 @@ public class MilestoneController {
 
     @PutMapping("/{milestoneId}")
     public ResponseEntity<MilestoneDTO> updateMilestone(
-            @PathVariable(name = "projectId") Long projectId,
-            @PathVariable(name = "milestoneId") Long milestoneId,
+            @PathVariable Long projectId,
+            @PathVariable Long milestoneId,
             @RequestBody MilestoneDTO milestoneDTO,
             @AuthenticationPrincipal CustomUserDetails principal) {
 
@@ -122,8 +122,8 @@ public class MilestoneController {
 
     @DeleteMapping("/{milestoneId}")
     public ResponseEntity<Void> deleteMilestone(
-            @PathVariable(name = "projectId") Long projectId,
-            @PathVariable(name = "milestoneId") Long milestoneId,
+            @PathVariable Long projectId,
+            @PathVariable Long milestoneId,
             @AuthenticationPrincipal CustomUserDetails principal) {
 
         User user = userService.getUserFromPrincipal(principal);

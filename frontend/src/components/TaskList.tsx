@@ -2,7 +2,6 @@ import { useState, useCallback, useMemo } from "react";
 import { useProjects } from "../hooks/useProjects";
 import { Task, Milestone } from "../types/project";
 import CreateTaskModal from "../components/modal/CreateTaskModal";
-import "../css/TaskList.css";
 
 interface TaskListProps {
   projectId: string;

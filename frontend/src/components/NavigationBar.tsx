@@ -1,7 +1,6 @@
 import { useAuth } from "../hooks/useAuth";
 import { UserProfile } from "./UserProfile";
 import { Link } from "react-router-dom";
-import "../css/NavigationBar.css";
 
 const NavigationBar = () => {
   const { user, loading } = useAuth();

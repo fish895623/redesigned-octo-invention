@@ -2,7 +2,6 @@ import { useEffect, useState, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { ProjectProvider } from "../context/ProjectContext";
 import { Milestone, Task } from "../types/project";
-import "../css/MilestonePage.css";
 import { API_BASE_URL, createHeaders } from "../config/api";
 
 const MilestonePageContent = () => {
