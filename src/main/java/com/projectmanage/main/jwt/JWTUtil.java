@@ -15,6 +15,9 @@ import io.jsonwebtoken.Jwts;
 public class JWTUtil {
     private SecretKey secretKey;
 
+    @Value("${app.jwt.access-token.expiration}")
+    private Long accessTokenDurationMs;
+
     public JWTUtil(@Value("${spring.jwt.secret}") String secret) {
         secretKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8),
                 Jwts.SIG.HS256.key().build().getAlgorithm());
@@ -35,9 +38,20 @@ public class JWTUtil {
                 .before(new Date());
     }
 
+    // Create an access token with default expiration
+    public String createAccessToken(String username, String role) {
+        return createJwt(username, role, accessTokenDurationMs);
+    }
+
+    // Original method maintained for backward compatibility
     public String createJwt(String username, String role, Long expiredMs) {
-        return Jwts.builder().claim("username", username).claim("role", role)
+        return Jwts.builder()
+                .claim("username", username)
+                .claim("role", role)
+                .claim("tokenType", "ACCESS")
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + expiredMs)).signWith(secretKey).compact();
+                .expiration(new Date(System.currentTimeMillis() + expiredMs))
+                .signWith(secretKey)
+                .compact();
     }
 }

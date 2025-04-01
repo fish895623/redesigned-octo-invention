@@ -6,7 +6,6 @@ import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,15 +13,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.projectmanage.main.dto.CustomUserDetails;
+import com.projectmanage.main.exception.TokenRefreshException;
 import com.projectmanage.main.jwt.JWTUtil;
+import com.projectmanage.main.model.RefreshToken;
 import com.projectmanage.main.model.User;
+import com.projectmanage.main.model.dto.TokenRefreshRequest;
+import com.projectmanage.main.model.dto.TokenRefreshResponse;
 import com.projectmanage.main.model.dto.UserDTO;
+import com.projectmanage.main.service.RefreshTokenService;
 import com.projectmanage.main.service.UserService;
 
 import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -34,9 +36,10 @@ public class AuthController {
 
     private final JWTUtil jwtUtil;
     private final UserService userService;
+    private final RefreshTokenService refreshTokenService;
 
-    // JWT expiration: 24 hours
-    private static final Long JWT_EXPIRATION = 1000L * 60 * 60 * 24;
+    // JWT expiration: 1 hour for access token
+    private static final Long JWT_EXPIRATION = 1000L * 60 * 60;
 
     @GetMapping("/status")
     public ResponseEntity<Map<String, Object>> getAuthStatus(@AuthenticationPrincipal CustomUserDetails principal) {
@@ -63,18 +66,24 @@ public class AuthController {
         try {
             User user = userService.authenticateUser(email, password);
 
-            String token = jwtUtil.createJwt(user.getUsername(), user.getRole(), JWT_EXPIRATION);
+            // Create access token
+            String accessToken = jwtUtil.createJwt(user.getUsername(), user.getRole(), JWT_EXPIRATION);
+
+            // Create refresh token
+            RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getUsername());
 
             // Set cookie
-            Cookie cookie = new Cookie("Authorization", token);
+            Cookie cookie = new Cookie("Authorization", accessToken);
             cookie.setHttpOnly(true);
             cookie.setPath("/");
-            cookie.setMaxAge(24 * 60 * 60); // 24 hours in seconds
+            cookie.setMaxAge(60 * 60); // 1 hour in seconds
             response.addCookie(cookie);
 
-            // Also return token in response for client-side storage
+            // Return tokens in response for client-side storage
             Map<String, Object> result = new HashMap<>();
-            result.put("token", token);
+            result.put("accessToken", accessToken);
+            result.put("refreshToken", refreshToken.getToken());
+            result.put("tokenType", "Bearer");
             result.put("authenticated", true);
             result.put("name", user.getName());
             result.put("email", user.getEmail());
@@ -94,18 +103,24 @@ public class AuthController {
         try {
             User user = userService.registerUser(userDTO);
 
-            String token = jwtUtil.createJwt(user.getUsername(), user.getRole(), JWT_EXPIRATION);
+            // Create access token
+            String accessToken = jwtUtil.createJwt(user.getUsername(), user.getRole(), JWT_EXPIRATION);
+
+            // Create refresh token
+            RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getUsername());
 
             // Set cookie
-            Cookie cookie = new Cookie("Authorization", token);
+            Cookie cookie = new Cookie("Authorization", accessToken);
             cookie.setHttpOnly(true);
             cookie.setPath("/");
-            cookie.setMaxAge(24 * 60 * 60); // 24 hours in seconds
+            cookie.setMaxAge(60 * 60); // 1 hour in seconds
             response.addCookie(cookie);
 
-            // Also return token in response for client-side storage
+            // Return tokens in response for client-side storage
             Map<String, Object> result = new HashMap<>();
-            result.put("token", token);
+            result.put("accessToken", accessToken);
+            result.put("refreshToken", refreshToken.getToken());
+            result.put("tokenType", "Bearer");
             result.put("authenticated", true);
             result.put("name", user.getName());
             result.put("email", user.getEmail());
@@ -115,6 +130,49 @@ public class AuthController {
             log.error("Registration failed: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of("authenticated", false, "message", e.getMessage()));
+        }
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<?> refreshToken(@RequestBody TokenRefreshRequest request) {
+        String requestRefreshToken = request.getRefreshToken();
+
+        return refreshTokenService.findByToken(requestRefreshToken)
+                .map(refreshTokenService::verifyExpiration)
+                .map(RefreshToken::getUser)
+                .map(user -> {
+                    String newAccessToken = jwtUtil.createJwt(
+                            user.getUsername(),
+                            user.getRole(),
+                            JWT_EXPIRATION);
+
+                    return ResponseEntity.ok(new TokenRefreshResponse(
+                            newAccessToken,
+                            requestRefreshToken,
+                            "Bearer"));
+                })
+                .orElseThrow(() -> new TokenRefreshException(requestRefreshToken,
+                        "Refresh token is not in database!"));
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logoutUser(@RequestBody Map<String, String> logoutRequest,
+            HttpServletResponse response) {
+        try {
+            String username = logoutRequest.get("email");
+            refreshTokenService.deleteByUserId(username);
+
+            // Clear auth cookie
+            Cookie cookie = new Cookie("Authorization", null);
+            cookie.setHttpOnly(true);
+            cookie.setPath("/");
+            cookie.setMaxAge(0);
+            response.addCookie(cookie);
+
+            return ResponseEntity.ok(Map.of("message", "Logout successful"));
+        } catch (Exception e) {
+            log.error("Logout failed: {}", e.getMessage());
+            return ResponseEntity.badRequest().body(Map.of("message", "Logout failed"));
         }
     }
 
@@ -131,30 +189,5 @@ public class AuthController {
         userDetails.put("picture", principal.getPicture());
 
         return ResponseEntity.ok(userDetails);
-    }
-
-    @PostMapping("/logout")
-    public ResponseEntity<Map<String, String>> logout(HttpServletRequest request, HttpServletResponse response) {
-        // Clear the security context
-        SecurityContextHolder.clearContext();
-
-        // Invalidate the HTTP session
-        HttpSession session = request.getSession(false);
-        if (session != null) {
-            session.invalidate();
-        }
-
-        // Clear all cookies
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                cookie.setValue("");
-                cookie.setPath("/");
-                cookie.setMaxAge(0);
-                response.addCookie(cookie);
-            }
-        }
-
-        return ResponseEntity.ok(Map.of("message", "Successfully logged out"));
     }
 }
