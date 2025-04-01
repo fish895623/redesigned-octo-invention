@@ -7,7 +7,7 @@ export default function DarkModeToggle() {
   return (
     <Button
       variant="text"
-      className="p-2 rounded-full"
+      className="p-1 sm:p-2 rounded-full"
       onClick={toggleDarkMode}
       title={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
     >
@@ -18,7 +18,7 @@ export default function DarkModeToggle() {
           viewBox="0 0 24 24"
           strokeWidth={1.5}
           stroke="currentColor"
-          className="w-5 h-5"
+          className="w-4 h-4 sm:w-5 sm:h-5"
         >
           <path
             strokeLinecap="round"
@@ -33,7 +33,7 @@ export default function DarkModeToggle() {
           viewBox="0 0 24 24"
           strokeWidth={1.5}
           stroke="currentColor"
-          className="w-5 h-5"
+          className="w-4 h-4 sm:w-5 sm:h-5"
         >
           <path
             strokeLinecap="round"
