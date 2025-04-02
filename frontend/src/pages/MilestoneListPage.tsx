@@ -1,3 +1,8 @@
+/**
+ * @file MilestoneListPage.tsx
+ * @description This file is the main component for the MilestoneListPage.
+ * It displays a list of milestones for a given project.
+ */
 import { useParams } from "react-router-dom";
 import { ProjectProvider } from "../context/ProjectContext";
 import { useAuth } from "../hooks/useAuth";
