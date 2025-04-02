@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useProjects } from "../../hooks/useProjects";
+import { useProject } from "../../context/ProjectContextDefinition";
 import { Milestone } from "../../types/project";
 import { API_BASE_URL, createHeaders } from "../../config/api";
 
@@ -20,7 +20,7 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
   const [description, setDescription] = useState("");
   const [milestoneId, setMilestoneId] = useState<number | undefined>(undefined);
   const [titleError, setTitleError] = useState("");
-  const { addTask } = useProjects();
+  const { addTask } = useProject();
 
   // Set the milestone ID when the modal opens with a selected milestone
   useEffect(() => {

@@ -8,6 +8,7 @@ import { useProject } from "../../context/ProjectContextDefinition";
 import { Milestone, Task } from "../../types/project";
 import TaskList from "../lists/TaskList";
 import { Link } from "react-router-dom";
+import CreateTaskModal from "../modals/CreateTaskModal";
 
 interface MilestoneDetailProps {
   projectId: number;
@@ -26,6 +27,7 @@ const MilestoneDetail = ({ projectId, milestoneId }: MilestoneDetailProps) => {
   const [completed, setCompleted] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showCreateTaskModal, setShowCreateTaskModal] = useState(false);
 
   useEffect(() => {
     // Find the project and milestone
@@ -289,9 +291,17 @@ const MilestoneDetail = ({ projectId, milestoneId }: MilestoneDetailProps) => {
         )}
 
         <div className="p-6 border-t border-gray-700">
-          <h2 className="text-xl font-bold text-white mb-4">
-            Tasks ({milestoneTasks.length})
-          </h2>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-bold text-white">
+              Tasks ({milestoneTasks.length})
+            </h2>
+            <button
+              onClick={() => setShowCreateTaskModal(true)}
+              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+            >
+              Add Task
+            </button>
+          </div>
           {milestoneTasks.length > 0 ? (
             <TaskList
               projectId={projectId}
@@ -305,6 +315,16 @@ const MilestoneDetail = ({ projectId, milestoneId }: MilestoneDetailProps) => {
           )}
         </div>
       </div>
+
+      {/* Task Creation Modal */}
+      {showCreateTaskModal && (
+        <CreateTaskModal
+          projectId={projectId}
+          milestones={projectMilestones}
+          selectedMilestoneId={milestoneId}
+          onClose={() => setShowCreateTaskModal(false)}
+        />
+      )}
     </div>
   );
 };
