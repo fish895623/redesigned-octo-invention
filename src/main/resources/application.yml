@@ -23,32 +23,38 @@ spring:
           timeout: 5000
           starttls:
             enable: true
-  security:
-    oauth2:
-      client:
-        registration:
-          google:
-            client-id: ${GOOGLE_CLIENT_ID:""}
-            client-secret: ${GOOGLE_CLIENT_SECRET:""}
-            scope:
-              - email
-              - profile
-            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
-        provider:
-          google:
-            authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
-            token-uri: https://www.googleapis.com/oauth2/v4/token
-            user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
-            user-name-attribute: sub
-            jwk-set-uri: https://www.googleapis.com/oauth2/v3/certs
+  jwt:
+    secret: vmfhaltmskdlstkfkdgodyroqkfwkdbalroqkfwkdbalaaaaaaaaaaaaaaaabbbbb
 
-    # spring data jpa Setting
+  # spring data jpa Setting
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     show-sql: false
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     open-in-view: false
+
+# JWT token settings
+app:
+  jwt:
+    access-token:
+      expiration: 3600000 # 1 hour in milliseconds
+    refresh-token:
+      expiration: 2592000000 # 30 days in milliseconds
+
+logging:
+  level:
+    root: INFO
+    org.springframework.web: INFO
+    com.projectmanage.main: DEBUG
+  pattern:
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  logback:
+    rollingpolicy:
+      max-file-size: 10MB
+      max-history: 30
+      total-size-cap: 100MB
+      file-name-pattern: logs/archived/application.%d{yyyy-MM-dd}.%i.log

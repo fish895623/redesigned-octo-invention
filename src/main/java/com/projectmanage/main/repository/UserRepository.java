@@ -11,5 +11,5 @@ import com.projectmanage.main.model.User;
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmail(String email);
 
-    Optional<User> findByProviderId(String providerId);
+    User findByUsername(String username);
 }

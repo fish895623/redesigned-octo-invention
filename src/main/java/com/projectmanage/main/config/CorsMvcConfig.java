@@ -1,18 +1,21 @@
 package com.projectmanage.main.config;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.lang.NonNull;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
-public class CorsConfig implements WebMvcConfigurer {
+public class CorsMvcConfig implements WebMvcConfigurer {
 
     @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
+    public void addCorsMappings(@NonNull CorsRegistry corsRegistry) {
+        corsRegistry.addMapping("/**")
+                .exposedHeaders("Set-Cookie", "Authorization")
                 .allowedOrigins("http://localhost:5173")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
-                .allowCredentials(true);
+                .allowCredentials(true)
+                .maxAge(3600L);
     }
 }
