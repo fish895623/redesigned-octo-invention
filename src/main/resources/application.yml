@@ -2,8 +2,9 @@
 server:
   port: 8080
 
-# database Local, Docker Environment Variable
 spring:
+  main:
+    banner-mode: off
   datasource:
     driver-class-name: org.postgresql.Driver
     url: ${SPRING_DATASOURCE_URL:""}
