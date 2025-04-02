@@ -1,3 +1,8 @@
+/**
+ * This component is used to display a list of tasks under the milestones.
+ * This requests to /api/projects/:projectId/milestones/:milestoneId/tasks.
+ * Authentication is requested.
+ */
 import { useState, useEffect } from "react";
 import { useProject } from "../../context/ProjectContextDefinition";
 import { Milestone, Task } from "../../types/project";

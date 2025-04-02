@@ -16,6 +16,10 @@ const MilestoneList = ({ projectId, milestones }: MilestoneListProps) => {
   const [showMilestoneModal, setShowMilestoneModal] = useState(false);
   const [sortBy, setSortBy] = useState<"created" | "updated">("updated");
 
+  const handleMilestoneClick = (milestoneId: number) => {
+    window.location.href = `/project/${projectId}/milestone/${milestoneId}`;
+  };
+
   const sortedMilestones = [...milestones].sort((a, b) => {
     if (sortBy === "updated") {
       return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
@@ -60,7 +64,10 @@ const MilestoneList = ({ projectId, milestones }: MilestoneListProps) => {
           >
             <div className="flex justify-between items-start">
               <div>
-                <h3 className="text-lg font-semibold text-white">
+                <h3
+                  className="text-lg font-semibold text-white cursor-pointer hover:text-blue-400 transition-colors"
+                  onClick={() => handleMilestoneClick(milestone.id)}
+                >
                   {milestone.title}
                 </h3>
                 {milestone.description && (
