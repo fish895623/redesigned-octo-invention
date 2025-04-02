@@ -1,9 +1,9 @@
 export interface Task {
-  id: string;
+  id: number;
   title: string;
   completed: boolean;
-  projectId: string;
-  milestoneId?: string;
+  projectId: number;
+  milestoneId?: number;
   description?: string;
   dueDate?: Date;
   createdAt: Date;
@@ -11,10 +11,10 @@ export interface Task {
 }
 
 export interface Milestone {
-  id: string;
+  id: number;
   title: string;
   description?: string;
-  projectId: string;
+  projectId: number;
   startDate?: Date;
   dueDate?: Date;
   completed: boolean;
@@ -24,7 +24,7 @@ export interface Milestone {
 }
 
 export interface Project {
-  id: string;
+  id: number;
   title: string;
   description?: string;
   milestones: Milestone[];

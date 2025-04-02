@@ -3,11 +3,24 @@ export interface User {
   name?: string;
   email?: string;
   picture?: string;
+  accessToken?: string;
+  refreshToken?: string;
+  tokenType?: string;
+}
+
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+export interface RegisterRequest extends LoginRequest {
+  name: string;
 }
 
 export interface AuthContextType {
   user: User | null;
   loading: boolean;
-  loginWithGoogle: () => void;
-  logout: () => void;
+  login: (credentials: LoginRequest) => Promise<User>;
+  register: (userData: RegisterRequest) => Promise<User>;
+  logout: () => Promise<void>;
 }

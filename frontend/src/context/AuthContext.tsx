@@ -1,11 +1,13 @@
 import { useState, useEffect, ReactNode } from "react";
-import { User } from "../types/auth";
+import { User, LoginRequest, RegisterRequest } from "../types/auth";
 import {
   getCurrentUser,
-  loginWithGoogle,
+  login as apiLogin,
   logout as apiLogout,
+  register as apiRegister,
 } from "../api/auth";
 import { AuthContext } from "./AuthContextDefinition";
+import { useLocation } from "react-router-dom";
 
 interface AuthProviderProps {
   children: ReactNode;
@@ -14,32 +16,68 @@ interface AuthProviderProps {
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const location = useLocation();
+
+  const fetchUser = async () => {
+    try {
+      setLoading(true);
+      const userData = await getCurrentUser();
+      setUser(userData);
+    } catch (error) {
+      console.error("Failed to fetch user:", error);
+      setUser(null);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const userData = await getCurrentUser();
-        setUser(userData);
-      } catch (error) {
-        console.error("Failed to fetch user:", error);
-        setUser(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchUser();
   }, []);
 
+  // Refresh user data when redirected from authentication
+  useEffect(() => {
+    if (location.pathname === "/oauth/callback") {
+      fetchUser();
+    }
+  }, [location.pathname]);
+
+  const login = async (credentials: LoginRequest) => {
+    try {
+      const userData = await apiLogin(credentials);
+      setUser(userData);
+      return userData;
+    } catch (error) {
+      console.error("Login failed:", error);
+      return { authenticated: false };
+    }
+  };
+
+  const register = async (userData: RegisterRequest) => {
+    try {
+      const newUser = await apiRegister(userData);
+      setUser(newUser);
+      return newUser;
+    } catch (error) {
+      console.error("Registration failed:", error);
+      return { authenticated: false };
+    }
+  };
+
   const logout = async () => {
-    await apiLogout();
-    setUser(null);
+    try {
+      await apiLogout();
+      setUser(null);
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
   };
 
   const value = {
     user,
     loading,
-    loginWithGoogle,
+    login,
+    register,
     logout,
   };
 

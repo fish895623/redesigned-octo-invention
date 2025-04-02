@@ -1,6 +1,13 @@
-import { defineConfig, loadEnv, type ConfigEnv, type UserConfig } from "vite";
+import {
+  defineConfig,
+  loadEnv,
+  type ConfigEnv,
+  type UserConfig,
+  type PluginOption,
+} from "vite";
 import react from "@vitejs/plugin-react";
 import { visualizer } from "rollup-plugin-visualizer";
+import tailwindcss from "@tailwindcss/vite";
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
@@ -24,28 +31,11 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
             }),
           ]
         : []),
-    ] as any,
+      tailwindcss(),
+    ] as PluginOption[],
 
     server: {
       port: 5173,
-      proxy: {
-        "/api": {
-          target: "http://localhost:8080",
-          changeOrigin: true,
-        },
-        "/oauth2": {
-          target: "http://localhost:8080",
-          changeOrigin: true,
-        },
-        "/login": {
-          target: "http://localhost:8080",
-          changeOrigin: true,
-        },
-        "/logout": {
-          target: "http://localhost:8080",
-          changeOrigin: true,
-        },
-      },
     },
 
     build: {
@@ -68,7 +58,7 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
             vendor: ["react", "react-dom", "react-router-dom"],
             // Group components with similar functionality
             auth: ["./src/context/AuthContext.tsx"],
-            ui: ["./src/components/NavigationBar.tsx"],
+            ui: ["./src/components/ui/Navigation/NavigationBar.tsx"],
           },
           // Generate chunk filenames with content hashes for better caching
           chunkFileNames: "assets/[name]-[hash].js",

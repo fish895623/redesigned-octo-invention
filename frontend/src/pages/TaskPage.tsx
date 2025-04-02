@@ -1,6 +1,6 @@
 import { useParams, Link } from "react-router-dom";
 import { ProjectProvider } from "../context/ProjectContext";
-import TaskDetail from "../components/TaskDetail";
+import TaskDetail from "../components/details/TaskDetail";
 import { useAuth } from "../hooks/useAuth";
 
 const TaskPage = () => {
@@ -26,7 +26,7 @@ const TaskPage = () => {
             Back to Tasks
           </Link>
         </div>
-        <TaskDetail projectId={projectId} taskId={taskId} />
+        <TaskDetail projectId={Number(projectId)} taskId={Number(taskId)} />
       </div>
     </ProjectProvider>
   );

@@ -1,6 +1,6 @@
 import { useParams, Link } from "react-router-dom";
 import { ProjectProvider } from "../context/ProjectContext";
-import TaskList from "../components/TaskList";
+import TaskList from "../components/lists/TaskList";
 import { useAuth } from "../hooks/useAuth";
 
 const TaskListPage = () => {
@@ -23,7 +23,7 @@ const TaskListPage = () => {
             Back to Project
           </Link>
         </div>
-        <TaskList projectId={projectId} />
+        <TaskList projectId={Number(projectId)} />
       </div>
     </ProjectProvider>
   );

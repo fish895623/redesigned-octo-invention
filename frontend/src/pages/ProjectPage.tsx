@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import { ProjectProvider } from "../context/ProjectContext";
-import ProjectDetail from "../components/ProjectDetail";
+import ProjectDetail from "../components/details/ProjectDetail";
 import { useAuth } from "../hooks/useAuth";
 
 const ProjectPage = () => {
@@ -18,7 +18,7 @@ const ProjectPage = () => {
   return (
     <ProjectProvider>
       <div className="app-container">
-        <ProjectDetail projectId={projectId} />
+        <ProjectDetail projectId={Number(projectId)} />
       </div>
     </ProjectProvider>
   );

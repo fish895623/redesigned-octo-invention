@@ -1,23 +1,12 @@
-import { User } from "../types/auth";
+import { User, LoginRequest, RegisterRequest } from "../types/auth";
+import { API_ENDPOINTS } from "../config/api";
+import { apiClient } from "./apiClient";
 
 export const getCurrentUser = async (): Promise<User> => {
   try {
-    const response = await fetch("/api/auth/user", {
-      credentials: "include",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      return {
-        authenticated: data.authenticated,
-        name: data.name,
-        email: data.email,
-        picture: data.picture,
-      };
+    const response = await apiClient.get<User>(API_ENDPOINTS.auth.user);
+    if (response.data.authenticated) {
+      return response.data;
     } else {
       return { authenticated: false };
     }
@@ -27,22 +16,65 @@ export const getCurrentUser = async (): Promise<User> => {
   }
 };
 
-export const loginWithGoogle = () => {
-  window.location.href = "/oauth2/authorization/google";
+export const login = async (credentials: LoginRequest): Promise<User> => {
+  try {
+    const response = await apiClient.post<User>(
+      API_ENDPOINTS.auth.login,
+      credentials
+    );
+    if (
+      response.data.authenticated &&
+      response.data.accessToken &&
+      response.data.refreshToken
+    ) {
+      apiClient.setTokens(
+        response.data.accessToken,
+        response.data.refreshToken
+      );
+    } else {
+      apiClient.removeTokens();
+    }
+    return response.data;
+  } catch (err) {
+    console.error("Login failed:", err);
+    apiClient.removeTokens();
+    throw err;
+  }
+};
+
+export const register = async (userData: RegisterRequest): Promise<User> => {
+  try {
+    const response = await apiClient.post<User>(
+      API_ENDPOINTS.auth.register,
+      userData
+    );
+    if (
+      response.data.authenticated &&
+      response.data.accessToken &&
+      response.data.refreshToken
+    ) {
+      apiClient.setTokens(
+        response.data.accessToken,
+        response.data.refreshToken
+      );
+    } else {
+      apiClient.removeTokens();
+    }
+    return response.data;
+  } catch (err) {
+    console.error("Registration failed:", err);
+    apiClient.removeTokens();
+    throw err;
+  }
 };
 
 export const logout = async (): Promise<void> => {
   try {
-    await fetch("/api/auth/logout", {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-    });
-    window.location.href = "/";
+    await apiClient.post(API_ENDPOINTS.auth.logout, {});
+    apiClient.removeTokens();
   } catch (err) {
     console.error("Logout failed:", err);
+    // Still remove tokens on the client side even if server request fails
+    apiClient.removeTokens();
   }
 };
