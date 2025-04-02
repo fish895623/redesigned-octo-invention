@@ -20,6 +20,7 @@ const TaskList = ({
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [showTaskModal, setShowTaskModal] = useState(false);
   const [filter, setFilter] = useState<"all" | "active" | "completed">("all");
+  const [refreshKey, setRefreshKey] = useState(0);
 
   // Callbacks to avoid unnecessary rerenders
   const handleToggleTask = useCallback(
@@ -46,6 +47,10 @@ const TaskList = ({
     [deleteTask, projectId]
   );
 
+  const handleTaskCreated = useCallback(() => {
+    setRefreshKey((prev) => prev + 1);
+  }, []);
+
   // Sort tasks by update time
   const sortedTasks = useMemo(() => {
     return [...tasks].sort((a, b) => {
@@ -53,7 +58,7 @@ const TaskList = ({
       const dateB = new Date(b.updatedAt);
       return dateB.getTime() - dateA.getTime();
     });
-  }, [tasks]);
+  }, [tasks, refreshKey]);
 
   // Filter tasks based on completion status
   const filteredTasks = useMemo(() => {
@@ -149,6 +154,7 @@ const TaskList = ({
           projectId={projectId}
           milestones={milestones}
           onClose={() => setShowTaskModal(false)}
+          onTaskCreated={handleTaskCreated}
         />
       )}
 

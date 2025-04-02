@@ -6,6 +6,7 @@ interface CreateTaskModalProps {
   projectId: number;
   milestones: Milestone[];
   onClose: () => void;
+  onTaskCreated?: () => void;
   selectedMilestoneId?: number | null;
 }
 
@@ -13,6 +14,7 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
   projectId,
   milestones,
   onClose,
+  onTaskCreated,
   selectedMilestoneId,
 }) => {
   const [title, setTitle] = useState("");
@@ -34,6 +36,12 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!title.trim()) {
+      setTitleError("Task title is required");
+      return;
+    }
+
     try {
       const response = await fetch(API_ENDPOINTS.tasks.create(projectId), {
         method: "POST",
@@ -46,6 +54,12 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
         }),
       });
       await response.json();
+
+      // Call onTaskCreated if provided to refresh the task list
+      if (onTaskCreated) {
+        onTaskCreated();
+      }
+
       onClose();
     } catch (error) {
       console.error("Error creating task:", error);

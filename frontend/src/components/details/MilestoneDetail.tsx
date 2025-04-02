@@ -3,7 +3,7 @@
  * This requests to /api/projects/:projectId/milestones/:milestoneId/tasks.
  * Authentication is requested.
  */
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useProject } from "../../context/ProjectContextDefinition";
 import { Milestone, Task } from "../../types/project";
 import TaskList from "../lists/TaskList";
@@ -27,6 +27,7 @@ const MilestoneDetail = ({ projectId, milestoneId }: MilestoneDetailProps) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showCreateTaskModal, setShowCreateTaskModal] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
     // Find the project and milestone
@@ -60,7 +61,7 @@ const MilestoneDetail = ({ projectId, milestoneId }: MilestoneDetailProps) => {
       setError("Project not found");
       setLoading(false);
     }
-  }, [projectId, milestoneId, projects]);
+  }, [projectId, milestoneId, projects, refreshKey]);
 
   const handleUpdate = (e: React.FormEvent) => {
     e.preventDefault();
@@ -89,6 +90,10 @@ const MilestoneDetail = ({ projectId, milestoneId }: MilestoneDetailProps) => {
       window.location.href = `/project/${projectId}/milestone`;
     }
   };
+
+  const handleTaskCreated = useCallback(() => {
+    setRefreshKey((prev) => prev + 1);
+  }, []);
 
   if (loading) {
     return <div className="text-white p-6">Loading milestone...</div>;
@@ -225,51 +230,6 @@ const MilestoneDetail = ({ projectId, milestoneId }: MilestoneDetailProps) => {
               </button>
             </div>
           </div>
-
-          {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-            <div className="bg-gray-700 p-3 rounded-md">
-              <h3 className="text-sm font-medium text-gray-400 mb-1">Status</h3>
-              <div className="flex items-center">
-                <span
-                  className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium ${
-                    milestone.completed
-                      ? "bg-green-900 text-green-200"
-                      : "bg-yellow-900 text-yellow-200"
-                  }`}
-                >
-                  {milestone.completed ? "Completed" : "In Progress"}
-                </span>
-                <button
-                  onClick={handleToggleCompleted}
-                  className="ml-2 text-xs text-blue-400 hover:underline"
-                >
-                  {milestone.completed ? "Mark Incomplete" : "Mark Complete"}
-                </button>
-              </div>
-            </div>
-
-            {milestone.startDate && (
-              <div className="bg-gray-700 p-3 rounded-md">
-                <h3 className="text-sm font-medium text-gray-400 mb-1">
-                  Start Date
-                </h3>
-                <p className="text-white">
-                  {new Date(milestone.startDate).toLocaleDateString()}
-                </p>
-              </div>
-            )}
-
-            {milestone.dueDate && (
-              <div className="bg-gray-700 p-3 rounded-md">
-                <h3 className="text-sm font-medium text-gray-400 mb-1">
-                  Due Date
-                </h3>
-                <p className="text-white">
-                  {new Date(milestone.dueDate).toLocaleDateString()}
-                </p>
-              </div>
-            )}
-          </div> */}
         </div>
       )}
 
@@ -314,6 +274,7 @@ const MilestoneDetail = ({ projectId, milestoneId }: MilestoneDetailProps) => {
           milestones={projectMilestones}
           selectedMilestoneId={milestoneId}
           onClose={() => setShowCreateTaskModal(false)}
+          onTaskCreated={handleTaskCreated}
         />
       )}
     </div>
