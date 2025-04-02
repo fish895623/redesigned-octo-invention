@@ -49,7 +49,9 @@ const TaskList = ({
   // Sort tasks by update time
   const sortedTasks = useMemo(() => {
     return [...tasks].sort((a, b) => {
-      return b.updatedAt.getTime() - a.updatedAt.getTime();
+      const dateA = new Date(a.updatedAt);
+      const dateB = new Date(b.updatedAt);
+      return dateB.getTime() - dateA.getTime();
     });
   }, [tasks]);
 

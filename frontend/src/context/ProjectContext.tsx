@@ -179,7 +179,7 @@ export function ProjectProvider({ children }: ProjectProviderProps) {
   ) => {
     try {
       const response = await apiClient.post<Task>(
-        `${API_ENDPOINTS.tasks.create}/${projectId}`,
+        API_ENDPOINTS.tasks.create(projectId),
         task
       );
       setProjects(
