@@ -25,11 +25,11 @@ export const LogoutButton = () => {
   return (
     <button
       onClick={handleLogout}
-      className={`w-full flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-white ${
+      className={`flex items-center justify-center gap-2 w-full px-4 py-2 ${
         isDarkMode
           ? "bg-red-700 hover:bg-red-800"
           : "bg-red-600 hover:bg-red-700"
-      } rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors`}
+      } text-white font-medium rounded-md focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors`}
       aria-label="Logout"
       disabled={isLoggingOut}
     >
@@ -44,7 +44,7 @@ export const LogoutButton = () => {
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
-        className={`${isLoggingOut ? "animate-pulse" : ""}`}
+        className={isLoggingOut ? "animate-pulse" : ""}
       >
         <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
         <polyline points="16 17 21 12 16 7"></polyline>

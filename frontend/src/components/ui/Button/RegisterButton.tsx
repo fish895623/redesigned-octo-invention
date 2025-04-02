@@ -8,7 +8,10 @@ export const RegisterButton = ({ label = "Register" }: { label?: string }) => {
   };
 
   return (
-    <button onClick={handleClick} className="register-button">
+    <button
+      onClick={handleClick}
+      className="px-4 py-2 border border-gray-300 hover:bg-gray-100 text-gray-700 font-medium rounded-md transition-colors"
+    >
       {label}
     </button>
   );

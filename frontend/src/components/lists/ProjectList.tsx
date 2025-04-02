@@ -71,7 +71,7 @@ const ProjectList = ({ onSelectProject }: ProjectListProps) => {
         </div>
         <div className="flex gap-4 items-center mt-4 sm:mt-0">
           <select
-            className="p-2 border border-gray-700 rounded-md bg-gray-800 text-white"
+            className="p-2 border border-gray-700 rounded-md bg-gray-800 text-white focus:ring-2 focus:ring-blue-500"
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
           >
@@ -79,7 +79,7 @@ const ProjectList = ({ onSelectProject }: ProjectListProps) => {
             <option value="created">Sort by Created</option>
           </select>
           <button
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition-colors"
             onClick={() => setShowProjectModal(true)}
           >
             Add Project
@@ -103,14 +103,14 @@ const ProjectList = ({ onSelectProject }: ProjectListProps) => {
                   onKeyDown={(e) =>
                     e.key === "Enter" && handleSaveEdit(project)
                   }
-                  className="p-2 border border-gray-700 rounded-md w-full bg-gray-800 text-white"
+                  className="p-2 border border-gray-700 rounded-md w-full bg-gray-800 text-white focus:ring-2 focus:ring-blue-500"
                 />
                 <textarea
                   value={editDescription}
                   onChange={(e) => setEditDescription(e.target.value)}
                   onBlur={() => handleSaveEdit(project)}
                   placeholder="Add description..."
-                  className="p-2 border border-gray-700 rounded-md w-full bg-gray-800 text-white min-h-[100px] resize-y"
+                  className="p-2 border border-gray-700 rounded-md w-full bg-gray-800 text-white min-h-[100px] resize-y focus:ring-2 focus:ring-blue-500"
                 />
               </div>
             ) : (
@@ -144,7 +144,7 @@ const ProjectList = ({ onSelectProject }: ProjectListProps) => {
             )}
             <div className="flex gap-2">
               <button
-                className="inline-block px-2 py-1 bg-purple-600 text-white rounded hover:bg-purple-700 transition-colors"
+                className="inline-block px-3 py-1 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-md transition-colors"
                 onClick={(e) => {
                   e.stopPropagation();
                   window.location.href = `/project/${project.id}`;
@@ -153,7 +153,7 @@ const ProjectList = ({ onSelectProject }: ProjectListProps) => {
                 More
               </button>
               <button
-                className="px-2 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+                className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition-colors"
                 onClick={(e) => {
                   e.stopPropagation();
                   handleEditProject(project);
@@ -162,7 +162,7 @@ const ProjectList = ({ onSelectProject }: ProjectListProps) => {
                 Edit
               </button>
               <button
-                className="px-2 py-1 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
+                className="px-3 py-1 bg-red-600 hover:bg-red-700 text-white font-medium rounded-md transition-colors"
                 onClick={(e) => {
                   e.stopPropagation();
                   handleDeleteProject(project.id);
