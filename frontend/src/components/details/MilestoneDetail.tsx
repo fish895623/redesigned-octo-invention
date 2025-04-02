@@ -120,7 +120,7 @@ const MilestoneDetail = ({ projectId, milestoneId }: MilestoneDetailProps) => {
     projects.find((p) => p.id === projectId)?.milestones || [];
 
   return (
-    <div className="max-w-7xl mx-auto p-6 text-white">
+    <div className="w-full max-w-7xl mx-auto bg-gray-900 rounded-lg shadow-md overflow-hidden">
       {isEditing ? (
         <form
           onSubmit={handleUpdate}

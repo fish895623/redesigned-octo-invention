@@ -22,7 +22,7 @@ const MilestonePage = () => {
 
   return (
     <ProjectProvider>
-      <div className="app-container">
+      <div className="w-full p-0 md:p-2 mt-16">
         <MilestoneDetail
           projectId={Number(projectId)}
           milestoneId={Number(milestoneId)}
