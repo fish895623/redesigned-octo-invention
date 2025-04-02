@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useProject } from "../../context/ProjectContextDefinition";
 import { Milestone } from "../../types/project";
-import { API_BASE_URL, createHeaders } from "../../config/api";
+import { API_BASE_URL, API_ENDPOINTS, createHeaders } from "../../config/api";
 
 interface CreateTaskModalProps {
   projectId: number;
@@ -37,26 +37,17 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await fetch(
-        `${API_BASE_URL}/api/projects/${projectId}/tasks`,
-        {
-          method: "POST",
-          credentials: "include",
-          headers: createHeaders(),
-          body: JSON.stringify({
-            title,
-            description,
-            milestoneId,
-          }),
-        }
-      );
-      await response.json();
-      addTask(projectId, {
-        title: title.trim(),
-        description: description.trim() || undefined,
-        completed: false,
-        milestoneId: milestoneId,
+      const response = await fetch(API_ENDPOINTS.tasks.create(projectId), {
+        method: "POST",
+        credentials: "include",
+        headers: createHeaders(),
+        body: JSON.stringify({
+          title,
+          description,
+          milestoneId,
+        }),
       });
+      await response.json();
       onClose();
     } catch (error) {
       console.error("Error creating task:", error);
