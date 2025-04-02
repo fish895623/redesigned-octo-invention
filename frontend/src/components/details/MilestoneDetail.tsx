@@ -292,12 +292,18 @@ const MilestoneDetail = ({ projectId, milestoneId }: MilestoneDetailProps) => {
 
         <div className="p-6 border-t border-gray-700">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-bold text-white">
-              Tasks ({milestoneTasks.length})
-            </h2>
+            <div>
+              <h2 className="text-xl font-bold text-white">Tasks</h2>
+              <div className="text-sm text-blue-400 font-medium mt-1">
+                Total Tasks:{" "}
+                <span className="bg-blue-600 text-white px-2 py-0.5 rounded-full ml-1">
+                  {milestoneTasks.length}
+                </span>
+              </div>
+            </div>
             <button
               onClick={() => setShowCreateTaskModal(true)}
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+              className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 transition-colors"
             >
               Add Task
             </button>
