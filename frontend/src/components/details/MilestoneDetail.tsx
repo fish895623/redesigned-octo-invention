@@ -124,7 +124,7 @@ const MilestoneDetail = ({ projectId, milestoneId }: MilestoneDetailProps) => {
       {isEditing ? (
         <form
           onSubmit={handleUpdate}
-          className="bg-gray-800 rounded-lg shadow-md mb-8 p-6"
+          className="flex flex-col sm:flex-row sm:justify-between sm:items-center p-4 border-b border-gray-700"
         >
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-300 mb-1">
@@ -206,10 +206,10 @@ const MilestoneDetail = ({ projectId, milestoneId }: MilestoneDetailProps) => {
           </div>
         </form>
       ) : (
-        <div className="bg-gray-800 rounded-lg shadow-md mb-8 p-6">
-          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start">
+        <div className="flex flex-col p-4 border-b border-gray-700">
+          <div className="flex justify-between items-center">
             <div>
-              <h2 className="text-xl font-bold text-white mb-1">
+              <h2 className="text-xl font-bold text-white">
                 {milestone.title}
               </h2>
               <div className="text-sm text-blue-400 mb-2">
@@ -221,16 +221,16 @@ const MilestoneDetail = ({ projectId, milestoneId }: MilestoneDetailProps) => {
                 </p>
               )}
             </div>
-            <div className="flex gap-2 mt-4 sm:mt-0">
+            <div className="flex gap-4 items-center">
               <button
                 onClick={() => setIsEditing(true)}
-                className="px-3 py-1.5 bg-blue-600 text-white text-sm rounded hover:bg-blue-700"
+                className="px-3 py-1.5 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 transition-colors"
               >
                 Edit
               </button>
               <button
                 onClick={handleDelete}
-                className="px-3 py-1.5 bg-red-600 text-white text-sm rounded hover:bg-red-700"
+                className="px-3 py-1.5 bg-red-600 text-white text-sm rounded-md hover:bg-red-700 transition-colors"
               >
                 Delete
               </button>
@@ -238,7 +238,7 @@ const MilestoneDetail = ({ projectId, milestoneId }: MilestoneDetailProps) => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-            <div className="bg-gray-700 p-3 rounded-md">
+            {/* <div className="bg-gray-700 p-3 rounded-md">
               <h3 className="text-sm font-medium text-gray-400 mb-1">Status</h3>
               <div className="flex items-center">
                 <span
@@ -257,7 +257,7 @@ const MilestoneDetail = ({ projectId, milestoneId }: MilestoneDetailProps) => {
                   {milestone.completed ? "Mark Incomplete" : "Mark Complete"}
                 </button>
               </div>
-            </div>
+            </div> */}
 
             {milestone.startDate && (
               <div className="bg-gray-700 p-3 rounded-md">
