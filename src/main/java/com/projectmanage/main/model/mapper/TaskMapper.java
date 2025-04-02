@@ -1,56 +1,77 @@
 package com.projectmanage.main.model.mapper;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Component;
+
 import com.projectmanage.main.model.Task;
 import com.projectmanage.main.model.dto.TaskDTO;
 import com.projectmanage.main.repository.MilestoneRepository;
 import com.projectmanage.main.repository.ProjectRepository;
+
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
 public class TaskMapper {
 
-    public final ProjectRepository projectRepository;
-    public final MilestoneRepository milestoneRepository;
+    private final ProjectRepository projectRepository;
+    private final MilestoneRepository milestoneRepository;
 
-    public TaskDTO toDTO(Task task){
-        TaskDTO dto=new TaskDTO();
-        dto.setId(task.getId());
-        dto.setTitle(task.getTitle());
-        dto.setDescription(task.getDescription());
-        dto.setCompleted(task.isCompleted());
-
-        if(task.getProject()!=null) {
-            dto.setProjectId(task.getProject().getId());
-        }
-        if(task.getMilestone()!=null) {
-            dto.setMilestoneId(task.getMilestone().getId());
+    public TaskDTO toDTO(Task task) {
+        if (task == null) {
+            return null;
         }
 
-        dto.setDueDate(task.getDueDate());
-        dto.setCreatedAt(task.getCreatedAt());
-        dto.setUpdatedAt(task.getUpdatedAt());
-        return dto;
+        TaskDTO.TaskDTOBuilder builder = TaskDTO.builder()
+                .id(task.getId())
+                .title(task.getTitle())
+                .description(task.getDescription())
+                .completed(task.isCompleted())
+                .projectId(task.getProject().getId())
+                .dueDate(task.getDueDate())
+                .createdAt(task.getCreatedAt())
+                .updatedAt(task.getUpdatedAt());
+
+        if (task.getMilestone() != null) {
+            builder.milestoneId(task.getMilestone().getId());
+        }
+
+        return builder.build();
     }
 
-    public Task toEntity(TaskDTO task){
-        Task entity=new Task();
-        entity.setId(task.getId());
-        entity.setTitle(task.getTitle());
-        entity.setDescription(task.getDescription());
-        entity.setCompleted(task.isCompleted());
+    public List<TaskDTO> toDTOList(List<Task> tasks) {
+        return tasks.stream()
+                .map(this::toDTO)
+                .collect(Collectors.toList());
+    }
 
-        if(task.getProjectId()!=null){
-            entity.setProject(projectRepository.findById(task.getProjectId()).orElse(null));
-        }
-        if(task.getMilestoneId()!=null){
-            entity.setMilestone(milestoneRepository.findById(task.getMilestoneId()).orElse(null));
+    public Task toEntity(TaskDTO taskDTO) {
+        if (taskDTO == null) {
+            return null;
         }
 
-        entity.setDueDate(task.getDueDate());
-        entity.setCreatedAt(task.getCreatedAt());
-        entity.setUpdatedAt(task.getUpdatedAt());
-        return entity;
+        Task.TaskBuilder builder = Task.builder()
+                .title(taskDTO.getTitle())
+                .description(taskDTO.getDescription())
+                .completed(taskDTO.isCompleted())
+                .dueDate(taskDTO.getDueDate());
+
+        if (taskDTO.getId() != null) {
+            builder.id(taskDTO.getId());
+        }
+
+        if (taskDTO.getProjectId() != null) {
+            projectRepository.findById(taskDTO.getProjectId())
+                    .ifPresent(builder::project);
+        }
+
+        if (taskDTO.getMilestoneId() != null) {
+            milestoneRepository.findById(taskDTO.getMilestoneId())
+                    .ifPresent(builder::milestone);
+        }
+
+        return builder.build();
     }
 }

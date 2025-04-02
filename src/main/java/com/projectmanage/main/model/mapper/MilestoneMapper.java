@@ -1,59 +1,76 @@
 package com.projectmanage.main.model.mapper;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Component;
+
 import com.projectmanage.main.model.Milestone;
 import com.projectmanage.main.model.dto.MilestoneDTO;
+import com.projectmanage.main.model.dto.TaskDTO;
 import com.projectmanage.main.repository.ProjectRepository;
-import com.projectmanage.main.repository.TaskRepository;
+
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
 public class MilestoneMapper {
-    public final TaskMapper taskBuilder;
-    public final ProjectRepository projectRepository;
-    public final TaskRepository taskRepository;
+
+    private final ProjectRepository projectRepository;
+    private final TaskMapper taskMapper;
 
     public MilestoneDTO toDTO(Milestone milestone) {
-        MilestoneDTO dto = new MilestoneDTO();
-        dto.setId(milestone.getId());
-        dto.setTitle(milestone.getTitle());
-        dto.setDescription(milestone.getDescription());
-
-        if (milestone.getProject() != null) {
-            dto.setProjectId(milestone.getProject().getId());
+        if (milestone == null) {
+            return null;
         }
 
-        dto.setStartDate(milestone.getStartDate());
-        dto.setDueDate(milestone.getDueDate());
-        dto.setCompleted(milestone.isCompleted());
+        List<TaskDTO> tasks = milestone.getTasks() != null
+                ? milestone.getTasks().stream()
+                        .map(taskMapper::toDTO)
+                        .collect(Collectors.toList())
+                : List.of();
 
-        dto.setTasks(milestone.getTasks().stream().map(taskBuilder::toDTO).toList());
-
-        dto.setCreatedAt(milestone.getCreatedAt());
-        dto.setUpdatedAt(milestone.getUpdatedAt());
-
-        return dto;
+        return MilestoneDTO.builder()
+                .id(milestone.getId())
+                .title(milestone.getTitle())
+                .description(milestone.getDescription())
+                .projectId(milestone.getProject().getId())
+                .startDate(milestone.getStartDate())
+                .dueDate(milestone.getDueDate())
+                .completed(milestone.isCompleted())
+                .tasks(tasks)
+                .createdAt(milestone.getCreatedAt())
+                .updatedAt(milestone.getUpdatedAt())
+                .build();
     }
 
-    public Milestone toEntity(MilestoneDTO milestone){
-        Milestone entity = new Milestone();
-        entity.setId(milestone.getId());
-        entity.setTitle(milestone.getTitle());
-        entity.setDescription(milestone.getDescription());
+    public List<MilestoneDTO> toDTOList(List<Milestone> milestones) {
+        return milestones.stream()
+                .map(this::toDTO)
+                .collect(Collectors.toList());
+    }
 
-        if (milestone.getProjectId()!= null) {
-            entity.setProject(projectRepository.findById(milestone.getProjectId()).orElse(null));
+    public Milestone toEntity(MilestoneDTO milestoneDTO) {
+        if (milestoneDTO == null) {
+            return null;
         }
 
-        entity.setStartDate(milestone.getStartDate());
-        entity.setDueDate(milestone.getDueDate());
-        entity.setCompleted(milestone.isCompleted());
+        Milestone.MilestoneBuilder builder = Milestone.builder()
+                .title(milestoneDTO.getTitle())
+                .description(milestoneDTO.getDescription())
+                .startDate(milestoneDTO.getStartDate())
+                .dueDate(milestoneDTO.getDueDate())
+                .completed(milestoneDTO.isCompleted());
 
-        entity.setTasks(taskRepository.findByMilestone_Id(milestone.getId()));
+        if (milestoneDTO.getId() != null) {
+            builder.id(milestoneDTO.getId());
+        }
 
-        entity.setCreatedAt(milestone.getCreatedAt());
-        entity.setUpdatedAt(milestone.getUpdatedAt());
-        return entity;
+        if (milestoneDTO.getProjectId() != null) {
+            projectRepository.findById(milestoneDTO.getProjectId())
+                    .ifPresent(builder::project);
+        }
+
+        return builder.build();
     }
 }
