@@ -209,14 +209,14 @@ const MilestoneDetail = ({ projectId, milestoneId }: MilestoneDetailProps) => {
         <div className="flex flex-col p-4 border-b border-gray-700">
           <div className="flex justify-between items-center">
             <div>
-              <h2 className="text-xl font-bold text-white">
+              <h2 className="text-xl font-bold text-white text-left">
                 {milestone.title}
               </h2>
-              <div className="text-sm text-blue-400 mb-2">
+              <div className="text-sm text-blue-400 mb-2 text-left">
                 Project: {projectTitle}
               </div>
               {milestone.description && (
-                <p className="text-gray-300 text-sm mt-2 whitespace-pre-wrap">
+                <p className=" text-sm text-left text-gray-300 whitespace-pre-wrap">
                   {milestone.description}
                 </p>
               )}
