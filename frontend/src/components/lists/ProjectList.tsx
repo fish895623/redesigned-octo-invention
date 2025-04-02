@@ -2,7 +2,7 @@ import { useState, useCallback, useMemo } from "react";
 import { useProject } from "../../context/ProjectContextDefinition";
 import { Project } from "../../types/project";
 import CreateProjectModal from "../modals/CreateProjectModal";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 interface ProjectListProps {
   onSelectProject?: (id: number) => void;
@@ -10,6 +10,7 @@ interface ProjectListProps {
 
 // Main ProjectList component
 const ProjectList = ({ onSelectProject }: ProjectListProps) => {
+  const navigate = useNavigate();
   const { projects, updateProject, deleteProject } = useProject();
   const [editingProjectId, setEditingProjectId] = useState<number | null>(null);
   const [editTitle, setEditTitle] = useState("");
@@ -40,12 +41,19 @@ const ProjectList = ({ onSelectProject }: ProjectListProps) => {
   );
 
   const handleDeleteProject = useCallback(
-    (projectId: number) => {
-      if (window.confirm("Are you sure you want to delete this project?")) {
-        deleteProject(projectId);
+    async (projectId: number) => {
+      if (window.confirm("프로젝트를 삭제하시겠습니까?")) {
+        try {
+          await deleteProject(projectId);
+          // 프로젝트 삭제 후 프로젝트 목록 페이지로 이동
+          navigate("/");
+        } catch (error) {
+          console.error("Error deleting project:", error);
+          alert("프로젝트 삭제에 실패했습니다. 다시 시도해주세요.");
+        }
       }
     },
-    [deleteProject]
+    [deleteProject, navigate]
   );
 
   // Sort projects by either created or updated time
@@ -147,7 +155,7 @@ const ProjectList = ({ onSelectProject }: ProjectListProps) => {
                 className="inline-block px-3 py-1 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-md transition-colors"
                 onClick={(e) => {
                   e.stopPropagation();
-                  window.location.href = `/project/${project.id}`;
+                  navigate(`/project/${project.id}`);
                 }}
               >
                 More
