@@ -237,8 +237,8 @@ const MilestoneDetail = ({ projectId, milestoneId }: MilestoneDetailProps) => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-            {/* <div className="bg-gray-700 p-3 rounded-md">
+          {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+            <div className="bg-gray-700 p-3 rounded-md">
               <h3 className="text-sm font-medium text-gray-400 mb-1">Status</h3>
               <div className="flex items-center">
                 <span
@@ -257,7 +257,7 @@ const MilestoneDetail = ({ projectId, milestoneId }: MilestoneDetailProps) => {
                   {milestone.completed ? "Mark Incomplete" : "Mark Complete"}
                 </button>
               </div>
-            </div> */}
+            </div>
 
             {milestone.startDate && (
               <div className="bg-gray-700 p-3 rounded-md">
@@ -280,26 +280,28 @@ const MilestoneDetail = ({ projectId, milestoneId }: MilestoneDetailProps) => {
                 </p>
               </div>
             )}
-          </div>
+          </div> */}
         </div>
       )}
 
-      <div className="flex justify-between items-center border-b border-gray-700 mb-6 pb-2">
-        <div>
-          <h2 className="text-xl font-bold text-white">Tasks</h2>
-          <div className="text-sm text-blue-400 font-medium mt-1">
-            Total Tasks:{" "}
-            <span className="bg-blue-600 text-white px-2 py-0.5 rounded-full ml-1">
-              {milestoneTasks.length}
-            </span>
+      <div className="flex flex-col p-4 border-b border-gray-700">
+        <div className="flex justify-between items-center">
+          <div className="flex items-center gap-4">
+            <h2 className="text-xl font-bold text-white">Tasks</h2>
+            <div className="text-sm text-blue-400 font-medium">
+              Total Tasks:{" "}
+              <span className="bg-blue-600 text-white px-2 py-0.5 rounded-full ml-1">
+                {milestoneTasks.length}
+              </span>
+            </div>
           </div>
+          <button
+            onClick={() => setShowCreateTaskModal(true)}
+            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors font-medium"
+          >
+            Add Task
+          </button>
         </div>
-        <button
-          onClick={() => setShowCreateTaskModal(true)}
-          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors font-medium"
-        >
-          Add Task
-        </button>
       </div>
 
       <div className="bg-gray-800 rounded-lg p-6">
