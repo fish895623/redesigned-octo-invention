@@ -6,6 +6,7 @@
 import { useState } from "react";
 import { Milestone } from "../../types/project";
 import CreateMilestoneModal from "../modals/CreateMilestoneModal";
+import { useProject } from "../../context/ProjectContextDefinition";
 
 interface MilestoneListProps {
   projectId: number;
@@ -13,11 +14,19 @@ interface MilestoneListProps {
 }
 
 const MilestoneList = ({ projectId, milestones }: MilestoneListProps) => {
+  const { deleteMilestone } = useProject();
   const [showMilestoneModal, setShowMilestoneModal] = useState(false);
   const [sortBy, setSortBy] = useState<"created" | "updated">("updated");
 
   const handleMilestoneClick = (milestoneId: number) => {
     window.location.href = `/project/${projectId}/milestone/${milestoneId}`;
+  };
+
+  const handleDelete = (milestoneId: number, event: React.MouseEvent) => {
+    event.stopPropagation();
+    if (window.confirm("Are you sure you want to delete this milestone?")) {
+      deleteMilestone(projectId, milestoneId);
+    }
   };
 
   const sortedMilestones = [...milestones].sort((a, b) => {
@@ -60,28 +69,35 @@ const MilestoneList = ({ projectId, milestones }: MilestoneListProps) => {
         {sortedMilestones.map((milestone) => (
           <div
             key={milestone.id}
-            className="bg-gray-800 rounded-lg p-4 border border-gray-700"
+            className="bg-gray-800 rounded-lg p-4 border border-gray-700 hover:border-gray-600 transition-colors cursor-pointer"
+            onClick={() => handleMilestoneClick(milestone.id)}
           >
             <div className="flex justify-between items-start">
               <div>
-                <h3
-                  className="text-lg font-semibold text-white cursor-pointer hover:text-blue-400 transition-colors"
-                  onClick={() => handleMilestoneClick(milestone.id)}
-                >
+                <h3 className="text-lg font-semibold text-white hover:text-blue-400 transition-colors">
                   {milestone.title}
                 </h3>
                 {milestone.description && (
                   <p className="text-gray-400 mt-1">{milestone.description}</p>
                 )}
               </div>
-              <div
-                className={`px-3 py-1 rounded-full text-sm font-medium ${
-                  milestone.completed
-                    ? "bg-green-600 text-green-100"
-                    : "bg-yellow-600 text-yellow-100"
-                }`}
-              >
-                {milestone.completed ? "Completed" : "In Progress"}
+              <div className="flex items-center gap-3">
+                <div
+                  className={`px-3 py-1 rounded-full text-sm font-medium ${
+                    milestone.completed
+                      ? "bg-green-600 text-green-100"
+                      : "bg-yellow-600 text-yellow-100"
+                  }`}
+                >
+                  {milestone.completed ? "Completed" : "In Progress"}
+                </div>
+                <button
+                  onClick={(e) => handleDelete(milestone.id, e)}
+                  className="px-3 py-1 bg-red-600 hover:bg-red-700 text-white text-sm rounded-md transition-colors"
+                  title="Delete milestone"
+                >
+                  Delete
+                </button>
               </div>
             </div>
             <div className="mt-4 flex flex-wrap gap-4 text-sm text-gray-400">
