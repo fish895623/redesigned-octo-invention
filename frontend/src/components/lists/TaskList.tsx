@@ -39,9 +39,17 @@ const TaskList = ({
   }, []);
 
   const handleDeleteTask = useCallback(
-    (taskId: number) => {
+    async (taskId: number) => {
       if (window.confirm("Are you sure you want to delete this task?")) {
-        deleteTask(projectId, taskId);
+        try {
+          await deleteTask(projectId, taskId);
+          // Force refresh after successful deletion
+          setRefreshKey((prev) => prev + 1);
+        } catch (error) {
+          console.error("Error deleting task:", error);
+          // Show user-friendly error message
+          alert("Failed to delete task. Please try again.");
+        }
       }
     },
     [deleteTask, projectId]
@@ -164,6 +172,7 @@ const TaskList = ({
           projectId={projectId}
           milestones={milestones}
           onClose={() => setEditingTask(null)}
+          onTaskEdited={handleTaskCreated}
         />
       )}
     </div>

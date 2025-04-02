@@ -204,7 +204,7 @@ export function ProjectProvider({ children }: ProjectProviderProps) {
   const updateTask = async (updatedTask: Task) => {
     try {
       await apiClient.put<Task>(
-        `${API_ENDPOINTS.tasks.update}/${updatedTask.projectId}/${updatedTask.id}`,
+        API_ENDPOINTS.tasks.update(updatedTask.projectId, updatedTask.id),
         updatedTask
       );
       setProjects(
@@ -229,11 +229,9 @@ export function ProjectProvider({ children }: ProjectProviderProps) {
 
   const deleteTask = async (projectId: number, taskId: number) => {
     try {
-      await apiClient.delete(
-        `${API_ENDPOINTS.tasks.delete}/${projectId}/${taskId}`
-      );
-      setProjects(
-        projects.map((project) => {
+      // Update the UI immediately for better user experience
+      setProjects((prevProjects) =>
+        prevProjects.map((project) => {
           if (project.id === projectId) {
             return {
               ...project,
@@ -243,9 +241,26 @@ export function ProjectProvider({ children }: ProjectProviderProps) {
           return project;
         })
       );
+
+      // Then send the API request
+      await apiClient.delete(API_ENDPOINTS.tasks.delete(projectId, taskId));
     } catch (error) {
       console.error("Error deleting task:", error);
       setError("Failed to delete task");
+
+      // On error, refresh the project list to restore correct state
+      try {
+        const response = await apiClient.get<Project[]>(
+          API_ENDPOINTS.projects.list
+        );
+        setProjects(response.data);
+      } catch (refreshError) {
+        console.error(
+          "Failed to refresh data after delete error:",
+          refreshError
+        );
+      }
+
       throw error;
     }
   };

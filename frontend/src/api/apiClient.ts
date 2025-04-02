@@ -132,6 +132,20 @@ class ApiClient {
         );
       }
 
+      // Check if response is empty (common for DELETE operations)
+      const contentType = response.headers.get("content-type");
+      const contentLength = response.headers.get("content-length");
+
+      if (
+        contentLength === "0" ||
+        (!contentType?.includes("application/json") && response.status === 204)
+      ) {
+        return {
+          data: {} as T,
+          status: response.status,
+        };
+      }
+
       const data = await response.json();
       return {
         data,

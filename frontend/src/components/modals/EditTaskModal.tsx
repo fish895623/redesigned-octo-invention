@@ -7,12 +7,14 @@ interface EditTaskModalProps {
   projectId: number;
   milestones: Milestone[];
   onClose: () => void;
+  onTaskEdited?: () => void;
 }
 
 const EditTaskModal: React.FC<EditTaskModalProps> = ({
   task,
   milestones,
   onClose,
+  onTaskEdited,
 }) => {
   const [title, setTitle] = useState(task.title);
   const [description, setDescription] = useState(task.description || "");
@@ -46,6 +48,12 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({
 
     try {
       await updateTask(updatedTask);
+
+      // Call onTaskEdited callback if provided
+      if (onTaskEdited) {
+        onTaskEdited();
+      }
+
       onClose();
     } catch (error) {
       console.error("Error updating task:", error);
