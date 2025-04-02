@@ -37,7 +37,7 @@ public class MilestoneController {
 
     @GetMapping
     public ResponseEntity<List<MilestoneDTO>> getMilestonesByProjectId(
-            @PathVariable Long projectId,
+            @PathVariable(name = "projectId") Long projectId,
             @AuthenticationPrincipal CustomUserDetails principal) {
 
         User user = userService.getUserFromPrincipal(principal);
@@ -54,8 +54,8 @@ public class MilestoneController {
 
     @GetMapping("/{milestoneId}")
     public ResponseEntity<MilestoneDTO> getMilestoneById(
-            @PathVariable Long projectId,
-            @PathVariable Long milestoneId,
+            @PathVariable(name = "projectId") Long projectId,
+            @PathVariable(name = "milestoneId") Long milestoneId,
             @AuthenticationPrincipal CustomUserDetails principal) {
 
         User user = userService.getUserFromPrincipal(principal);
@@ -96,8 +96,8 @@ public class MilestoneController {
 
     @PutMapping("/{milestoneId}")
     public ResponseEntity<MilestoneDTO> updateMilestone(
-            @PathVariable Long projectId,
-            @PathVariable Long milestoneId,
+            @PathVariable(name = "projectId") Long projectId,
+            @PathVariable(name = "milestoneId") Long milestoneId,
             @RequestBody MilestoneDTO milestoneDTO,
             @AuthenticationPrincipal CustomUserDetails principal) {
 
@@ -122,8 +122,8 @@ public class MilestoneController {
 
     @DeleteMapping("/{milestoneId}")
     public ResponseEntity<Void> deleteMilestone(
-            @PathVariable Long projectId,
-            @PathVariable Long milestoneId,
+            @PathVariable(name = "projectId") Long projectId,
+            @PathVariable(name = "milestoneId") Long milestoneId,
             @AuthenticationPrincipal CustomUserDetails principal) {
 
         User user = userService.getUserFromPrincipal(principal);
