@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useProject } from "../../context/ProjectContextDefinition";
 import { Milestone, Task } from "../../types/project";
 
@@ -11,7 +11,6 @@ interface EditTaskModalProps {
 
 const EditTaskModal: React.FC<EditTaskModalProps> = ({
   task,
-  projectId,
   milestones,
   onClose,
 }) => {

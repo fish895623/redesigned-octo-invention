@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { useProject } from "../../context/ProjectContextDefinition";
 import { Milestone } from "../../types/project";
-import { API_BASE_URL, API_ENDPOINTS, createHeaders } from "../../config/api";
+import { API_ENDPOINTS, createHeaders } from "../../config/api";
 
 interface CreateTaskModalProps {
   projectId: number;
@@ -20,7 +19,6 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
   const [description, setDescription] = useState("");
   const [milestoneId, setMilestoneId] = useState<number | undefined>(undefined);
   const [titleError, setTitleError] = useState("");
-  const { addTask } = useProject();
 
   // Set the milestone ID when the modal opens with a selected milestone
   useEffect(() => {
