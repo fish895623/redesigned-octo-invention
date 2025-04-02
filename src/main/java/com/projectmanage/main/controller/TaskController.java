@@ -106,7 +106,7 @@ public class TaskController {
 
     @PostMapping("/tasks")
     public ResponseEntity<TaskDTO> createTask(
-            @PathVariable Long projectId,
+            @PathVariable(name = "projectId") Long projectId,
             @RequestBody TaskDTO taskDTO,
             @AuthenticationPrincipal CustomUserDetails principal) {
 
@@ -133,8 +133,8 @@ public class TaskController {
 
     @PutMapping("/tasks/{taskId}")
     public ResponseEntity<TaskDTO> updateTask(
-            @PathVariable Long projectId,
-            @PathVariable Long taskId,
+            @PathVariable(name = "projectId") Long projectId,
+            @PathVariable(name = "taskId") Long taskId,
             @RequestBody TaskDTO taskDTO,
             @AuthenticationPrincipal CustomUserDetails principal) {
 
@@ -168,8 +168,8 @@ public class TaskController {
 
     @DeleteMapping("/tasks/{taskId}")
     public ResponseEntity<Void> deleteTask(
-            @PathVariable Long projectId,
-            @PathVariable Long taskId,
+            @PathVariable(name = "projectId") Long projectId,
+            @PathVariable(name = "taskId") Long taskId,
             @AuthenticationPrincipal CustomUserDetails principal) {
 
         User user = userService.getUserFromPrincipal(principal);

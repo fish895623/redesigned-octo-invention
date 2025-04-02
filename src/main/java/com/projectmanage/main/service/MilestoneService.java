@@ -31,6 +31,7 @@ public class MilestoneService {
         return milestoneMapper.toDTOList(milestones);
     }
 
+    @Transactional(readOnly = true)
     public MilestoneDTO getMilestoneById(Long milestoneId) {
         Milestone milestone = milestoneRepository.findById(milestoneId)
                 .orElseThrow(() -> new EntityNotFoundException("Milestone not found with id: " + milestoneId));
