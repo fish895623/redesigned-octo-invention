@@ -86,7 +86,7 @@ const TaskList = ({
               className="bg-gray-800 rounded-lg p-4 border border-gray-700"
             >
               <div className="flex justify-between items-start">
-                <div>
+                <div className="text-left">
                   <h3
                     className={`text-lg font-semibold ${
                       task.completed
