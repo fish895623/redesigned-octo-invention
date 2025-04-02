@@ -297,7 +297,7 @@ const MilestoneDetail = ({ projectId, milestoneId }: MilestoneDetailProps) => {
           </div>
           <button
             onClick={() => setShowCreateTaskModal(true)}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors font-medium"
+            className="px-3 py-1.5 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 transition-colors"
           >
             Add Task
           </button>
