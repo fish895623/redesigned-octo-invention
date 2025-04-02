@@ -90,17 +90,6 @@ const MilestoneDetail = ({ projectId, milestoneId }: MilestoneDetailProps) => {
     }
   };
 
-  const handleToggleCompleted = () => {
-    if (milestone) {
-      const updatedMilestone: Milestone = {
-        ...milestone,
-        completed: !milestone.completed,
-        updatedAt: new Date(),
-      };
-      updateMilestone(updatedMilestone);
-    }
-  };
-
   if (loading) {
     return <div className="text-white p-6">Loading milestone...</div>;
   }
