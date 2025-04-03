@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -40,11 +41,18 @@ public class MilestoneService {
     }
 
     //마일스톤 수정
-    public void updateMilestone(MilestoneDTO milestoneDTO){
-        if (!InvalidMilestone2(milestoneDTO)) {
-            throw new IllegalArgumentException("Invalid milestone");
+    public void updateMilestone(Long milestoneId, MilestoneDTO milestoneDTO) {
+        try {
+            if (!Objects.equals(milestoneId, milestoneDTO.getId())) {
+                throw new IllegalArgumentException("Invalid milestone ID");
+            }
+            if (!InvalidMilestone2(milestoneDTO)) {
+                throw new IllegalArgumentException("Invalid milestone");
+            }
+            milestoneRepository.save(milestoneMapper.toEntity(milestoneDTO));
+        }catch (Exception e) {
+            System.out.println(e.getMessage());
         }
-        milestoneRepository.save(milestoneMapper.toEntity(milestoneDTO));
     }
 
     //마일스톤 삭제
