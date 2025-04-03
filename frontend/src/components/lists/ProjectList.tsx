@@ -12,10 +12,11 @@ interface ProjectListProps {
 // Main ProjectList component
 const ProjectList = ({ onSelectProject }: ProjectListProps) => {
   const navigate = useNavigate();
-  const { projects, updateProject, deleteProject } = useProject();
+  const { projects, updateProject, deleteProject, loading } = useProject();
   const [editingProject, setEditingProject] = useState<Project | null>(null);
   const [showProjectModal, setShowProjectModal] = useState(false);
   const [sortBy, setSortBy] = useState<'created' | 'updated'>('updated');
+  const [deletingProjectId, setDeletingProjectId] = useState<number | null>(null);
 
   // Callbacks to avoid unnecessary rerenders
   const handleEditProject = useCallback((project: Project) => {
@@ -26,12 +27,13 @@ const ProjectList = ({ onSelectProject }: ProjectListProps) => {
     async (projectId: number) => {
       if (window.confirm('프로젝트를 삭제하시겠습니까?')) {
         try {
+          setDeletingProjectId(projectId);
           await deleteProject(projectId);
-          // 삭제 후 페이지 이동을 제거하여 목록에서 바로 삭제되도록 수정
-          // navigate('/');
         } catch (error) {
           console.error('Error deleting project:', error);
           alert('프로젝트 삭제에 실패했습니다. 다시 시도해주세요.');
+        } finally {
+          setDeletingProjectId(null);
         }
       }
     },
@@ -73,75 +75,97 @@ const ProjectList = ({ onSelectProject }: ProjectListProps) => {
             className="p-2 border border-gray-700 rounded-md bg-gray-800 text-white focus:ring-2 focus:ring-blue-500"
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
+            disabled={loading}
           >
             <option value="updated">Sort by Updated</option>
             <option value="created">Sort by Created</option>
           </select>
           <button
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition-colors"
+            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             onClick={() => setShowProjectModal(true)}
+            disabled={loading}
           >
             Add Project
           </button>
         </div>
       </div>
       <div className="p-4 flex flex-col gap-4">
-        {sortedProjects.map((project) => (
-          <div
-            key={project.id}
-            className="flex items-start gap-4 p-4 border border-gray-700 rounded-md bg-gray-800 project-item"
-            onClick={() => onSelectProject && onSelectProject(project.id)}
-          >
-            <Link to={`/project/${project.id}/milestone`} className="flex-1 cursor-pointer no-underline text-inherit">
-              <div className="flex-1">
-                <h3 className="text-lg font-semibold text-white mb-2 text-left">{project.title}</h3>
-                {project.description && (
-                  <p className="text-gray-400 text-sm whitespace-pre-wrap text-left">{project.description}</p>
-                )}
-              </div>
-              <div className="flex gap-4 mb-2 text-sm text-gray-300">
-                <span>Milestones: {project.milestones.length}</span>
-                <span>Tasks: {project.tasks.length}</span>
-              </div>
-              <div className="flex gap-4 text-sm text-gray-500">
-                <span className="flex items-center gap-1">Updated: {new Date(project.updatedAt).toLocaleString()}</span>
-                <span className="flex items-center gap-1">Created: {new Date(project.createdAt).toLocaleString()}</span>
-              </div>
-            </Link>
-            <div className="flex gap-2">
-              <button
-                className="inline-block px-3 py-1 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-md transition-colors"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  navigate(`/project/${project.id}`);
-                }}
-                data-testid={`view-project-${project.id}`}
-              >
-                More
-              </button>
-              <button
-                className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition-colors"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleEditProject(project);
-                }}
-                data-testid={`edit-project-${project.id}`}
-              >
-                Edit
-              </button>
-              <button
-                className="px-3 py-1 bg-red-600 hover:bg-red-700 text-white font-medium rounded-md transition-colors"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleDeleteProject(project.id);
-                }}
-                data-testid={`delete-project-${project.id}`}
-              >
-                Delete
-              </button>
-            </div>
+        {loading && (
+          <div className="flex justify-center items-center py-8">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
           </div>
-        ))}
+        )}
+        {!loading &&
+          sortedProjects.map((project) => (
+            <div
+              key={project.id}
+              className="flex items-start gap-4 p-4 border border-gray-700 rounded-md bg-gray-800 project-item"
+              onClick={() => onSelectProject && onSelectProject(project.id)}
+            >
+              <Link to={`/project/${project.id}/milestone`} className="flex-1 cursor-pointer no-underline text-inherit">
+                <div className="flex-1">
+                  <h3 className="text-lg font-semibold text-white mb-2 text-left">{project.title}</h3>
+                  {project.description && (
+                    <p className="text-gray-400 text-sm whitespace-pre-wrap text-left">{project.description}</p>
+                  )}
+                </div>
+                <div className="flex gap-4 mb-2 text-sm text-gray-300">
+                  <span>Milestones: {project.milestones.length}</span>
+                  <span>Tasks: {project.tasks.length}</span>
+                </div>
+                <div className="flex gap-4 text-sm text-gray-500">
+                  <span className="flex items-center gap-1">
+                    Updated: {new Date(project.updatedAt).toLocaleString()}
+                  </span>
+                  <span className="flex items-center gap-1">
+                    Created: {new Date(project.createdAt).toLocaleString()}
+                  </span>
+                </div>
+              </Link>
+              <div className="flex gap-2">
+                <button
+                  className="inline-block px-3 py-1 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigate(`/project/${project.id}`);
+                  }}
+                  data-testid={`view-project-${project.id}`}
+                  disabled={loading}
+                >
+                  More
+                </button>
+                <button
+                  className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleEditProject(project);
+                  }}
+                  data-testid={`edit-project-${project.id}`}
+                  disabled={loading}
+                >
+                  Edit
+                </button>
+                <button
+                  className="px-3 py-1 bg-red-600 hover:bg-red-700 text-white font-medium rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDeleteProject(project.id);
+                  }}
+                  data-testid={`delete-project-${project.id}`}
+                  disabled={loading || deletingProjectId === project.id}
+                >
+                  {deletingProjectId === project.id ? (
+                    <span className="flex items-center gap-1">
+                      <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></span>
+                      Deleting...
+                    </span>
+                  ) : (
+                    'Delete'
+                  )}
+                </button>
+              </div>
+            </div>
+          ))}
       </div>
       {showProjectModal && <CreateProjectModal onClose={() => setShowProjectModal(false)} />}
       {editingProject && <EditProjectModal project={editingProject} onClose={() => setEditingProject(null)} />}
