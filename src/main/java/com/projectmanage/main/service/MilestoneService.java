@@ -32,26 +32,29 @@ public class MilestoneService {
 
     //마일스톤 추가
     public MilestoneDTO addMilestone(Long projectId, MilestoneDTO milestoneDTO){
-        MilestoneDTO newMilestone=null;
-
-        try {
-            milestoneDTO.setProjectId(projectId);
-            if (!InvalidMilestone(milestoneDTO)) {
-                throw new IllegalArgumentException("Invalid milestone");
-            }
-            newMilestone = milestoneMapper.toDTO(milestoneRepository.save(milestoneMapper.toEntity(milestoneDTO)));
-        }catch (Exception e){
-            e.printStackTrace();
+        milestoneDTO.setProjectId(projectId);
+        if (!InvalidMilestone(milestoneDTO)) {
+            throw new IllegalArgumentException("Invalid milestone");
         }
-        return newMilestone;
+        return milestoneMapper.toDTO(milestoneRepository.save(milestoneMapper.toEntity(milestoneDTO)));
     }
 
     //마일스톤 수정
     public void updateMilestone(MilestoneDTO milestoneDTO){
-
+        if (!InvalidMilestone(milestoneDTO)) {
+            throw new IllegalArgumentException("Invalid milestone");
+        }
+        milestoneRepository.save(milestoneMapper.toEntity(milestoneDTO));
     }
 
     //마일스톤 삭제
+    public void deleteMilestone(Long milestoneId){
+        try {
+            milestoneRepository.deleteById(milestoneId);
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+        }
+    }
 
     //마일스톤 검증
     public boolean InvalidMilestone(MilestoneDTO milestoneDTO){
