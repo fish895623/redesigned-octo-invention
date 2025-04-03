@@ -3,6 +3,7 @@ package com.projectmanage.main.model.mapper;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Component;
 
 import com.projectmanage.main.model.Project;
@@ -16,10 +17,14 @@ import lombok.RequiredArgsConstructor;
 public class ProjectMapper {
 
     private final UserRepository userRepository;
-    private final MilestoneMapper milestoneMapper;
-    private final TaskMapper taskMapper;
+    private static UserRepository staticUserRepository;
 
-    public ProjectDTO toDTO(Project project) {
+    @PostConstruct
+    public void init(){
+        staticUserRepository=userRepository;
+    }
+
+    public static ProjectDTO toDTO(Project project) {
         if (project == null) {
             return null;
         }
@@ -35,7 +40,7 @@ public class ProjectMapper {
         // Safely handle milestones that might be null
         if (project.getMilestones() != null) {
             builder.milestones(project.getMilestones().stream()
-                    .map(milestoneMapper::toDTO)
+                    .map(MilestoneMapper::toDTO)
                     .collect(Collectors.toList()));
         } else {
             builder.milestones(List.of());
@@ -44,7 +49,7 @@ public class ProjectMapper {
         // Safely handle tasks that might be null
         if (project.getTasks() != null) {
             builder.tasks(project.getTasks().stream()
-                    .map(taskMapper::toDTO)
+                    .map(TaskMapper::toDTO)
                     .collect(Collectors.toList()));
         } else {
             builder.tasks(List.of());
@@ -53,13 +58,13 @@ public class ProjectMapper {
         return builder.build();
     }
 
-    public List<ProjectDTO> toDTOList(List<Project> projects) {
+    public static List<ProjectDTO> toDTOList(List<Project> projects) {
         return projects.stream()
-                .map(this::toDTO)
+                .map(ProjectMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
-    public Project toEntity(ProjectDTO projectDTO) {
+    public static Project toEntity(ProjectDTO projectDTO) {
         if (projectDTO == null) {
             return null;
         }
@@ -73,7 +78,7 @@ public class ProjectMapper {
         }
 
         if (projectDTO.getUserId() != null) {
-            userRepository.findById(projectDTO.getUserId())
+            staticUserRepository.findById(projectDTO.getUserId())
                     .ifPresent(builder::user);
         }
 

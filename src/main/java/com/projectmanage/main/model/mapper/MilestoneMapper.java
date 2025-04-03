@@ -3,6 +3,7 @@ package com.projectmanage.main.model.mapper;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Component;
 
 import com.projectmanage.main.model.Milestone;
@@ -16,17 +17,23 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class MilestoneMapper {
 
-    private final ProjectRepository projectRepository;
-    private final TaskMapper taskMapper;
 
-    public MilestoneDTO toDTO(Milestone milestone) {
+    private final ProjectRepository projectRepository;
+    private static ProjectRepository staticProjectRepository;
+
+    @PostConstruct
+    public void init() {
+        staticProjectRepository = projectRepository;
+    }
+
+    public static MilestoneDTO toDTO(Milestone milestone) {
         if (milestone == null) {
             return null;
         }
 
         List<TaskDTO> tasks = milestone.getTasks() != null
                 ? milestone.getTasks().stream()
-                        .map(taskMapper::toDTO)
+                        .map(TaskMapper::toDTO)
                         .collect(Collectors.toList())
                 : List.of();
 
@@ -44,13 +51,14 @@ public class MilestoneMapper {
                 .build();
     }
 
-    public List<MilestoneDTO> toDTOList(List<Milestone> milestones) {
+    public static List<MilestoneDTO> toDTOList(List<Milestone> milestones) {
         return milestones.stream()
-                .map(this::toDTO)
+                .map(MilestoneMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
-    public Milestone toEntity(MilestoneDTO milestoneDTO) {
+    public static Milestone toEntity(MilestoneDTO milestoneDTO) {
+
         if (milestoneDTO == null) {
             return null;
         }
@@ -67,7 +75,7 @@ public class MilestoneMapper {
         }
 
         if (milestoneDTO.getProjectId() != null) {
-            projectRepository.findById(milestoneDTO.getProjectId())
+            staticProjectRepository.findById(milestoneDTO.getProjectId())
                     .ifPresent(builder::project);
         }
 

@@ -3,6 +3,7 @@ package com.projectmanage.main.model.mapper;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Component;
 
 import com.projectmanage.main.model.Task;
@@ -17,9 +18,17 @@ import lombok.RequiredArgsConstructor;
 public class TaskMapper {
 
     private final ProjectRepository projectRepository;
+    private static ProjectRepository staticProjectRepository;
     private final MilestoneRepository milestoneRepository;
+    private static MilestoneRepository staticMilestoneRepository;
 
-    public TaskDTO toDTO(Task task) {
+    @PostConstruct
+    public void init() {
+        staticProjectRepository = projectRepository;
+        staticMilestoneRepository = milestoneRepository;
+    }
+
+    public static TaskDTO toDTO(Task task) {
         if (task == null) {
             return null;
         }
@@ -41,13 +50,13 @@ public class TaskMapper {
         return builder.build();
     }
 
-    public List<TaskDTO> toDTOList(List<Task> tasks) {
+    public static List<TaskDTO> toDTOList(List<Task> tasks) {
         return tasks.stream()
-                .map(this::toDTO)
+                .map(TaskMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
-    public Task toEntity(TaskDTO taskDTO) {
+    public static Task toEntity(TaskDTO taskDTO) {
         if (taskDTO == null) {
             return null;
         }
@@ -63,12 +72,12 @@ public class TaskMapper {
         }
 
         if (taskDTO.getProjectId() != null) {
-            projectRepository.findById(taskDTO.getProjectId())
+            staticProjectRepository.findById(taskDTO.getProjectId())
                     .ifPresent(builder::project);
         }
 
         if (taskDTO.getMilestoneId() != null) {
-            milestoneRepository.findById(taskDTO.getMilestoneId())
+            staticMilestoneRepository.findById(taskDTO.getMilestoneId())
                     .ifPresent(builder::milestone);
         }
 
