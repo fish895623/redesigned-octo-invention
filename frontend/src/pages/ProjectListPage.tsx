@@ -1,5 +1,10 @@
-import { ProjectProvider } from "../context/ProjectContext";
-import ProjectList from "../components/lists/ProjectList";
+/**
+ * @file ProjectListPage.tsx
+ * @description This file is the main component for the ProjectListPage.
+ * It displays a list of projects.
+ */
+import { ProjectProvider } from '../context/ProjectContext';
+import ProjectList from '../components/lists/ProjectList';
 
 const ProjectListPage = () => {
   return (

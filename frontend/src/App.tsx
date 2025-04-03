@@ -1,22 +1,22 @@
-import "./App.css";
-import { AuthProvider } from "./context/AuthContext";
-import NavigationBar from "./components/ui/Navigation/NavigationBar";
-import { Routes, Route, Navigate } from "react-router-dom";
-import { lazy, Suspense } from "react";
-import { LoadingSpinner } from "./components/ui/Loading/LoadingSpinner";
-import { ProtectedRoute } from "./components/auth/ProtectedRoute";
-import { ProjectProvider } from "./context/ProjectContext";
+import './App.css';
+import { AuthProvider } from './context/AuthContext';
+import NavigationBar from './components/ui/Navigation/NavigationBar';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { lazy, Suspense } from 'react';
+import { LoadingSpinner } from './components/ui/Loading/LoadingSpinner';
+import { ProtectedRoute } from './components/auth/ProtectedRoute';
+import { ProjectProvider } from './context/ProjectContext';
 
 // Lazy load page components for better performance
-const Profile = lazy(() => import("./ProfilePage"));
-const LoginPage = lazy(() => import("./pages/LoginPage"));
-const UserRegister = lazy(() => import("./pages/UserRegister"));
-const ProjectListPage = lazy(() => import("./pages/ProjectListPage"));
-const ProjectPage = lazy(() => import("./pages/ProjectPage"));
-const MilestoneListPage = lazy(() => import("./pages/MilestoneListPage"));
-const MilestonePage = lazy(() => import("./pages/MilestonePage"));
-const TaskListPage = lazy(() => import("./pages/TaskListPage"));
-const TaskPage = lazy(() => import("./pages/TaskPage"));
+const Profile = lazy(() => import('./ProfilePage'));
+const LoginPage = lazy(() => import('./pages/LoginPage'));
+const UserRegister = lazy(() => import('./pages/UserRegister'));
+const ProjectListPage = lazy(() => import('./pages/ProjectListPage'));
+const ProjectPage = lazy(() => import('./pages/ProjectPage'));
+const MilestoneListPage = lazy(() => import('./pages/MilestoneListPage'));
+const MilestonePage = lazy(() => import('./pages/MilestonePage'));
+const TaskListPage = lazy(() => import('./pages/TaskListPage'));
+const TaskPage = lazy(() => import('./pages/TaskPage'));
 
 // Loading fallback component
 const LoadingFallback = () => (

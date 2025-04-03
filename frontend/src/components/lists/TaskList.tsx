@@ -1,7 +1,8 @@
-import { useState, useCallback, useMemo } from "react";
-import { useProjects } from "../../hooks/useProjects";
-import { Task, Milestone } from "../../types/project";
-import CreateTaskModal from "../modals/CreateTaskModal";
+import { useState, useCallback, useMemo } from 'react';
+import { useProject } from '../../context/ProjectContextDefinition';
+import { Task, Milestone } from '../../types/project';
+import CreateTaskModal from '../modals/CreateTaskModal';
+import EditTaskModal from '../modals/EditTaskModal';
 
 interface TaskListProps {
   projectId: number;
@@ -10,20 +11,12 @@ interface TaskListProps {
 }
 
 // Main TaskList component
-const TaskList = ({
-  projectId,
-  tasks = [],
-  milestones = [],
-}: TaskListProps) => {
-  const { updateTask, deleteTask } = useProjects();
-  const [editingTaskId, setEditingTaskId] = useState<number | null>(null);
-  const [editTitle, setEditTitle] = useState("");
-  const [editDescription, setEditDescription] = useState("");
-  const [editMilestoneId, setEditMilestoneId] = useState<number | undefined>(
-    undefined
-  );
-  const [filter, setFilter] = useState<"all" | "active" | "completed">("all");
+const TaskList = ({ projectId, tasks = [], milestones = [] }: TaskListProps) => {
+  const { updateTask, deleteTask } = useProject();
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [showTaskModal, setShowTaskModal] = useState(false);
+  const [filter, setFilter] = useState<'all' | 'active' | 'completed'>('all');
+  const [refreshKey, setRefreshKey] = useState(0);
 
   // Callbacks to avoid unnecessary rerenders
   const handleToggleTask = useCallback(
@@ -34,146 +27,135 @@ const TaskList = ({
         updatedAt: new Date(),
       });
     },
-    [updateTask]
+    [updateTask],
   );
 
   const handleEditTask = useCallback((task: Task) => {
-    setEditingTaskId(task.id);
-    setEditTitle(task.title);
-    setEditDescription(task.description || "");
-    setEditMilestoneId(task.milestoneId);
+    setEditingTask(task);
   }, []);
 
-  const handleSaveEdit = useCallback(
-    (task: Task) => {
-      if (editTitle.trim()) {
-        updateTask({
-          ...task,
-          title: editTitle.trim(),
-          description: editDescription.trim() || undefined,
-          milestoneId: editMilestoneId,
-          updatedAt: new Date(),
-        });
-        setEditingTaskId(null);
+  const handleDeleteTask = useCallback(
+    async (taskId: number) => {
+      if (window.confirm('Are you sure you want to delete this task?')) {
+        try {
+          await deleteTask(projectId, taskId);
+          // Force refresh after successful deletion
+          setRefreshKey((prev) => prev + 1);
+        } catch (error) {
+          console.error('Error deleting task:', error);
+          // Show user-friendly error message
+          alert('Failed to delete task. Please try again.');
+        }
       }
     },
-    [editTitle, editDescription, editMilestoneId, updateTask]
+    [deleteTask, projectId],
   );
 
-  const handleDeleteTask = useCallback(
-    (taskId: number) => {
-      if (window.confirm("Are you sure you want to delete this task?")) {
-        deleteTask(projectId, taskId);
-      }
-    },
-    [deleteTask, projectId]
-  );
+  const handleTaskCreated = useCallback(() => {
+    setRefreshKey((prev) => prev + 1);
+  }, []);
 
   // Sort tasks by update time
   const sortedTasks = useMemo(() => {
     return [...tasks].sort((a, b) => {
-      return b.updatedAt.getTime() - a.updatedAt.getTime();
+      const dateA = new Date(a.updatedAt);
+      const dateB = new Date(b.updatedAt);
+      return dateB.getTime() - dateA.getTime();
     });
-  }, [tasks]);
+  }, [tasks, refreshKey]);
 
   // Filter tasks based on completion status
   const filteredTasks = useMemo(() => {
     return sortedTasks.filter((task) => {
-      if (filter === "active") return !task.completed;
-      if (filter === "completed") return task.completed;
+      if (filter === 'active') return !task.completed;
+      if (filter === 'completed') return task.completed;
       return true;
     });
   }, [sortedTasks, filter]);
 
   return (
-    <div className="task-list">
-      <div className="task-list-header">
-        <h2>Tasks</h2>
-        <div className="task-list-controls">
-          <select
-            value={filter}
-            onChange={(e) => setFilter(e.target.value as typeof filter)}
-          >
-            <option value="all">All</option>
-            <option value="active">Active</option>
-            <option value="completed">Completed</option>
-          </select>
-          <button onClick={() => setShowTaskModal(true)}>Add Task</button>
-        </div>
+    <div className="w-full">
+      <div className="flex justify-end mb-4">
+        <select
+          value={filter}
+          onChange={(e) => setFilter(e.target.value as typeof filter)}
+          className="px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white"
+        >
+          <option value="all">All Tasks</option>
+          <option value="active">Active Tasks</option>
+          <option value="completed">Completed Tasks</option>
+        </select>
       </div>
-      <div className="task-list-content">
-        {filteredTasks.map((task) => (
-          <div key={task.id} className="task-item">
-            <input
-              type="checkbox"
-              checked={task.completed}
-              onChange={() => handleToggleTask(task)}
-            />
-            {editingTaskId === task.id ? (
-              <div className="task-edit">
-                <input
-                  type="text"
-                  value={editTitle}
-                  onChange={(e) => setEditTitle(e.target.value)}
-                  onBlur={() => handleSaveEdit(task)}
-                  onKeyDown={(e) => e.key === "Enter" && handleSaveEdit(task)}
-                />
-                <textarea
-                  value={editDescription}
-                  onChange={(e) => setEditDescription(e.target.value)}
-                  onBlur={() => handleSaveEdit(task)}
-                  placeholder="Add description..."
-                />
-                <select
-                  value={editMilestoneId || ""}
-                  onChange={(e) =>
-                    setEditMilestoneId(
-                      e.target.value ? Number(e.target.value) : undefined
-                    )
-                  }
-                  onBlur={() => handleSaveEdit(task)}
-                >
-                  <option value="">No Milestone</option>
-                  {milestones.map((milestone) => (
-                    <option key={milestone.id} value={milestone.id}>
-                      {milestone.title}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            ) : (
-              <div className="task-content">
-                <div className="task-title">{task.title}</div>
-                {task.description && (
-                  <div className="task-description">{task.description}</div>
-                )}
-                {task.milestoneId && (
-                  <div className="task-milestone">
-                    {milestones.find((m) => m.id === task.milestoneId)?.title}
+
+      <div className="space-y-4">
+        {filteredTasks.length > 0 ? (
+          filteredTasks.map((task) => (
+            <div key={task.id} className="bg-gray-800 rounded-lg p-4 border border-gray-700">
+              <div className="flex justify-between items-start">
+                <div className="text-left">
+                  <h3
+                    className={`text-lg font-semibold ${task.completed ? 'text-gray-400 line-through' : 'text-white'}`}
+                  >
+                    {task.title}
+                  </h3>
+                  {task.description && <p className="text-gray-400 mt-1">{task.description}</p>}
+                  <div className="mt-4 flex flex-wrap gap-4 text-sm text-gray-400">
+                    <div>Status: {task.completed ? 'Completed' : 'In Progress'}</div>
                   </div>
-                )}
-                <div className="task-meta">
-                  <span className="task-date">
-                    Updated: {new Date(task.updatedAt).toLocaleString()}
-                  </span>
-                  <span className="task-date">
-                    Created: {new Date(task.createdAt).toLocaleString()}
-                  </span>
+                </div>
+                <div
+                  className={`px-3 py-1 rounded-full text-sm font-medium ${
+                    task.completed ? 'bg-green-600 text-green-100' : 'bg-yellow-600 text-yellow-100'
+                  }`}
+                >
+                  {task.completed ? 'Completed' : 'In Progress'}
                 </div>
               </div>
-            )}
-            <div className="task-actions">
-              <button onClick={() => handleEditTask(task)}>Edit</button>
-              <button onClick={() => handleDeleteTask(task.id)}>Delete</button>
+              <div className="mt-2 flex space-x-2 justify-end">
+                <input
+                  type="checkbox"
+                  checked={task.completed}
+                  onChange={() => handleToggleTask(task)}
+                  className="mr-1 mt-1 h-4 w-4 rounded bg-gray-700 border-gray-600 text-blue-600"
+                />
+                <button
+                  onClick={() => handleEditTask(task)}
+                  className="px-2 py-1 bg-gray-700 text-white text-xs rounded hover:bg-gray-600"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => handleDeleteTask(task.id)}
+                  className="px-2 py-1 bg-red-700 text-white text-xs rounded hover:bg-red-600"
+                >
+                  Delete
+                </button>
+              </div>
             </div>
+          ))
+        ) : (
+          <div className="text-center text-gray-400 py-8">
+            No tasks found for this milestone. Add a task to get started.
           </div>
-        ))}
+        )}
       </div>
+
       {showTaskModal && (
         <CreateTaskModal
           projectId={projectId}
           milestones={milestones}
           onClose={() => setShowTaskModal(false)}
+          onTaskCreated={handleTaskCreated}
+        />
+      )}
+
+      {editingTask && (
+        <EditTaskModal
+          task={editingTask}
+          projectId={projectId}
+          milestones={milestones}
+          onClose={() => setEditingTask(null)}
+          onTaskEdited={handleTaskCreated}
         />
       )}
     </div>

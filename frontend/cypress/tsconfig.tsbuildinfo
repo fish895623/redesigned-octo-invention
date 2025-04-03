@@ -1,0 +1,1 @@
+{"root":["./e2e/auth.cy.ts","./e2e/error-handling.cy.ts","./e2e/milestones.cy.ts","./e2e/navigation.cy.ts","./e2e/projects.cy.ts","./e2e/tasks.cy.ts","./support/commands.ts","./support/e2e.ts","./support/interfaces.ts"],"version":"5.7.3"}

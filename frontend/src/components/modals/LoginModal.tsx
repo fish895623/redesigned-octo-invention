@@ -1,21 +1,8 @@
-import {
-  Card,
-  CardHeader,
-  CardBody,
-  CardFooter,
-  Typography,
-  Input,
-  Checkbox,
-  Button,
-} from "@material-tailwind/react";
+import { Card, CardHeader, CardBody, CardFooter, Typography, Input, Checkbox, Button } from '@material-tailwind/react';
 const LoginModal = () => {
   return (
     <Card className="w-96">
-      <CardHeader
-        variant="gradient"
-        color="gray"
-        className="mb-4 grid h-28 place-items-center"
-      >
+      <CardHeader variant="gradient" color="gray" className="mb-4 grid h-28 place-items-center">
         <Typography variant="h3" color="white">
           Sign In
         </Typography>
@@ -33,13 +20,7 @@ const LoginModal = () => {
         </Button>
         <Typography variant="small" className="mt-6 flex justify-center">
           Don&apos;t have an account?
-          <Typography
-            as="a"
-            href="#signup"
-            variant="small"
-            color="blue-gray"
-            className="ml-1 font-bold"
-          >
+          <Typography as="a" href="#signup" variant="small" color="blue-gray" className="ml-1 font-bold">
             Sign up
           </Typography>
         </Typography>

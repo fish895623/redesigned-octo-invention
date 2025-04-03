@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
-import { useProjects } from "../../hooks/useProjects";
-import { Task } from "../../types/project";
+import { useState, useEffect } from 'react';
+import { useProjects } from '../../hooks/useProjects';
+import { Task } from '../../types/project';
 
 interface TaskDetailProps {
   projectId: number;
@@ -13,29 +13,29 @@ const TaskDetail = ({ projectId, taskId }: TaskDetailProps) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [editTitle, setEditTitle] = useState("");
-  const [editDescription, setEditDescription] = useState("");
+  const [editTitle, setEditTitle] = useState('');
+  const [editDescription, setEditDescription] = useState('');
   const [editCompleted, setEditCompleted] = useState(false);
 
   useEffect(() => {
     // Find the project and task
     const project = projects.find((p) => p.id === projectId);
     if (!project) {
-      setError("Project not found");
+      setError('Project not found');
       setLoading(false);
       return;
     }
 
     const foundTask = project.tasks.find((t) => t.id === taskId);
     if (!foundTask) {
-      setError("Task not found");
+      setError('Task not found');
       setLoading(false);
       return;
     }
 
     setTask(foundTask);
     setEditTitle(foundTask.title);
-    setEditDescription(foundTask.description || "");
+    setEditDescription(foundTask.description || '');
     setEditCompleted(foundTask.completed);
     setLoading(false);
   }, [projectId, taskId, projects]);
@@ -65,34 +65,22 @@ const TaskDetail = ({ projectId, taskId }: TaskDetailProps) => {
   };
 
   const handleDelete = () => {
-    if (task && window.confirm("Are you sure you want to delete this task?")) {
+    if (task && window.confirm('Are you sure you want to delete this task?')) {
       deleteTask(projectId, task.id);
       // Redirect would happen via react-router navigation in a real app
     }
   };
 
   if (loading) {
-    return (
-      <div className="flex justify-center items-center p-8 text-gray-400">
-        Loading task...
-      </div>
-    );
+    return <div className="flex justify-center items-center p-8 text-gray-400">Loading task...</div>;
   }
 
   if (error) {
-    return (
-      <div className="p-4 text-center text-red-500 bg-red-900/20 rounded-md">
-        {error}
-      </div>
-    );
+    return <div className="p-4 text-center text-red-500 bg-red-900/20 rounded-md">{error}</div>;
   }
 
   if (!task) {
-    return (
-      <div className="p-4 text-center text-red-500 bg-red-900/20 rounded-md">
-        Task not found
-      </div>
-    );
+    return <div className="p-4 text-center text-red-500 bg-red-900/20 rounded-md">Task not found</div>;
   }
 
   return (
@@ -100,10 +88,7 @@ const TaskDetail = ({ projectId, taskId }: TaskDetailProps) => {
       {isEditing ? (
         <form onSubmit={handleUpdate} className="space-y-4">
           <div className="space-y-2">
-            <label
-              htmlFor="title"
-              className="block text-sm font-medium text-gray-300"
-            >
+            <label htmlFor="title" className="block text-sm font-medium text-gray-300">
               Title
             </label>
             <input
@@ -116,10 +101,7 @@ const TaskDetail = ({ projectId, taskId }: TaskDetailProps) => {
             />
           </div>
           <div className="space-y-2">
-            <label
-              htmlFor="description"
-              className="block text-sm font-medium text-gray-300"
-            >
+            <label htmlFor="description" className="block text-sm font-medium text-gray-300">
               Description
             </label>
             <textarea
@@ -164,17 +146,13 @@ const TaskDetail = ({ projectId, taskId }: TaskDetailProps) => {
             <h2 className="text-xl font-bold text-white">{task.title}</h2>
             <div
               className={`px-3 py-1 rounded-full text-sm font-medium ${
-                task.completed
-                  ? "bg-green-700 text-green-200"
-                  : "bg-gray-700 text-gray-200"
+                task.completed ? 'bg-green-700 text-green-200' : 'bg-gray-700 text-gray-200'
               }`}
             >
-              {task.completed ? "Completed" : "In Progress"}
+              {task.completed ? 'Completed' : 'In Progress'}
             </div>
           </div>
-          {task.description && (
-            <p className="text-gray-300">{task.description}</p>
-          )}
+          {task.description && <p className="text-gray-300">{task.description}</p>}
 
           <div className="space-y-1 text-sm text-gray-400">
             <p>Created: {new Date(task.createdAt).toLocaleString()}</p>
@@ -192,12 +170,10 @@ const TaskDetail = ({ projectId, taskId }: TaskDetailProps) => {
             <button
               onClick={handleToggleStatus}
               className={`px-4 py-2 ${
-                task.completed
-                  ? "bg-yellow-600 hover:bg-yellow-700"
-                  : "bg-green-600 hover:bg-green-700"
+                task.completed ? 'bg-yellow-600 hover:bg-yellow-700' : 'bg-green-600 hover:bg-green-700'
               } text-white font-medium rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500`}
             >
-              {task.completed ? "Mark as Incomplete" : "Mark as Complete"}
+              {task.completed ? 'Mark as Incomplete' : 'Mark as Complete'}
             </button>
             <button
               onClick={handleDelete}

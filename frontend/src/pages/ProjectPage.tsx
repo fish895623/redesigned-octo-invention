@@ -1,7 +1,7 @@
-import { useParams } from "react-router-dom";
-import { ProjectProvider } from "../context/ProjectContext";
-import ProjectDetail from "../components/details/ProjectDetail";
-import { useAuth } from "../hooks/useAuth";
+import { useParams } from 'react-router-dom';
+import { ProjectProvider } from '../context/ProjectContext';
+import ProjectDetail from '../components/details/ProjectDetail';
+import { useAuth } from '../hooks/useAuth';
 
 const ProjectPage = () => {
   const { loading } = useAuth();

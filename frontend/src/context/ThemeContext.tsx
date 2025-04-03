@@ -1,6 +1,6 @@
-import { useState, useMemo, ReactNode } from "react";
-import { ThemeProvider as MaterialTailwindThemeProvider } from "@material-tailwind/react";
-import { ThemeContext } from "./ThemeContextDefinition";
+import { useState, useMemo, ReactNode } from 'react';
+import { ThemeProvider as MaterialTailwindThemeProvider } from '@material-tailwind/react';
+import { ThemeContext } from './ThemeContextDefinition';
 
 type ThemeProviderProps = {
   children: ReactNode;
@@ -8,18 +8,17 @@ type ThemeProviderProps = {
 
 export const ThemeProvider = ({ children }: ThemeProviderProps) => {
   const [isDarkMode, setIsDarkMode] = useState(
-    localStorage.getItem("darkMode") === "true" ||
-      window.matchMedia("(prefers-color-scheme: dark)").matches
+    localStorage.getItem('darkMode') === 'true' || window.matchMedia('(prefers-color-scheme: dark)').matches,
   );
 
   // Apply dark mode class to html element
   useMemo(() => {
     if (isDarkMode) {
-      document.documentElement.classList.add("dark");
-      localStorage.setItem("darkMode", "true");
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('darkMode', 'true');
     } else {
-      document.documentElement.classList.remove("dark");
-      localStorage.setItem("darkMode", "false");
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('darkMode', 'false');
     }
   }, [isDarkMode]);
 
@@ -33,9 +32,7 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
 
   return (
     <ThemeContext.Provider value={{ isDarkMode, toggleDarkMode }}>
-      <MaterialTailwindThemeProvider value={materialTailwindTheme}>
-        {children}
-      </MaterialTailwindThemeProvider>
+      <MaterialTailwindThemeProvider value={materialTailwindTheme}>{children}</MaterialTailwindThemeProvider>
     </ThemeContext.Provider>
   );
 };
