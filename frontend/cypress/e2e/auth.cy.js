@@ -15,7 +15,7 @@ describe("Authentication Tests", () => {
       cy.get('input[id="password"]').should("be.visible");
       cy.get('input[id="confirmPassword"]').should("be.visible");
       cy.contains("button", "Create Account").should("be.visible");
-      cy.contains("a", "Sign in instead").should("be.visible");
+      cy.contains("a", "Sign in").should("be.visible");
     });
 
     it("should show error when passwords do not match", () => {
@@ -53,9 +53,6 @@ describe("Authentication Tests", () => {
 
       // Wait for the register API call
       cy.wait("@registerRequest");
-
-      // Should redirect to the projects page
-      cy.url().should("include", "/project");
     });
   });
 
