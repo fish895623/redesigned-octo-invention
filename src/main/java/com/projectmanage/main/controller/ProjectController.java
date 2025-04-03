@@ -49,8 +49,8 @@ public class ProjectController {
     @PutMapping("/{projectId}")
     public ResponseEntity<?> updateProject(@AuthenticationPrincipal CustomUserDetails userDetails,
                                            @PathVariable Long projectId,
-                                           @RequestBody ProjectDTO projectDTO){
-        //추후 구현
+                                           @RequestBody ProjectDTO projectDTO) {
+        projectService.updateProject(projectId, projectDTO);
         return ResponseEntity.ok("Project updated successfully");
     }
 
@@ -59,7 +59,7 @@ public class ProjectController {
     @DeleteMapping("/{projectId}")
     public ResponseEntity<?> deleteProject(@AuthenticationPrincipal CustomUserDetails userDetails,
                                            @PathVariable Long projectId){
-        //추후 구현
+        projectService.deleteProject(projectId);
         return ResponseEntity.ok("Project deleted successfully");
     }
 

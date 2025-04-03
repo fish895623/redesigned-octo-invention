@@ -2,6 +2,7 @@ package com.projectmanage.main.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,17 +48,42 @@ public class ProjectService {
         return projectMapper.toDTO(addProject);
     }
 
+    // 프로젝트 수정
+    public void updateProject(Long ProjectId, ProjectDTO project){
+        //프로젝트 아이디, 프로젝트 객체 내 아이디 동일 여부 검증
+        try {
+            if (!Objects.equals(ProjectId, project.getId())) {
+                throw new IllegalArgumentException("Invalid project id");
+            }
+            if (isValidProject(project)) {
+                throw new IllegalArgumentException("Invalid project");
+            }
+            projectRepository.save(projectMapper.toEntity(project));
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+    }
+
+    // 프로젝트 삭제
+    public void deleteProject(Long projectId){
+        try {
+            projectRepository.deleteById(projectId);
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+        }
+    }
+
     // 프로젝트 검증
     public boolean isValidProject(ProjectDTO project) {
+        // 프로젝트의 각 속성 존재여부 검증
+        if(project.getTitle().length()<=0||project.getDescription().length()<=0){
+            return false;
+        }
+
         // 프로젝트 제목 동일여부 파악
         if (projectRepository.existsByTitle(project.getTitle())) {
             return false;
         }
         return true;
     }
-
-    // 프로젝트 수정
-
-    // 프로젝트 삭제
-
 }
