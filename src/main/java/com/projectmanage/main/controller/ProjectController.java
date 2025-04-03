@@ -40,7 +40,7 @@ public class ProjectController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ProjectDTO> getProjectById(
-            @PathVariable Long id,
+            @PathVariable(name = "id") Long id,
             @AuthenticationPrincipal CustomUserDetails principal) {
         log.trace("ProjectController.getProjectById");
         ProjectDTO project = projectService.getProjectById(id);
@@ -58,7 +58,7 @@ public class ProjectController {
 
     @PutMapping("/{id}")
     public ResponseEntity<ProjectDTO> updateProject(
-            @PathVariable Long id,
+            @PathVariable(name = "id") Long id,
             @RequestBody ProjectDTO projectDTO,
             @AuthenticationPrincipal CustomUserDetails principal) {
         log.trace("ProjectController.updateProject");
@@ -67,7 +67,7 @@ public class ProjectController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProject(@PathVariable Long id,
+    public ResponseEntity<Void> deleteProject(@PathVariable(name = "id") Long id,
             @AuthenticationPrincipal CustomUserDetails principal) {
         log.trace("deleteProject");
         projectService.deleteProject(id);
