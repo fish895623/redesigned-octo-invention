@@ -29,26 +29,16 @@ public class MilestoneController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping
     public ResponseEntity<?> registerMilestone(@PathVariable(name = "projectId") Long projectId, @RequestBody MilestoneDTO milestone) {
-        try {
-            MilestoneDTO newMilestone = milestoneService.addMilestone(projectId, milestone);
-            return ResponseEntity.ok(newMilestone);
-        }catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        MilestoneDTO newMilestone = milestoneService.addMilestone(projectId, milestone);
+        return ResponseEntity.ok(newMilestone);
     }
 
     //마일스톤 하나 읽기
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/{milestoneId}")
-    public ResponseEntity<?> getMilestoneById(@PathVariable(name = "projectId") Long projectId, @PathVariable Long milestoneId) {
-        try {
-            MilestoneDTO milestone = milestoneService.getMilestone(milestoneId);
-            return ResponseEntity.ok(milestone);
-        }catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public ResponseEntity<?> getMilestoneById(@PathVariable(name = "projectId") Long projectId, @PathVariable(name = "milestoneId") Long milestoneId) {
+        MilestoneDTO milestone = milestoneService.getMilestone(milestoneId);
+        return ResponseEntity.ok(milestone);
     }
-
-
 
 }
