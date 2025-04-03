@@ -41,7 +41,7 @@ public class MilestoneService {
 
     //마일스톤 수정
     public void updateMilestone(MilestoneDTO milestoneDTO){
-        if (!InvalidMilestone(milestoneDTO)) {
+        if (!InvalidMilestone2(milestoneDTO)) {
             throw new IllegalArgumentException("Invalid milestone");
         }
         milestoneRepository.save(milestoneMapper.toEntity(milestoneDTO));
@@ -57,18 +57,25 @@ public class MilestoneService {
     }
 
     //마일스톤 검증
-    public boolean InvalidMilestone(MilestoneDTO milestoneDTO){
+    public boolean InvalidMilestone(MilestoneDTO milestone){
 
         //마일 스톤의 제목, 설명 검증
-        if(milestoneDTO.getTitle().length()<=0 || milestoneDTO.getDescription().length()<=0){
+        if(milestone.getTitle().length()<=0 || milestone.getDescription().length()<=0){
             return false;
         }
         //같은 프로젝트 내 중복여부 검증
-        if(milestoneRepository.existsByProject_IdAndTitle(milestoneDTO.getProjectId(),milestoneDTO.getTitle())){
+        if(milestoneRepository.existsByProject_IdAndTitle(milestone.getProjectId(), milestone.getTitle())){
             return false;
         }
 
+        return true;
+    }
 
+    //마일스톤 검증2(제목, 설명 유효성만 검증)
+    public boolean InvalidMilestone2(MilestoneDTO milestone){
+        if(milestone.getTitle().length()<=0 || milestone.getDescription().length()<=0){
+            return false;
+        }
         return true;
     }
 }

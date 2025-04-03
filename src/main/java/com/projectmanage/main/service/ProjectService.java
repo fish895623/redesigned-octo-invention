@@ -55,7 +55,7 @@ public class ProjectService {
             if (!Objects.equals(ProjectId, project.getId())) {
                 throw new IllegalArgumentException("Invalid project id");
             }
-            if (isValidProject(project)) {
+            if(!isValidProject2(project)){
                 throw new IllegalArgumentException("Invalid project");
             }
             projectRepository.save(projectMapper.toEntity(project));
@@ -84,6 +84,15 @@ public class ProjectService {
         if (projectRepository.existsByTitle(project.getTitle())) {
             return false;
         }
+        return true;
+    }
+
+    //프로젝트 검증2(제목, 설명 유효성만 검증)
+    public boolean isValidProject2(ProjectDTO project) {
+        if(project.getTitle().length()<=0||project.getDescription().length()<=0){
+            return false;
+        }
+
         return true;
     }
 }
