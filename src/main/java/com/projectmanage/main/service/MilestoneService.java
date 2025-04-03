@@ -1,0 +1,71 @@
+package com.projectmanage.main.service;
+
+import com.projectmanage.main.model.dto.MilestoneDTO;
+import com.projectmanage.main.model.mapper.MilestoneMapper;
+import com.projectmanage.main.repository.MilestoneRepository;
+import com.projectmanage.main.repository.ProjectRepository;
+import com.projectmanage.main.repository.TaskRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class MilestoneService {
+
+    private final MilestoneRepository milestoneRepository;
+    private final ProjectRepository projectRepository;
+    private final TaskRepository taskRepository;
+
+    private final MilestoneMapper milestoneMapper;
+
+    //마일스톤 목록 읽기
+    public List<MilestoneDTO> getMilestoneList(Long projectId){
+        return milestoneMapper.toDTOList(milestoneRepository.findByProject_Id(projectId));
+    }
+
+    //마일스톤 읽기
+    public MilestoneDTO getMilestone(Long milestoneId){
+        return milestoneMapper.toDTO(milestoneRepository.findById(milestoneId).orElse(null));
+    }
+
+    //마일스톤 추가
+    public MilestoneDTO addMilestone(Long projectId, MilestoneDTO milestoneDTO){
+        MilestoneDTO newMilestone=null;
+
+        try {
+            milestoneDTO.setProjectId(projectId);
+            if (!InvalidMilestone(milestoneDTO)) {
+                throw new IllegalArgumentException("Invalid milestone");
+            }
+            newMilestone = milestoneMapper.toDTO(milestoneRepository.save(milestoneMapper.toEntity(milestoneDTO)));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return newMilestone;
+    }
+
+    //마일스톤 수정
+    public void updateMilestone(MilestoneDTO milestoneDTO){
+
+    }
+
+    //마일스톤 삭제
+
+    //마일스톤 검증
+    public boolean InvalidMilestone(MilestoneDTO milestoneDTO){
+
+        //마일 스톤의 제목, 설명 검증
+        if(milestoneDTO.getTitle().length()<=0 || milestoneDTO.getDescription().length()<=0){
+            return false;
+        }
+        //같은 프로젝트 내 중복여부 검증
+        if(milestoneRepository.existsByProject_IdAndTitle(milestoneDTO.getProjectId(),milestoneDTO.getTitle())){
+            return false;
+        }
+
+
+        return true;
+    }
+}
