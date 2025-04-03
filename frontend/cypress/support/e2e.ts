@@ -13,6 +13,9 @@
 // https://on.cypress.io/configuration
 // ***********************************************************
 
+// Import interfaces to make them available globally
+import "./interfaces";
+
 // Import commands.ts using ES2015 syntax:
 import "./commands";
 
