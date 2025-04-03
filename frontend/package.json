@@ -13,9 +13,8 @@
     "clean": "rm -rf dist node_modules/.vite",
     "test": "cypress run",
     "test:open": "cypress open",
-    "test:e2e": "cypress run --e2e",
-    "test:e2e:open": "cypress open --e2e",
-    "test:component": "cypress run --component"
+    "test:e2e": "cypress run --e2e -b firefox",
+    "test:e2e:open": "cypress open --e2e -b firefox"
   },
   "dependencies": {
     "@material-tailwind/react": "^2.1.10",
