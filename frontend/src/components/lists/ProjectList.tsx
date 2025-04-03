@@ -2,6 +2,7 @@ import { useState, useCallback, useMemo } from 'react';
 import { useProject } from '../../context/ProjectContextDefinition';
 import { Project } from '../../types/project';
 import CreateProjectModal from '../modals/CreateProjectModal';
+import EditProjectModal from '../modals/EditProjectModal';
 import { Link, useNavigate } from 'react-router-dom';
 
 interface ProjectListProps {
@@ -12,33 +13,14 @@ interface ProjectListProps {
 const ProjectList = ({ onSelectProject }: ProjectListProps) => {
   const navigate = useNavigate();
   const { projects, updateProject, deleteProject } = useProject();
-  const [editingProjectId, setEditingProjectId] = useState<number | null>(null);
-  const [editTitle, setEditTitle] = useState('');
-  const [editDescription, setEditDescription] = useState('');
+  const [editingProject, setEditingProject] = useState<Project | null>(null);
   const [showProjectModal, setShowProjectModal] = useState(false);
   const [sortBy, setSortBy] = useState<'created' | 'updated'>('updated');
 
   // Callbacks to avoid unnecessary rerenders
   const handleEditProject = useCallback((project: Project) => {
-    setEditingProjectId(project.id);
-    setEditTitle(project.title);
-    setEditDescription(project.description || '');
+    setEditingProject(project);
   }, []);
-
-  const handleSaveEdit = useCallback(
-    (project: Project) => {
-      if (editTitle.trim()) {
-        updateProject({
-          ...project,
-          title: editTitle.trim(),
-          description: editDescription.trim() || undefined,
-          updatedAt: new Date(),
-        });
-        setEditingProjectId(null);
-      }
-    },
-    [editTitle, editDescription, updateProject],
-  );
 
   const handleDeleteProject = useCallback(
     async (projectId: number) => {
@@ -110,68 +92,22 @@ const ProjectList = ({ onSelectProject }: ProjectListProps) => {
             className="flex items-start gap-4 p-4 border border-gray-700 rounded-md bg-gray-800 project-item"
             onClick={() => onSelectProject && onSelectProject(project.id)}
           >
-            {editingProjectId === project.id ? (
-              <div className="flex-1 flex flex-col gap-2">
-                <input
-                  type="text"
-                  value={editTitle}
-                  onChange={(e) => setEditTitle(e.target.value)}
-                  onBlur={() => handleSaveEdit(project)}
-                  onKeyDown={(e) => e.key === 'Enter' && handleSaveEdit(project)}
-                  className="p-2 border border-gray-700 rounded-md w-full bg-gray-800 text-white focus:ring-2 focus:ring-blue-500"
-                  data-testid="edit-project-title-input"
-                />
-                <textarea
-                  value={editDescription}
-                  onChange={(e) => setEditDescription(e.target.value)}
-                  onBlur={() => handleSaveEdit(project)}
-                  placeholder="Add description..."
-                  className="p-2 border border-gray-700 rounded-md w-full bg-gray-800 text-white min-h-[100px] resize-y focus:ring-2 focus:ring-blue-500"
-                  data-testid="edit-project-description-input"
-                />
-                <div className="flex justify-end mt-2">
-                  <button
-                    onClick={() => handleSaveEdit(project)}
-                    className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition-colors"
-                    data-testid="save-edit-project"
-                  >
-                    Save
-                  </button>
-                </div>
+            <Link to={`/project/${project.id}/milestone`} className="flex-1 cursor-pointer no-underline text-inherit">
+              <div className="flex-1">
+                <h3 className="text-lg font-semibold text-white mb-2 text-left">{project.title}</h3>
+                {project.description && (
+                  <p className="text-gray-400 text-sm whitespace-pre-wrap text-left">{project.description}</p>
+                )}
               </div>
-            ) : (
-              <Link to={`/project/${project.id}/milestone`} className="flex-1 cursor-pointer no-underline text-inherit">
-                <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-white mb-2 text-left">{project.title}</h3>
-                  {project.description && (
-                    <p className="text-gray-400 text-sm whitespace-pre-wrap text-left">{project.description}</p>
-                  )}
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-white mb-2 text-left">{project.title}</h3>
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-white mb-2 text-left">
-                    {(project as any).name || project.title}
-                  </h3>
-                  {project.description && (
-                    <p className="text-gray-400 text-sm whitespace-pre-wrap text-left">{project.description}</p>
-                  )}
-                </div>
-                <div className="flex gap-4 mb-2 text-sm text-gray-300">
-                  <span>Milestones: {project.milestones.length}</span>
-                  <span>Tasks: {project.tasks.length}</span>
-                </div>
-                <div className="flex gap-4 text-sm text-gray-500">
-                  <span className="flex items-center gap-1">
-                    Updated: {new Date(project.updatedAt).toLocaleString()}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    Created: {new Date(project.createdAt).toLocaleString()}
-                  </span>
-                </div>
-              </Link>
-            )}
+              <div className="flex gap-4 mb-2 text-sm text-gray-300">
+                <span>Milestones: {project.milestones.length}</span>
+                <span>Tasks: {project.tasks.length}</span>
+              </div>
+              <div className="flex gap-4 text-sm text-gray-500">
+                <span className="flex items-center gap-1">Updated: {new Date(project.updatedAt).toLocaleString()}</span>
+                <span className="flex items-center gap-1">Created: {new Date(project.createdAt).toLocaleString()}</span>
+              </div>
+            </Link>
             <div className="flex gap-2">
               <button
                 className="inline-block px-3 py-1 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-md transition-colors"
@@ -208,6 +144,7 @@ const ProjectList = ({ onSelectProject }: ProjectListProps) => {
         ))}
       </div>
       {showProjectModal && <CreateProjectModal onClose={() => setShowProjectModal(false)} />}
+      {editingProject && <EditProjectModal project={editingProject} onClose={() => setEditingProject(null)} />}
     </div>
   );
 };

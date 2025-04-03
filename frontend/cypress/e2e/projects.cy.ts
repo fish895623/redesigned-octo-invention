@@ -1,6 +1,15 @@
 /// <reference types="cypress" />
 import { Project } from '../support/interfaces';
 
+declare global {
+  namespace Cypress {
+    interface Chainable {
+      login(email?: string, password?: string, options?: { mock?: boolean }): Chainable<void>;
+      mockProjects(projects?: Project[]): Chainable<void>;
+    }
+  }
+}
+
 describe('Project Management Tests', () => {
   beforeEach(() => {
     // Use custom login command
@@ -125,13 +134,136 @@ describe('Project Management Tests', () => {
       cy.contains('Project 2 description').should('be.visible');
     });
 
-    // Mark more complex tests as skipped for now
-    it.skip('should edit project', () => {
-      // Complex test to be implemented later
+    it('should edit project', () => {
+      const mockProjects = [
+        {
+          id: 1,
+          title: 'Test Project 1',
+          description: 'Project 1 description',
+          status: 'IN_PROGRESS' as const,
+          milestones: [],
+          tasks: [],
+          createdAt: new Date(2023, 0, 1),
+          updatedAt: new Date(2023, 0, 15),
+        },
+      ];
+
+      // Mock initial projects list
+      cy.intercept('GET', '/api/projects', {
+        statusCode: 200,
+        body: mockProjects,
+      }).as('initialProjectsList');
+
+      // Mock the project update API
+      const updatedProject = {
+        ...mockProjects[0],
+        title: 'Updated Project Title',
+        description: 'Updated project description',
+        updatedAt: new Date(),
+      };
+
+      cy.intercept('PUT', '/api/projects/1', {
+        statusCode: 200,
+        body: updatedProject,
+      }).as('updateProject');
+
+      // Mock the updated projects list after update
+      cy.intercept('GET', '/api/projects', {
+        statusCode: 200,
+        body: [updatedProject],
+      }).as('updatedProjectsList');
+
+      cy.visit('/project');
+      cy.wait('@authCheck');
+      cy.wait('@initialProjectsList');
+
+      // Click edit button on the first project
+      cy.get('[data-testid="edit-project-1"]').should('be.visible').click();
+
+      // Verify modal is open and has correct initial values
+      cy.get('input[type="text"]').should('be.visible').should('have.value', 'Test Project 1');
+      cy.get('textarea').should('be.visible').should('have.value', 'Project 1 description');
+
+      // Update the project details
+      cy.get('input[type="text"]').clear().type('Updated Project Title');
+      cy.get('textarea').clear().type('Updated project description');
+
+      // Submit the form
+      cy.contains('button', 'Save Changes').click();
+
+      // Wait for the update request
+      cy.wait('@updateProject');
+      cy.wait('@updatedProjectsList');
+
+      // Verify the updated content is visible
+      cy.contains('Updated Project Title').should('be.visible');
+      cy.contains('Updated project description').should('be.visible');
     });
 
-    it.skip('should delete project', () => {
-      // Complex test to be implemented later
+    it('should delete project', () => {
+      const mockProjects = [
+        {
+          id: 1,
+          title: 'Test Project 1',
+          description: 'Project 1 description',
+          status: 'IN_PROGRESS' as const,
+          milestones: [],
+          tasks: [],
+          createdAt: new Date(2023, 0, 1),
+          updatedAt: new Date(2023, 0, 15),
+        },
+        {
+          id: 2,
+          title: 'Test Project 2',
+          description: 'Project 2 description',
+          status: 'PLANNED' as const,
+          milestones: [],
+          tasks: [],
+          createdAt: new Date(2023, 1, 1),
+          updatedAt: new Date(2023, 1, 15),
+        },
+      ];
+
+      // Mock initial projects list
+      cy.intercept('GET', '/api/projects', {
+        statusCode: 200,
+        body: mockProjects,
+      }).as('initialProjectsList');
+
+      // Mock the project delete API
+      cy.intercept('DELETE', '/api/projects/1', {
+        statusCode: 204,
+      }).as('deleteProject');
+
+      // Mock the updated projects list after deletion
+      cy.intercept('GET', '/api/projects', {
+        statusCode: 200,
+        body: [mockProjects[1]],
+      }).as('updatedProjectsList');
+
+      cy.visit('/project');
+      cy.wait('@authCheck');
+      cy.wait('@initialProjectsList');
+
+      // Stub the window.confirm to return true
+      cy.window().then((win) => {
+        cy.stub(win, 'confirm').returns(true);
+      });
+
+      // Click delete button on the first project
+      cy.get('[data-testid="delete-project-1"]').should('be.visible').click();
+
+      // Wait for the delete request
+      cy.wait('@deleteProject');
+      cy.wait('@updatedProjectsList');
+
+      // Verify the project is no longer visible
+      cy.contains('Test Project 1').should('not.exist');
+      cy.contains('Project 1 description').should('not.exist');
+
+      // Verify the remaining project is still visible
+      cy.contains('Test Project 2').should('be.visible');
+      cy.contains('Project 2 description').should('be.visible');
     });
 
     it('should handle API errors when creating a project', () => {
