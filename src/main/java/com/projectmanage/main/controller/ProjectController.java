@@ -21,16 +21,16 @@ public class ProjectController {
 
     //프로젝트 목록 읽기
     @PreAuthorize("isAuthenticated()")
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<?> getAllProjects(@AuthenticationPrincipal CustomUserDetails userDetails){
         return ResponseEntity.ok(projectService.getProjectListByUser(userDetails.getUsername()));
     }
 
     //프로젝트 등록
     @PreAuthorize("isAuthenticated()")
-    @PostMapping("/")
+    @PostMapping
     public ResponseEntity<?> PostProject(@AuthenticationPrincipal CustomUserDetails userDetails,
-                                         ProjectDTO projectDTO){
+                                         @RequestBody ProjectDTO projectDTO){
         projectDTO.setUserId(userService.getUserFromPrincipal(userDetails).getId());
         ProjectDTO newProject=projectService.addProject(projectDTO);
         return ResponseEntity.ok(newProject);
