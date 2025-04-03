@@ -89,19 +89,23 @@ Cypress.Commands.add('mockProjects', (projects?: Project[]) => {
   const defaultProjects: Project[] = [
     {
       id: 1,
-      name: 'Test Project 1',
+      title: 'Test Project 1',
       description: 'Project 1 description',
       status: 'IN_PROGRESS',
       milestones: [],
       tasks: [],
+      createdAt: new Date(2023, 0, 1),
+      updatedAt: new Date(2023, 0, 15),
     },
     {
       id: 2,
-      name: 'Test Project 2',
+      title: 'Test Project 2',
       description: 'Project 2 description',
       status: 'PLANNED',
       milestones: [],
       tasks: [],
+      createdAt: new Date(2023, 1, 1),
+      updatedAt: new Date(2023, 1, 15),
     },
   ];
 
@@ -124,13 +128,13 @@ Cypress.Commands.add('mockProjectDetails', (project: Project | number = 1) => {
 
   const projectDetails: Project = {
     id: projectId,
-    name: `Test Project ${projectId}`,
+    title: `Test Project ${projectId}`,
     description: `Project ${projectId} description`,
     status: 'IN_PROGRESS',
     milestones: [
       {
         id: 1,
-        name: 'Milestone 1',
+        title: 'Milestone 1',
         description: 'First milestone',
         dueDate: '2023-12-31',
         status: 'IN_PROGRESS',
@@ -140,7 +144,7 @@ Cypress.Commands.add('mockProjectDetails', (project: Project | number = 1) => {
     tasks: [
       {
         id: 1,
-        name: 'Task 1',
+        title: 'Task 1',
         description: 'First task',
         status: 'TODO',
         priority: 'HIGH',
@@ -149,11 +153,15 @@ Cypress.Commands.add('mockProjectDetails', (project: Project | number = 1) => {
         milestoneId: 1,
       },
     ],
+    createdAt: new Date(2023, 0, 1),
+    updatedAt: new Date(2023, 0, 15),
   };
 
+  // Make sure the intercept is properly defined with the correct URL pattern
   cy.intercept('GET', `/api/projects/${projectId}`, {
     statusCode: 200,
     body: projectDetails,
+    delay: 0, // Ensure no delay is added
   }).as('projectDetailsRequest');
 });
 
@@ -163,7 +171,7 @@ Cypress.Commands.add('mockMilestones', (milestones?: Milestone[]) => {
   const defaultMilestones: Milestone[] = [
     {
       id: 1,
-      name: 'Milestone 1',
+      title: 'Milestone 1',
       description: 'First milestone',
       dueDate: '2023-12-31',
       status: 'IN_PROGRESS',
@@ -171,7 +179,7 @@ Cypress.Commands.add('mockMilestones', (milestones?: Milestone[]) => {
     },
     {
       id: 2,
-      name: 'Milestone 2',
+      title: 'Milestone 2',
       description: 'Second milestone',
       dueDate: '2024-03-31',
       status: 'PLANNED',
@@ -191,7 +199,7 @@ Cypress.Commands.add('mockMilestoneDetails', (milestone?: Milestone) => {
   // Default milestone if none provided
   const defaultMilestone: Milestone = {
     id: 1,
-    name: 'Milestone 1',
+    title: 'Milestone 1',
     description: 'First milestone',
     dueDate: '2023-12-31',
     status: 'IN_PROGRESS',
@@ -212,7 +220,7 @@ Cypress.Commands.add('mockTasks', (tasks?: ProjectTask[]) => {
   const defaultTasks: ProjectTask[] = [
     {
       id: 1,
-      name: 'Task 1',
+      title: 'Task 1',
       description: 'First task',
       status: 'TODO',
       priority: 'HIGH',
@@ -222,7 +230,7 @@ Cypress.Commands.add('mockTasks', (tasks?: ProjectTask[]) => {
     },
     {
       id: 2,
-      name: 'Task 2',
+      title: 'Task 2',
       description: 'Second task',
       status: 'IN_PROGRESS',
       priority: 'MEDIUM',
@@ -243,7 +251,7 @@ Cypress.Commands.add('mockTaskDetails', (task?: ProjectTask) => {
   // Default task if none provided
   const defaultTask: ProjectTask = {
     id: 1,
-    name: 'Task 1',
+    title: 'Task 1',
     description: 'First task',
     status: 'TODO',
     priority: 'HIGH',

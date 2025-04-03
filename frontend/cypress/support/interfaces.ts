@@ -11,7 +11,7 @@ export interface User {
 
 export interface Task {
   id: number;
-  name: string;
+  title: string;
   description: string;
   status: 'TODO' | 'IN_PROGRESS' | 'COMPLETED';
   priority: 'LOW' | 'MEDIUM' | 'HIGH';
@@ -22,7 +22,7 @@ export interface Task {
 
 export interface Milestone {
   id: number;
-  name: string;
+  title: string;
   description: string;
   dueDate: string;
   status: 'PLANNED' | 'IN_PROGRESS' | 'COMPLETED';
@@ -31,7 +31,7 @@ export interface Milestone {
 
 export interface Project {
   id: number;
-  name: string;
+  title: string;
   description: string;
   status: 'PLANNED' | 'IN_PROGRESS' | 'COMPLETED';
   milestones: Milestone[];
