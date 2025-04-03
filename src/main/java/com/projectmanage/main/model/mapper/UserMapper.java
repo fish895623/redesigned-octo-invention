@@ -24,7 +24,7 @@ public class UserMapper {
      * @param user the User entity
      * @return the UserDTO
      */
-    public static UserDTO toDto(User user) {
+    public UserDTO toDto(User user) {
         if (user == null) {
             return null;
         }
@@ -45,7 +45,7 @@ public class UserMapper {
      * @param userDTO the UserDTO
      * @return the User entity
      */
-    public static User toEntity(UserDTO userDTO) {
+    public User toEntity(UserDTO userDTO) {
         if (userDTO == null) {
             return null;
         }
@@ -66,13 +66,13 @@ public class UserMapper {
      * @param users list of User entities
      * @return list of UserDTOs
      */
-    public static List<UserDTO> toDtoList(List<User> users) {
+    public List<UserDTO> toDtoList(List<User> users) {
         if (users == null) {
             return Collections.emptyList();
         }
 
         return users.stream()
-                .map(UserMapper::toDto)
+                .map(this::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -83,7 +83,7 @@ public class UserMapper {
      * @param userDTO the UserDTO with updated data
      * @return the updated User entity
      */
-    public static User updateEntityFromDto(User user, UserDTO userDTO) {
+    public User updateEntityFromDto(User user, UserDTO userDTO) {
         if (user == null || userDTO == null) {
             return user;
         }

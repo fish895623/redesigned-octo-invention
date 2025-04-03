@@ -3,7 +3,6 @@ package com.projectmanage.main.model.mapper;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Component;
 
 import com.projectmanage.main.model.Milestone;
@@ -17,23 +16,17 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class MilestoneMapper {
 
-
     private final ProjectRepository projectRepository;
-    private static ProjectRepository staticProjectRepository;
+    private final TaskMapper taskMapper;
 
-    @PostConstruct
-    public void init() {
-        staticProjectRepository = projectRepository;
-    }
-
-    public static MilestoneDTO toDTO(Milestone milestone) {
+    public MilestoneDTO toDTO(Milestone milestone) {
         if (milestone == null) {
             return null;
         }
 
         List<TaskDTO> tasks = milestone.getTasks() != null
                 ? milestone.getTasks().stream()
-                        .map(TaskMapper::toDTO)
+                        .map(taskMapper::toDTO)
                         .collect(Collectors.toList())
                 : List.of();
 
@@ -51,14 +44,13 @@ public class MilestoneMapper {
                 .build();
     }
 
-    public static List<MilestoneDTO> toDTOList(List<Milestone> milestones) {
+    public List<MilestoneDTO> toDTOList(List<Milestone> milestones) {
         return milestones.stream()
-                .map(MilestoneMapper::toDTO)
+                .map(this::toDTO)
                 .collect(Collectors.toList());
     }
 
-    public static Milestone toEntity(MilestoneDTO milestoneDTO) {
-
+    public Milestone toEntity(MilestoneDTO milestoneDTO) {
         if (milestoneDTO == null) {
             return null;
         }
@@ -75,7 +67,7 @@ public class MilestoneMapper {
         }
 
         if (milestoneDTO.getProjectId() != null) {
-            staticProjectRepository.findById(milestoneDTO.getProjectId())
+            projectRepository.findById(milestoneDTO.getProjectId())
                     .ifPresent(builder::project);
         }
 
