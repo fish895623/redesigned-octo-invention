@@ -41,7 +41,7 @@ import { User, Project, Milestone, Task as ProjectTask } from './interfaces';
 declare global {
   namespace Cypress {
     interface Chainable {
-      login(email?: string, password?: string): Chainable<void>;
+      login(email?: string, password?: string, options?: { mock?: boolean }): Chainable<void>;
       mockProjects(projects?: Project[]): Chainable<void>;
       mockProjectDetails(project: Project | number): Chainable<void>;
       mockMilestones(milestones?: Milestone[]): Chainable<void>;
@@ -53,34 +53,55 @@ declare global {
   }
 }
 
-// -- This is a parent command --
-Cypress.Commands.add('login', (email: string = 'test@example.com', password: string = 'password123') => {
-  // Mock authentication
-  const user: User = {
-    authenticated: true,
-    id: 1,
-    name: 'Test User',
-    email,
-    accessToken: 'fake-access-token',
-    refreshToken: 'fake-refresh-token',
-  };
+// Login command with support for both mocked and real authentication
+Cypress.Commands.add('login', (email = 'test@example.com', password = 'password123', options = { mock: true }) => {
+  if (options.mock) {
+    // Mock authentication approach
+    const user = {
+      authenticated: true,
+      id: 1,
+      name: 'Test User',
+      email,
+      accessToken: 'fake-access-token',
+      refreshToken: 'fake-refresh-token',
+    };
 
-  cy.intercept('POST', '/api/auth/login', {
-    statusCode: 200,
-    body: user,
-  }).as('loginRequest');
+    cy.intercept('POST', '/api/auth/login', {
+      statusCode: 200,
+      body: user,
+    }).as('loginRequest');
 
-  // Set tokens in localStorage
-  cy.window().then((win) => {
-    win.localStorage.setItem('accessToken', 'fake-access-token');
-    win.localStorage.setItem('refreshToken', 'fake-refresh-token');
-  });
+    // Set tokens in localStorage
+    cy.window().then((win) => {
+      win.localStorage.setItem('accessToken', 'fake-access-token');
+      win.localStorage.setItem('refreshToken', 'fake-refresh-token');
+    });
 
-  // Mock authenticated user
-  cy.intercept('GET', '/api/auth/user', {
-    statusCode: 200,
-    body: user,
-  }).as('authCheck');
+    // Mock authenticated user
+    cy.intercept('GET', '/api/auth/user', {
+      statusCode: 200,
+      body: user,
+    }).as('authCheck');
+  } else {
+    // Real authentication approach
+    cy.visit('/login');
+
+    // Fill out the login form
+    cy.get('[data-testid="email-input"], input[type="email"], input[name="email"]').should('be.visible').type(email);
+
+    cy.get('[data-testid="password-input"], input[type="password"], input[name="password"]')
+      .should('be.visible')
+      .type(password);
+
+    // Submit the form
+    cy.get('[data-testid="login-button"], button[type="submit"]').should('be.visible').click();
+
+    // Wait for navigation and authentication to complete
+    cy.url().should('not.include', '/login');
+
+    // Verify authentication state
+    cy.window().its('localStorage.accessToken').should('exist');
+  }
 });
 
 // Mock project data for testing

@@ -45,15 +45,15 @@ const ProjectList = ({ onSelectProject }: ProjectListProps) => {
       if (window.confirm('프로젝트를 삭제하시겠습니까?')) {
         try {
           await deleteProject(projectId);
-          // 프로젝트 삭제 후 프로젝트 목록 페이지로 이동
-          navigate('/');
+          // 삭제 후 페이지 이동을 제거하여 목록에서 바로 삭제되도록 수정
+          // navigate('/');
         } catch (error) {
           console.error('Error deleting project:', error);
           alert('프로젝트 삭제에 실패했습니다. 다시 시도해주세요.');
         }
       }
     },
-    [deleteProject, navigate],
+    [deleteProject],
   );
 
   // Sort projects by either created or updated time with safe date handling
@@ -107,7 +107,7 @@ const ProjectList = ({ onSelectProject }: ProjectListProps) => {
         {sortedProjects.map((project) => (
           <div
             key={project.id}
-            className="flex items-start gap-4 p-4 border border-gray-700 rounded-md bg-gray-800"
+            className="flex items-start gap-4 p-4 border border-gray-700 rounded-md bg-gray-800 project-item"
             onClick={() => onSelectProject && onSelectProject(project.id)}
           >
             {editingProjectId === project.id ? (
@@ -119,6 +119,7 @@ const ProjectList = ({ onSelectProject }: ProjectListProps) => {
                   onBlur={() => handleSaveEdit(project)}
                   onKeyDown={(e) => e.key === 'Enter' && handleSaveEdit(project)}
                   className="p-2 border border-gray-700 rounded-md w-full bg-gray-800 text-white focus:ring-2 focus:ring-blue-500"
+                  data-testid="edit-project-title-input"
                 />
                 <textarea
                   value={editDescription}
@@ -126,7 +127,17 @@ const ProjectList = ({ onSelectProject }: ProjectListProps) => {
                   onBlur={() => handleSaveEdit(project)}
                   placeholder="Add description..."
                   className="p-2 border border-gray-700 rounded-md w-full bg-gray-800 text-white min-h-[100px] resize-y focus:ring-2 focus:ring-blue-500"
+                  data-testid="edit-project-description-input"
                 />
+                <div className="flex justify-end mt-2">
+                  <button
+                    onClick={() => handleSaveEdit(project)}
+                    className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition-colors"
+                    data-testid="save-edit-project"
+                  >
+                    Save
+                  </button>
+                </div>
               </div>
             ) : (
               <Link to={`/project/${project.id}/milestone`} className="flex-1 cursor-pointer no-underline text-inherit">
@@ -168,6 +179,7 @@ const ProjectList = ({ onSelectProject }: ProjectListProps) => {
                   e.stopPropagation();
                   navigate(`/project/${project.id}`);
                 }}
+                data-testid={`view-project-${project.id}`}
               >
                 More
               </button>
@@ -177,6 +189,7 @@ const ProjectList = ({ onSelectProject }: ProjectListProps) => {
                   e.stopPropagation();
                   handleEditProject(project);
                 }}
+                data-testid={`edit-project-${project.id}`}
               >
                 Edit
               </button>
@@ -186,6 +199,7 @@ const ProjectList = ({ onSelectProject }: ProjectListProps) => {
                   e.stopPropagation();
                   handleDeleteProject(project.id);
                 }}
+                data-testid={`delete-project-${project.id}`}
               >
                 Delete
               </button>
