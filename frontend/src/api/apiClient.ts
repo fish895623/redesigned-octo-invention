@@ -1,4 +1,4 @@
-import { API_ENDPOINTS, createHeaders } from "../config/api";
+import { API_ENDPOINTS, createHeaders } from '../config/api';
 
 interface ApiResponse<T> {
   data: T;
@@ -13,8 +13,8 @@ class ApiClient {
   private refreshPromise: Promise<boolean> | null = null;
 
   private constructor() {
-    this.accessToken = localStorage.getItem("accessToken");
-    this.refreshToken = localStorage.getItem("refreshToken");
+    this.accessToken = localStorage.getItem('accessToken');
+    this.refreshToken = localStorage.getItem('refreshToken');
   }
 
   public static getInstance(): ApiClient {
@@ -27,15 +27,15 @@ class ApiClient {
   public setTokens(accessToken: string, refreshToken: string): void {
     this.accessToken = accessToken;
     this.refreshToken = refreshToken;
-    localStorage.setItem("accessToken", accessToken);
-    localStorage.setItem("refreshToken", refreshToken);
+    localStorage.setItem('accessToken', accessToken);
+    localStorage.setItem('refreshToken', refreshToken);
   }
 
   public removeTokens(): void {
     this.accessToken = null;
     this.refreshToken = null;
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
   }
 
   private async refreshAccessToken(): Promise<boolean> {
@@ -51,7 +51,7 @@ class ApiClient {
       this.refreshPromise = new Promise((resolve) => {
         try {
           fetch(API_ENDPOINTS.auth.refresh, {
-            method: "POST",
+            method: 'POST',
             headers: {
               ...createHeaders(),
             },
@@ -59,17 +59,17 @@ class ApiClient {
           })
             .then((response) => {
               if (!response.ok) {
-                throw new Error("Failed to refresh token");
+                throw new Error('Failed to refresh token');
               }
               return response.json();
             })
             .then((data) => {
               this.accessToken = data.accessToken;
-              localStorage.setItem("accessToken", data.accessToken);
+              localStorage.setItem('accessToken', data.accessToken);
               resolve(true);
             })
             .catch((error) => {
-              console.error("Token refresh failed:", error);
+              console.error('Token refresh failed:', error);
               this.removeTokens();
               resolve(false);
             })
@@ -77,7 +77,7 @@ class ApiClient {
               this.refreshPromise = null;
             });
         } catch (error) {
-          console.error("Token refresh failed:", error);
+          console.error('Token refresh failed:', error);
           this.removeTokens();
           resolve(false);
           this.refreshPromise = null;
@@ -86,7 +86,7 @@ class ApiClient {
 
       return this.refreshPromise;
     } catch (error) {
-      console.error("Error refreshing token:", error);
+      console.error('Error refreshing token:', error);
       this.removeTokens();
       return false;
     }
@@ -95,13 +95,11 @@ class ApiClient {
   private async request<T>(
     endpoint: string,
     options: RequestInit = {},
-    retryWithRefresh = true
+    retryWithRefresh = true,
   ): Promise<ApiResponse<T>> {
     const headers = {
       ...createHeaders(),
-      ...(this.accessToken
-        ? { Authorization: `Bearer ${this.accessToken}` }
-        : {}),
+      ...(this.accessToken ? { Authorization: `Bearer ${this.accessToken}` } : {}),
       ...options.headers,
     };
 
@@ -119,27 +117,22 @@ class ApiClient {
           return this.request<T>(endpoint, options, false);
         } else {
           // Redirect to login
-          window.location.href = "/login";
-          throw new Error("Session expired. Please login again.");
+          window.location.href = '/login';
+          throw new Error('Session expired. Please login again.');
         }
       }
 
       // Handle other errors
       if (!response.ok) {
         const errorData = await response.json().catch(() => null);
-        throw new Error(
-          errorData?.message || `HTTP error! status: ${response.status}`
-        );
+        throw new Error(errorData?.message || `HTTP error! status: ${response.status}`);
       }
 
       // Check if response is empty (common for DELETE operations)
-      const contentType = response.headers.get("content-type");
-      const contentLength = response.headers.get("content-length");
+      const contentType = response.headers.get('content-type');
+      const contentLength = response.headers.get('content-length');
 
-      if (
-        contentLength === "0" ||
-        (!contentType?.includes("application/json") && response.status === 204)
-      ) {
+      if (contentLength === '0' || (!contentType?.includes('application/json') && response.status === 204)) {
         return {
           data: {} as T,
           status: response.status,
@@ -155,7 +148,7 @@ class ApiClient {
       if (error instanceof Error) {
         throw error;
       }
-      throw new Error("Unknown error occurred");
+      throw new Error('Unknown error occurred');
     }
   }
 
@@ -163,29 +156,23 @@ class ApiClient {
     return this.request<T>(endpoint);
   }
 
-  public async post<T>(
-    endpoint: string,
-    body: unknown
-  ): Promise<ApiResponse<T>> {
+  public async post<T>(endpoint: string, body: unknown): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, {
-      method: "POST",
+      method: 'POST',
       body: JSON.stringify(body),
     });
   }
 
-  public async put<T>(
-    endpoint: string,
-    body: unknown
-  ): Promise<ApiResponse<T>> {
+  public async put<T>(endpoint: string, body: unknown): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, {
-      method: "PUT",
+      method: 'PUT',
       body: JSON.stringify(body),
     });
   }
 
   public async delete<T>(endpoint: string): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, {
-      method: "DELETE",
+      method: 'DELETE',
     });
   }
 }

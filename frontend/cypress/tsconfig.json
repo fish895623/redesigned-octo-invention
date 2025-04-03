@@ -10,10 +10,5 @@
     "strict": true,
     "skipLibCheck": true
   },
-  "include": [
-    "**/*.ts",
-    "support/interfaces.ts",
-    "support/commands.ts",
-    "support/e2e.ts"
-  ]
+  "include": ["**/*.ts", "support/interfaces.ts", "support/commands.ts", "support/e2e.ts"]
 }

@@ -1,5 +1,5 @@
 /// <reference types="cypress" />
-import { User, Project, Milestone, Task } from "./interfaces";
+import { User, Project, Milestone, Task } from './interfaces';
 
 // To avoid the type conflict between the custom Task interface and Cypress.Task
 declare namespace Cypress {

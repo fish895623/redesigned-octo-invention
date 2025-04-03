@@ -26,6 +26,7 @@ export interface Milestone {
 export interface Project {
   id: number;
   title: string;
+  name?: string;
   description?: string;
   milestones: Milestone[];
   tasks: Task[];

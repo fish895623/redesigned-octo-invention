@@ -1,8 +1,8 @@
-import { useState, useCallback, useMemo } from "react";
-import { useProject } from "../../context/ProjectContextDefinition";
-import { Task, Milestone } from "../../types/project";
-import CreateTaskModal from "../modals/CreateTaskModal";
-import EditTaskModal from "../modals/EditTaskModal";
+import { useState, useCallback, useMemo } from 'react';
+import { useProject } from '../../context/ProjectContextDefinition';
+import { Task, Milestone } from '../../types/project';
+import CreateTaskModal from '../modals/CreateTaskModal';
+import EditTaskModal from '../modals/EditTaskModal';
 
 interface TaskListProps {
   projectId: number;
@@ -11,15 +11,11 @@ interface TaskListProps {
 }
 
 // Main TaskList component
-const TaskList = ({
-  projectId,
-  tasks = [],
-  milestones = [],
-}: TaskListProps) => {
+const TaskList = ({ projectId, tasks = [], milestones = [] }: TaskListProps) => {
   const { updateTask, deleteTask } = useProject();
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [showTaskModal, setShowTaskModal] = useState(false);
-  const [filter, setFilter] = useState<"all" | "active" | "completed">("all");
+  const [filter, setFilter] = useState<'all' | 'active' | 'completed'>('all');
   const [refreshKey, setRefreshKey] = useState(0);
 
   // Callbacks to avoid unnecessary rerenders
@@ -31,7 +27,7 @@ const TaskList = ({
         updatedAt: new Date(),
       });
     },
-    [updateTask]
+    [updateTask],
   );
 
   const handleEditTask = useCallback((task: Task) => {
@@ -40,19 +36,19 @@ const TaskList = ({
 
   const handleDeleteTask = useCallback(
     async (taskId: number) => {
-      if (window.confirm("Are you sure you want to delete this task?")) {
+      if (window.confirm('Are you sure you want to delete this task?')) {
         try {
           await deleteTask(projectId, taskId);
           // Force refresh after successful deletion
           setRefreshKey((prev) => prev + 1);
         } catch (error) {
-          console.error("Error deleting task:", error);
+          console.error('Error deleting task:', error);
           // Show user-friendly error message
-          alert("Failed to delete task. Please try again.");
+          alert('Failed to delete task. Please try again.');
         }
       }
     },
-    [deleteTask, projectId]
+    [deleteTask, projectId],
   );
 
   const handleTaskCreated = useCallback(() => {
@@ -71,8 +67,8 @@ const TaskList = ({
   // Filter tasks based on completion status
   const filteredTasks = useMemo(() => {
     return sortedTasks.filter((task) => {
-      if (filter === "active") return !task.completed;
-      if (filter === "completed") return task.completed;
+      if (filter === 'active') return !task.completed;
+      if (filter === 'completed') return task.completed;
       return true;
     });
   }, [sortedTasks, filter]);
@@ -94,38 +90,25 @@ const TaskList = ({
       <div className="space-y-4">
         {filteredTasks.length > 0 ? (
           filteredTasks.map((task) => (
-            <div
-              key={task.id}
-              className="bg-gray-800 rounded-lg p-4 border border-gray-700"
-            >
+            <div key={task.id} className="bg-gray-800 rounded-lg p-4 border border-gray-700">
               <div className="flex justify-between items-start">
                 <div className="text-left">
                   <h3
-                    className={`text-lg font-semibold ${
-                      task.completed
-                        ? "text-gray-400 line-through"
-                        : "text-white"
-                    }`}
+                    className={`text-lg font-semibold ${task.completed ? 'text-gray-400 line-through' : 'text-white'}`}
                   >
                     {task.title}
                   </h3>
-                  {task.description && (
-                    <p className="text-gray-400 mt-1">{task.description}</p>
-                  )}
+                  {task.description && <p className="text-gray-400 mt-1">{task.description}</p>}
                   <div className="mt-4 flex flex-wrap gap-4 text-sm text-gray-400">
-                    <div>
-                      Status: {task.completed ? "Completed" : "In Progress"}
-                    </div>
+                    <div>Status: {task.completed ? 'Completed' : 'In Progress'}</div>
                   </div>
                 </div>
                 <div
                   className={`px-3 py-1 rounded-full text-sm font-medium ${
-                    task.completed
-                      ? "bg-green-600 text-green-100"
-                      : "bg-yellow-600 text-yellow-100"
+                    task.completed ? 'bg-green-600 text-green-100' : 'bg-yellow-600 text-yellow-100'
                   }`}
                 >
-                  {task.completed ? "Completed" : "In Progress"}
+                  {task.completed ? 'Completed' : 'In Progress'}
                 </div>
               </div>
               <div className="mt-2 flex space-x-2 justify-end">

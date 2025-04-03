@@ -13,8 +13,8 @@ export interface Task {
   id: number;
   name: string;
   description: string;
-  status: "TODO" | "IN_PROGRESS" | "COMPLETED";
-  priority: "LOW" | "MEDIUM" | "HIGH";
+  status: 'TODO' | 'IN_PROGRESS' | 'COMPLETED';
+  priority: 'LOW' | 'MEDIUM' | 'HIGH';
   dueDate: string;
   projectId: number;
   milestoneId?: number;
@@ -25,7 +25,7 @@ export interface Milestone {
   name: string;
   description: string;
   dueDate: string;
-  status: "PLANNED" | "IN_PROGRESS" | "COMPLETED";
+  status: 'PLANNED' | 'IN_PROGRESS' | 'COMPLETED';
   projectId: number;
 }
 
@@ -33,7 +33,9 @@ export interface Project {
   id: number;
   name: string;
   description: string;
-  status: "PLANNED" | "IN_PROGRESS" | "COMPLETED";
+  status: 'PLANNED' | 'IN_PROGRESS' | 'COMPLETED';
   milestones: Milestone[];
   tasks: Task[];
+  createdAt?: Date;
+  updatedAt?: Date;
 }

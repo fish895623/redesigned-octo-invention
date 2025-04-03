@@ -1,21 +1,15 @@
-import {
-  defineConfig,
-  loadEnv,
-  type ConfigEnv,
-  type UserConfig,
-  type PluginOption,
-} from "vite";
-import react from "@vitejs/plugin-react";
-import { visualizer } from "rollup-plugin-visualizer";
-import tailwindcss from "@tailwindcss/vite";
+import { defineConfig, loadEnv, type ConfigEnv, type UserConfig, type PluginOption } from 'vite';
+import react from '@vitejs/plugin-react';
+import { visualizer } from 'rollup-plugin-visualizer';
+import tailwindcss from '@tailwindcss/vite';
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
   // Load env variables but don't store them since we don't use them
-  loadEnv(mode, process.cwd(), "");
+  loadEnv(mode, process.cwd(), '');
 
   // Check if we're running in analyze mode
-  const isAnalyze = mode === "analyze";
+  const isAnalyze = mode === 'analyze';
 
   return {
     plugins: [
@@ -25,7 +19,7 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
         ? [
             visualizer({
               open: true,
-              filename: "dist/stats.html",
+              filename: 'dist/stats.html',
               gzipSize: true,
               brotliSize: true,
             }),
@@ -40,14 +34,14 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
 
     build: {
       // Generate source maps for production build
-      sourcemap: mode === "development",
+      sourcemap: mode === 'development',
 
       // Configure minification
-      minify: mode === "production" ? "terser" : false,
+      minify: mode === 'production' ? 'terser' : false,
       terserOptions: {
         compress: {
-          drop_console: mode === "production",
-          drop_debugger: mode === "production",
+          drop_console: mode === 'production',
+          drop_debugger: mode === 'production',
         },
       },
 
@@ -55,15 +49,15 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
       rollupOptions: {
         output: {
           manualChunks: {
-            vendor: ["react", "react-dom", "react-router-dom"],
+            vendor: ['react', 'react-dom', 'react-router-dom'],
             // Group components with similar functionality
-            auth: ["./src/context/AuthContext.tsx"],
-            ui: ["./src/components/ui/Navigation/NavigationBar.tsx"],
+            auth: ['./src/context/AuthContext.tsx'],
+            ui: ['./src/components/ui/Navigation/NavigationBar.tsx'],
           },
           // Generate chunk filenames with content hashes for better caching
-          chunkFileNames: "assets/[name]-[hash].js",
-          entryFileNames: "assets/[name]-[hash].js",
-          assetFileNames: "assets/[name]-[hash].[ext]",
+          chunkFileNames: 'assets/[name]-[hash].js',
+          entryFileNames: 'assets/[name]-[hash].js',
+          assetFileNames: 'assets/[name]-[hash].[ext]',
         },
       },
 
@@ -73,7 +67,7 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
 
     // Optimize dependency pre-bundling
     optimizeDeps: {
-      include: ["react", "react-dom", "react-router-dom", "axios"],
+      include: ['react', 'react-dom', 'react-router-dom', 'axios'],
     },
 
     // Enable CSS code splitting

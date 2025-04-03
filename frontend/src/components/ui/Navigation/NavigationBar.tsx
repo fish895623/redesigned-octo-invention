@@ -1,9 +1,9 @@
-import { useAuth } from "../../../hooks/useAuth";
-import { UserProfile } from "../User/UserProfile";
-import { Link } from "react-router-dom";
-import DarkModeToggle from "../Button/DarkModeToggle";
-import { useTheme } from "../../../context/ThemeContextDefinition";
-import { useState } from "react";
+import { useAuth } from '../../../hooks/useAuth';
+import { UserProfile } from '../User/UserProfile';
+import { Link } from 'react-router-dom';
+import DarkModeToggle from '../Button/DarkModeToggle';
+import { useTheme } from '../../../context/ThemeContextDefinition';
+import { useState } from 'react';
 
 const NavigationBar = () => {
   const { user, loading } = useAuth();
@@ -15,26 +15,20 @@ const NavigationBar = () => {
   };
 
   if (loading) {
-    return (
-      <div className="fixed inset-x-0 top-0 p-4 bg-gray-800 text-blue-500 text-center">
-        Loading...
-      </div>
-    );
+    return <div className="fixed inset-x-0 top-0 p-4 bg-gray-800 text-blue-500 text-center">Loading...</div>;
   }
 
   return (
     <nav
       className={`fixed inset-x-0 top-0 w-full flex flex-wrap justify-between items-center px-4 py-3 shadow-md z-10 transition-colors ${
-        isDarkMode ? "bg-gray-800 text-white" : "bg-white text-gray-800"
+        isDarkMode ? 'bg-gray-800 text-white' : 'bg-white text-gray-800'
       }`}
     >
       <div className="text-xl font-bold">
         <Link
           to="/project"
           className={`transition-colors ${
-            isDarkMode
-              ? "text-blue-400 hover:text-blue-300"
-              : "text-blue-600 hover:text-blue-500"
+            isDarkMode ? 'text-blue-400 hover:text-blue-300' : 'text-blue-600 hover:text-blue-500'
           }`}
         >
           Project Management
@@ -58,11 +52,7 @@ const NavigationBar = () => {
             strokeLinecap="round"
             strokeLinejoin="round"
             strokeWidth={2}
-            d={
-              isMobileMenuOpen
-                ? "M6 18L18 6M6 6l12 12"
-                : "M4 6h16M4 12h16M4 18h16"
-            }
+            d={isMobileMenuOpen ? 'M6 18L18 6M6 6l12 12' : 'M4 6h16M4 12h16M4 18h16'}
           />
         </svg>
       </button>
@@ -73,9 +63,7 @@ const NavigationBar = () => {
             <Link
               to="/profile"
               className={`transition-colors ${
-                isDarkMode
-                  ? "text-gray-200 hover:text-white"
-                  : "text-gray-700 hover:text-gray-900"
+                isDarkMode ? 'text-gray-200 hover:text-white' : 'text-gray-700 hover:text-gray-900'
               }`}
             >
               Profile
@@ -83,9 +71,7 @@ const NavigationBar = () => {
             <Link
               to="/project"
               className={`transition-colors ${
-                isDarkMode
-                  ? "text-gray-200 hover:text-white"
-                  : "text-gray-700 hover:text-gray-900"
+                isDarkMode ? 'text-gray-200 hover:text-white' : 'text-gray-700 hover:text-gray-900'
               }`}
             >
               Projects
@@ -104,9 +90,7 @@ const NavigationBar = () => {
             <Link
               to="/login"
               className={`px-4 py-2 rounded-md text-white transition-colors ${
-                isDarkMode
-                  ? "bg-blue-600 hover:bg-blue-700"
-                  : "bg-blue-500 hover:bg-blue-600"
+                isDarkMode ? 'bg-blue-600 hover:bg-blue-700' : 'bg-blue-500 hover:bg-blue-600'
               }`}
             >
               Login
@@ -115,8 +99,8 @@ const NavigationBar = () => {
               to="/register"
               className={`px-4 py-2 rounded-md transition-colors ${
                 isDarkMode
-                  ? "border border-gray-600 text-gray-200 hover:bg-gray-700"
-                  : "border border-gray-300 text-gray-700 hover:bg-gray-100"
+                  ? 'border border-gray-600 text-gray-200 hover:bg-gray-700'
+                  : 'border border-gray-300 text-gray-700 hover:bg-gray-100'
               }`}
             >
               Register
@@ -133,9 +117,7 @@ const NavigationBar = () => {
               <Link
                 to="/profile"
                 className={`block px-4 py-2 transition-colors ${
-                  isDarkMode
-                    ? "text-gray-200 hover:bg-gray-700"
-                    : "text-gray-700 hover:bg-gray-100"
+                  isDarkMode ? 'text-gray-200 hover:bg-gray-700' : 'text-gray-700 hover:bg-gray-100'
                 }`}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
@@ -144,9 +126,7 @@ const NavigationBar = () => {
               <Link
                 to="/project"
                 className={`block px-4 py-2 transition-colors ${
-                  isDarkMode
-                    ? "text-gray-200 hover:bg-gray-700"
-                    : "text-gray-700 hover:bg-gray-100"
+                  isDarkMode ? 'text-gray-200 hover:bg-gray-700' : 'text-gray-700 hover:bg-gray-100'
                 }`}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
@@ -163,9 +143,7 @@ const NavigationBar = () => {
                 <Link
                   to="/login"
                   className={`px-3 py-1 text-sm rounded-md text-white transition-colors ${
-                    isDarkMode
-                      ? "bg-blue-600 hover:bg-blue-700"
-                      : "bg-blue-500 hover:bg-blue-600"
+                    isDarkMode ? 'bg-blue-600 hover:bg-blue-700' : 'bg-blue-500 hover:bg-blue-600'
                   }`}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
@@ -175,8 +153,8 @@ const NavigationBar = () => {
                   to="/register"
                   className={`px-3 py-1 text-sm rounded-md transition-colors ${
                     isDarkMode
-                      ? "border border-gray-600 text-gray-200 hover:bg-gray-700"
-                      : "border border-gray-300 text-gray-700 hover:bg-gray-100"
+                      ? 'border border-gray-600 text-gray-200 hover:bg-gray-700'
+                      : 'border border-gray-300 text-gray-700 hover:bg-gray-100'
                   }`}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >

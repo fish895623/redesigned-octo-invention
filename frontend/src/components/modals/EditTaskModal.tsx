@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import { useProject } from "../../context/ProjectContextDefinition";
-import { Milestone, Task } from "../../types/project";
+import React, { useState } from 'react';
+import { useProject } from '../../context/ProjectContextDefinition';
+import { Milestone, Task } from '../../types/project';
 
 interface EditTaskModalProps {
   task: Task;
@@ -10,30 +10,23 @@ interface EditTaskModalProps {
   onTaskEdited?: () => void;
 }
 
-const EditTaskModal: React.FC<EditTaskModalProps> = ({
-  task,
-  milestones,
-  onClose,
-  onTaskEdited,
-}) => {
+const EditTaskModal: React.FC<EditTaskModalProps> = ({ task, milestones, onClose, onTaskEdited }) => {
   const [title, setTitle] = useState(task.title);
-  const [description, setDescription] = useState(task.description || "");
-  const [milestoneId, setMilestoneId] = useState<number | undefined>(
-    task.milestoneId
-  );
+  const [description, setDescription] = useState(task.description || '');
+  const [milestoneId, setMilestoneId] = useState<number | undefined>(task.milestoneId);
   const [completed, setCompleted] = useState(task.completed);
-  const [titleError, setTitleError] = useState("");
+  const [titleError, setTitleError] = useState('');
   const { updateTask } = useProject();
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value);
-    if (titleError) setTitleError("");
+    if (titleError) setTitleError('');
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!title.trim()) {
-      setTitleError("Title is required");
+      setTitleError('Title is required');
       return;
     }
 
@@ -56,15 +49,12 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({
 
       onClose();
     } catch (error) {
-      console.error("Error updating task:", error);
+      console.error('Error updating task:', error);
     }
   };
 
   return (
-    <div
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-      onClick={onClose}
-    >
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={onClose}>
       <div
         className="bg-gray-800 rounded-lg shadow-xl max-w-lg w-full mx-4 overflow-hidden"
         onClick={(e) => e.stopPropagation()}
@@ -81,9 +71,7 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({
         </div>
         <form className="px-6 py-4" onSubmit={handleSubmit}>
           <div className="mb-4">
-            <h3 className="text-sm font-medium text-gray-300 mb-2">
-              Task Title
-            </h3>
+            <h3 className="text-sm font-medium text-gray-300 mb-2">Task Title</h3>
             <input
               type="text"
               value={title}
@@ -91,18 +79,14 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({
               placeholder="Enter task title"
               autoFocus
               className={`w-full px-3 py-2 bg-gray-700 border rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                titleError ? "border-red-500" : "border-gray-600"
+                titleError ? 'border-red-500' : 'border-gray-600'
               }`}
             />
-            {titleError && (
-              <div className="mt-1 text-sm text-red-500">{titleError}</div>
-            )}
+            {titleError && <div className="mt-1 text-sm text-red-500">{titleError}</div>}
           </div>
 
           <div className="mb-4">
-            <h3 className="text-sm font-medium text-gray-300 mb-2">
-              Description
-            </h3>
+            <h3 className="text-sm font-medium text-gray-300 mb-2">Description</h3>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
@@ -113,16 +97,10 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({
           </div>
 
           <div className="mb-4">
-            <h3 className="text-sm font-medium text-gray-300 mb-2">
-              Milestone
-            </h3>
+            <h3 className="text-sm font-medium text-gray-300 mb-2">Milestone</h3>
             <select
-              value={milestoneId || ""}
-              onChange={(e) =>
-                setMilestoneId(
-                  e.target.value ? Number(e.target.value) : undefined
-                )
-              }
+              value={milestoneId || ''}
+              onChange={(e) => setMilestoneId(e.target.value ? Number(e.target.value) : undefined)}
               className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">No Milestone</option>

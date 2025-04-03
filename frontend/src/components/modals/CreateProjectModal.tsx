@@ -1,26 +1,26 @@
-import React, { useState } from "react";
-import { useProjects } from "../../hooks/useProjects";
+import React, { useState } from 'react';
+import { useProjects } from '../../hooks/useProjects';
 
 interface CreateProjectModalProps {
   onClose: () => void;
 }
 
 const CreateProjectModal: React.FC<CreateProjectModalProps> = ({ onClose }) => {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [titleError, setTitleError] = useState("");
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [titleError, setTitleError] = useState('');
   const { addProject } = useProjects();
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value);
-    if (titleError) setTitleError("");
+    if (titleError) setTitleError('');
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!title.trim()) {
-      setTitleError("Project title is required");
+      setTitleError('Project title is required');
       return;
     }
 
@@ -29,18 +29,13 @@ const CreateProjectModal: React.FC<CreateProjectModalProps> = ({ onClose }) => {
   };
 
   return (
-    <div
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-      onClick={onClose}
-    >
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={onClose}>
       <div
         className="bg-gray-800 rounded-lg shadow-xl max-w-lg w-full mx-4 overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex justify-between items-center px-6 py-4 bg-gray-900 border-b border-gray-700">
-          <h2 className="text-xl font-semibold text-white">
-            Create New Project
-          </h2>
+          <h2 className="text-xl font-semibold text-white">Create New Project</h2>
           <button
             className="text-gray-400 hover:text-white text-2xl font-bold focus:outline-none"
             onClick={onClose}
@@ -51,9 +46,7 @@ const CreateProjectModal: React.FC<CreateProjectModalProps> = ({ onClose }) => {
         </div>
         <form className="px-6 py-4" onSubmit={handleSubmit}>
           <div className="mb-4">
-            <h3 className="text-sm font-medium text-gray-300 mb-2">
-              Project Title
-            </h3>
+            <h3 className="text-sm font-medium text-gray-300 mb-2">Project Title</h3>
             <input
               type="text"
               value={title}
@@ -61,18 +54,14 @@ const CreateProjectModal: React.FC<CreateProjectModalProps> = ({ onClose }) => {
               placeholder="Enter project title"
               autoFocus
               className={`w-full px-3 py-2 bg-gray-700 border rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                titleError ? "border-red-500" : "border-gray-600"
+                titleError ? 'border-red-500' : 'border-gray-600'
               }`}
             />
-            {titleError && (
-              <div className="mt-1 text-sm text-red-500">{titleError}</div>
-            )}
+            {titleError && <div className="mt-1 text-sm text-red-500">{titleError}</div>}
           </div>
 
           <div className="mb-4">
-            <h3 className="text-sm font-medium text-gray-300 mb-2">
-              Description
-            </h3>
+            <h3 className="text-sm font-medium text-gray-300 mb-2">Description</h3>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}

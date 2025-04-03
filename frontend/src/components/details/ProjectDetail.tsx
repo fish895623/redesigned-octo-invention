@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
-import { useProject } from "../../context/ProjectContextDefinition";
-import { Project } from "../../types/project";
-import MilestoneList from "../lists/MilestoneList";
-import TaskList from "../lists/TaskList";
-import CreateMilestoneModal from "../modals/CreateMilestoneModal";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
+import { useProject } from '../../context/ProjectContextDefinition';
+import { Project } from '../../types/project';
+import MilestoneList from '../lists/MilestoneList';
+import TaskList from '../lists/TaskList';
+import CreateMilestoneModal from '../modals/CreateMilestoneModal';
+import { useNavigate } from 'react-router-dom';
 
 interface ProjectDetailProps {
   projectId: number;
@@ -15,11 +15,9 @@ const ProjectDetail = ({ projectId }: ProjectDetailProps) => {
   const { projects, updateProject, deleteProject } = useProject();
   const [project, setProject] = useState<Project | null>(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [activeTab, setActiveTab] = useState<"milestones" | "tasks">(
-    "milestones"
-  );
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [activeTab, setActiveTab] = useState<'milestones' | 'tasks'>('milestones');
   const [showMilestoneModal, setShowMilestoneModal] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -34,11 +32,11 @@ const ProjectDetail = ({ projectId }: ProjectDetailProps) => {
     if (foundProject) {
       setProject(foundProject);
       setTitle(foundProject.title);
-      setDescription(foundProject.description || "");
+      setDescription(foundProject.description || '');
       setLoading(false);
     } else if (projects.length > 0) {
       // If we have projects but didn't find this one
-      setError("Project not found");
+      setError('Project not found');
       setLoading(false);
     }
   }, [projectId, projects]);
@@ -58,13 +56,13 @@ const ProjectDetail = ({ projectId }: ProjectDetailProps) => {
   };
 
   const handleDelete = async () => {
-    if (project && window.confirm("프로젝트를 삭제하시겠습니까?")) {
+    if (project && window.confirm('프로젝트를 삭제하시겠습니까?')) {
       try {
         await deleteProject(project.id);
-        navigate("/");
+        navigate('/');
       } catch (error) {
-        console.error("Error deleting project:", error);
-        alert("프로젝트 삭제에 실패했습니다. 다시 시도해주세요.");
+        console.error('Error deleting project:', error);
+        alert('프로젝트 삭제에 실패했습니다. 다시 시도해주세요.');
       }
     }
   };
@@ -117,14 +115,8 @@ const ProjectDetail = ({ projectId }: ProjectDetailProps) => {
       ) : (
         <div className="flex justify-between items-start mb-6 pb-4 border-b border-gray-700">
           <div>
-            <h2 className="text-2xl font-bold text-white mb-2">
-              {project.title}
-            </h2>
-            {project.description && (
-              <p className="text-gray-400 whitespace-pre-wrap">
-                {project.description}
-              </p>
-            )}
+            <h2 className="text-2xl font-bold text-white mb-2">{project.title}</h2>
+            {project.description && <p className="text-gray-400 whitespace-pre-wrap">{project.description}</p>}
           </div>
           <div className="flex gap-3">
             <button
@@ -145,43 +137,27 @@ const ProjectDetail = ({ projectId }: ProjectDetailProps) => {
       <div className="flex gap-4 mb-6">
         <button
           className={`px-4 py-2 font-medium rounded-md transition-colors ${
-            activeTab === "milestones"
-              ? "bg-blue-600 text-white"
-              : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+            activeTab === 'milestones' ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
           }`}
-          onClick={() => setActiveTab("milestones")}
+          onClick={() => setActiveTab('milestones')}
         >
           Milestones ({project.milestones.length})
         </button>
         <button
           className={`px-4 py-2 font-medium rounded-md transition-colors ${
-            activeTab === "tasks"
-              ? "bg-blue-600 text-white"
-              : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+            activeTab === 'tasks' ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
           }`}
-          onClick={() => setActiveTab("tasks")}
+          onClick={() => setActiveTab('tasks')}
         >
           Tasks ({project.tasks.length})
         </button>
       </div>
-      {showMilestoneModal && (
-        <CreateMilestoneModal
-          projectId={project.id}
-          onClose={handleCloseMilestoneModal}
-        />
-      )}
+      {showMilestoneModal && <CreateMilestoneModal projectId={project.id} onClose={handleCloseMilestoneModal} />}
       <div className="tab-content">
-        {activeTab === "milestones" ? (
-          <MilestoneList
-            projectId={project.id}
-            milestones={project.milestones}
-          />
+        {activeTab === 'milestones' ? (
+          <MilestoneList projectId={project.id} milestones={project.milestones} />
         ) : (
-          <TaskList
-            projectId={project.id}
-            tasks={project.tasks}
-            milestones={project.milestones}
-          />
+          <TaskList projectId={project.id} tasks={project.tasks} milestones={project.milestones} />
         )}
       </div>
     </div>

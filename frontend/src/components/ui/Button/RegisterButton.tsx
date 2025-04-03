@@ -1,10 +1,10 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 
-export const RegisterButton = ({ label = "Register" }: { label?: string }) => {
+export const RegisterButton = ({ label = 'Register' }: { label?: string }) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate("/register");
+    navigate('/register');
   };
 
   return (

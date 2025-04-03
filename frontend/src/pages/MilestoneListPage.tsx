@@ -3,11 +3,11 @@
  * @description This file is the main component for the MilestoneListPage.
  * It displays a list of milestones for a given project.
  */
-import { useParams } from "react-router-dom";
-import { ProjectProvider } from "../context/ProjectContext";
-import { useAuth } from "../hooks/useAuth";
-import MilestoneList from "../components/lists/MilestoneList";
-import { useProject } from "../context/ProjectContextDefinition";
+import { useParams } from 'react-router-dom';
+import { ProjectProvider } from '../context/ProjectContext';
+import { useAuth } from '../hooks/useAuth';
+import MilestoneList from '../components/lists/MilestoneList';
+import { useProject } from '../context/ProjectContextDefinition';
 
 const MilestoneListContent = () => {
   const { projectId: projectIdStr } = useParams<{ projectId: string }>();

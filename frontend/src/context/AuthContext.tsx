@@ -1,13 +1,8 @@
-import { useState, useEffect, ReactNode } from "react";
-import { User, LoginRequest, RegisterRequest } from "../types/auth";
-import {
-  getCurrentUser,
-  login as apiLogin,
-  logout as apiLogout,
-  register as apiRegister,
-} from "../api/auth";
-import { AuthContext } from "./AuthContextDefinition";
-import { useLocation } from "react-router-dom";
+import { useState, useEffect, ReactNode } from 'react';
+import { User, LoginRequest, RegisterRequest } from '../types/auth';
+import { getCurrentUser, login as apiLogin, logout as apiLogout, register as apiRegister } from '../api/auth';
+import { AuthContext } from './AuthContextDefinition';
+import { useLocation } from 'react-router-dom';
 
 interface AuthProviderProps {
   children: ReactNode;
@@ -24,7 +19,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       const userData = await getCurrentUser();
       setUser(userData);
     } catch (error) {
-      console.error("Failed to fetch user:", error);
+      console.error('Failed to fetch user:', error);
       setUser(null);
     } finally {
       setLoading(false);
@@ -37,7 +32,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   // Refresh user data when redirected from authentication
   useEffect(() => {
-    if (location.pathname === "/oauth/callback") {
+    if (location.pathname === '/oauth/callback') {
       fetchUser();
     }
   }, [location.pathname]);
@@ -48,7 +43,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setUser(userData);
       return userData;
     } catch (error) {
-      console.error("Login failed:", error);
+      console.error('Login failed:', error);
       return { authenticated: false };
     }
   };
@@ -59,7 +54,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setUser(newUser);
       return newUser;
     } catch (error) {
-      console.error("Registration failed:", error);
+      console.error('Registration failed:', error);
       return { authenticated: false };
     }
   };
@@ -69,7 +64,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       await apiLogout();
       setUser(null);
     } catch (error) {
-      console.error("Logout failed:", error);
+      console.error('Logout failed:', error);
     }
   };
 

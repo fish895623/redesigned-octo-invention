@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import CreateProjectModal from "../../modals/CreateProjectModal";
+import React, { useState } from 'react';
+import CreateProjectModal from '../../modals/CreateProjectModal';
 
 const CreateProjectButton: React.FC = () => {
   const [showModal, setShowModal] = useState(false);

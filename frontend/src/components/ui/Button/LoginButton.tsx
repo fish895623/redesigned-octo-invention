@@ -1,29 +1,29 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 
-export const LoginButton = ({ label = "Login" }: { label?: string }) => {
+export const LoginButton = ({ label = 'Login' }: { label?: string }) => {
   const navigate = useNavigate();
 
   const handleClick = async () => {
     try {
       // Call backend API to check auth status
-      const response = await fetch("/api/auth/status", {
-        method: "GET",
-        credentials: "include",
+      const response = await fetch('/api/auth/status', {
+        method: 'GET',
+        credentials: 'include',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
       });
 
       if (!response.ok) {
         // If not authenticated, navigate to login page
-        navigate("/login");
+        navigate('/login');
       } else {
         // If already authenticated, potentially navigate to dashboard
-        navigate("/dashboard");
+        navigate('/dashboard');
       }
     } catch (error) {
-      console.error("Error checking authentication status:", error);
-      navigate("/login");
+      console.error('Error checking authentication status:', error);
+      navigate('/login');
     }
   };
 

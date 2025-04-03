@@ -1,7 +1,7 @@
-import { useAuth } from "./hooks/useAuth";
-import { LoginButton } from "./components/ui/Button/LoginButton";
-import { UserProfile } from "./components/ui/User/UserProfile";
-import { LogoutButton } from "./components/ui/Button/LogoutButton";
+import { useAuth } from './hooks/useAuth';
+import { LoginButton } from './components/ui/Button/LoginButton';
+import { UserProfile } from './components/ui/User/UserProfile';
+import { LogoutButton } from './components/ui/Button/LogoutButton';
 
 const Profile = () => {
   const { user, loading } = useAuth();

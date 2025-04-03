@@ -1,5 +1,5 @@
-import { Button } from "@material-tailwind/react";
-import { useTheme } from "../../../context/ThemeContextDefinition";
+import { Button } from '@material-tailwind/react';
+import { useTheme } from '../../../context/ThemeContextDefinition';
 
 export default function DarkModeToggle() {
   const { isDarkMode, toggleDarkMode } = useTheme();
@@ -9,7 +9,7 @@ export default function DarkModeToggle() {
       variant="text"
       className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
       onClick={toggleDarkMode}
-      title={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
+      title={isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'}
     >
       {isDarkMode ? (
         <svg

@@ -1,5 +1,5 @@
-declare module "@material-tailwind/react" {
-  import { ComponentProps, ReactNode, ElementType } from "react";
+declare module '@material-tailwind/react' {
+  import { ComponentProps, ReactNode, ElementType } from 'react';
 
   // Common base props that TypeScript complains about
   interface BaseProps {
@@ -13,15 +13,15 @@ declare module "@material-tailwind/react" {
   // Button component
   export interface ButtonProps extends BaseProps {
     children?: ReactNode;
-    variant?: "filled" | "outlined" | "gradient" | "text";
-    size?: "sm" | "md" | "lg";
+    variant?: 'filled' | 'outlined' | 'gradient' | 'text';
+    size?: 'sm' | 'md' | 'lg';
     color?: string;
     fullWidth?: boolean;
     className?: string;
     onClick?: React.MouseEventHandler<HTMLButtonElement>;
     disabled?: boolean;
     loading?: boolean;
-    type?: "button" | "submit" | "reset";
+    type?: 'button' | 'submit' | 'reset';
     title?: string;
   }
   export const Button: React.FC<ButtonProps>;
@@ -71,7 +71,7 @@ declare module "@material-tailwind/react" {
   // Input component
   export interface InputProps extends BaseProps {
     label?: string;
-    size?: "md" | "lg";
+    size?: 'md' | 'lg';
     value?: string;
     name?: string;
     onChange?: React.ChangeEventHandler<HTMLInputElement>;

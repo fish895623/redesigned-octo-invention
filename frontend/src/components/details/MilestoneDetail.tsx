@@ -3,11 +3,11 @@
  * This requests to /api/projects/:projectId/milestones/:milestoneId/tasks.
  * Authentication is requested.
  */
-import React, { useState, useEffect, useCallback } from "react";
-import { useProject } from "../../context/ProjectContextDefinition";
-import { Milestone, Task } from "../../types/project";
-import TaskList from "../lists/TaskList";
-import CreateTaskModal from "../modals/CreateTaskModal";
+import React, { useState, useEffect, useCallback } from 'react';
+import { useProject } from '../../context/ProjectContextDefinition';
+import { Milestone, Task } from '../../types/project';
+import TaskList from '../lists/TaskList';
+import CreateTaskModal from '../modals/CreateTaskModal';
 
 interface MilestoneDetailProps {
   projectId: number;
@@ -17,12 +17,12 @@ interface MilestoneDetailProps {
 const MilestoneDetail = ({ projectId, milestoneId }: MilestoneDetailProps) => {
   const { projects, updateMilestone, deleteMilestone } = useProject();
   const [milestone, setMilestone] = useState<Milestone | null>(null);
-  const [projectTitle, setProjectTitle] = useState("");
+  const [projectTitle, setProjectTitle] = useState('');
   const [isEditing, setIsEditing] = useState(false);
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [startDate, setStartDate] = useState<string>("");
-  const [dueDate, setDueDate] = useState<string>("");
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [startDate, setStartDate] = useState<string>('');
+  const [dueDate, setDueDate] = useState<string>('');
   const [completed, setCompleted] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -34,31 +34,21 @@ const MilestoneDetail = ({ projectId, milestoneId }: MilestoneDetailProps) => {
     const project = projects.find((p) => p.id === projectId);
     if (project) {
       setProjectTitle(project.title);
-      const foundMilestone = project.milestones.find(
-        (m) => m.id === milestoneId
-      );
+      const foundMilestone = project.milestones.find((m) => m.id === milestoneId);
       if (foundMilestone) {
         setMilestone(foundMilestone);
         setTitle(foundMilestone.title);
-        setDescription(foundMilestone.description || "");
-        setStartDate(
-          foundMilestone.startDate
-            ? foundMilestone.startDate.toISOString().split("T")[0]
-            : ""
-        );
-        setDueDate(
-          foundMilestone.dueDate
-            ? foundMilestone.dueDate.toISOString().split("T")[0]
-            : ""
-        );
+        setDescription(foundMilestone.description || '');
+        setStartDate(foundMilestone.startDate ? foundMilestone.startDate.toISOString().split('T')[0] : '');
+        setDueDate(foundMilestone.dueDate ? foundMilestone.dueDate.toISOString().split('T')[0] : '');
         setCompleted(foundMilestone.completed);
         setLoading(false);
       } else {
-        setError("Milestone not found in this project");
+        setError('Milestone not found in this project');
         setLoading(false);
       }
     } else if (projects.length > 0) {
-      setError("Project not found");
+      setError('Project not found');
       setLoading(false);
     }
   }, [projectId, milestoneId, projects, refreshKey]);
@@ -81,10 +71,7 @@ const MilestoneDetail = ({ projectId, milestoneId }: MilestoneDetailProps) => {
   };
 
   const handleDelete = () => {
-    if (
-      milestone &&
-      window.confirm("Are you sure you want to delete this milestone?")
-    ) {
+    if (milestone && window.confirm('Are you sure you want to delete this milestone?')) {
       deleteMilestone(projectId, milestone.id);
       // Navigate back to milestone list (this will be handled by the router)
       window.location.href = `/project/${projectId}/milestone`;
@@ -110,8 +97,7 @@ const MilestoneDetail = ({ projectId, milestoneId }: MilestoneDetailProps) => {
   // Filter tasks that belong to this milestone
   const milestoneTasks: Task[] = milestone.tasks || [];
   // Get all milestones for the project
-  const projectMilestones =
-    projects.find((p) => p.id === projectId)?.milestones || [];
+  const projectMilestones = projects.find((p) => p.id === projectId)?.milestones || [];
 
   return (
     <div className="w-full max-w-7xl mx-auto bg-gray-900 rounded-lg shadow-md overflow-hidden">
@@ -121,9 +107,7 @@ const MilestoneDetail = ({ projectId, milestoneId }: MilestoneDetailProps) => {
           className="flex flex-col sm:flex-row sm:justify-between sm:items-center p-4 border-b border-gray-700"
         >
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-300 mb-1">
-              Title
-            </label>
+            <label className="block text-sm font-medium text-gray-300 mb-1">Title</label>
             <input
               type="text"
               value={title}
@@ -134,9 +118,7 @@ const MilestoneDetail = ({ projectId, milestoneId }: MilestoneDetailProps) => {
           </div>
 
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-300 mb-1">
-              Description
-            </label>
+            <label className="block text-sm font-medium text-gray-300 mb-1">Description</label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
@@ -148,9 +130,7 @@ const MilestoneDetail = ({ projectId, milestoneId }: MilestoneDetailProps) => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1">
-                Start Date
-              </label>
+              <label className="block text-sm font-medium text-gray-300 mb-1">Start Date</label>
               <input
                 type="date"
                 value={startDate}
@@ -159,9 +139,7 @@ const MilestoneDetail = ({ projectId, milestoneId }: MilestoneDetailProps) => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1">
-                Due Date
-              </label>
+              <label className="block text-sm font-medium text-gray-300 mb-1">Due Date</label>
               <input
                 type="date"
                 value={dueDate}
@@ -184,10 +162,7 @@ const MilestoneDetail = ({ projectId, milestoneId }: MilestoneDetailProps) => {
           </div>
 
           <div className="flex gap-3 mt-6">
-            <button
-              type="submit"
-              className="px-4 py-2 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700"
-            >
+            <button type="submit" className="px-4 py-2 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700">
               Save Changes
             </button>
             <button
@@ -203,16 +178,10 @@ const MilestoneDetail = ({ projectId, milestoneId }: MilestoneDetailProps) => {
         <div className="flex flex-col p-4 border-b border-gray-700">
           <div className="flex justify-between items-center">
             <div>
-              <h2 className="text-xl font-bold text-white text-left">
-                {milestone.title}
-              </h2>
-              <div className="text-sm text-blue-400 mb-2 text-left">
-                Project: {projectTitle}
-              </div>
+              <h2 className="text-xl font-bold text-white text-left">{milestone.title}</h2>
+              <div className="text-sm text-blue-400 mb-2 text-left">Project: {projectTitle}</div>
               {milestone.description && (
-                <p className=" text-sm text-left text-gray-300 whitespace-pre-wrap">
-                  {milestone.description}
-                </p>
+                <p className=" text-sm text-left text-gray-300 whitespace-pre-wrap">{milestone.description}</p>
               )}
             </div>
             <div className="flex gap-4 items-center">
@@ -238,10 +207,8 @@ const MilestoneDetail = ({ projectId, milestoneId }: MilestoneDetailProps) => {
           <div className="flex items-center gap-4">
             <h2 className="text-xl font-bold text-white">Tasks</h2>
             <div className="text-sm text-blue-400 font-medium">
-              Total Tasks:{" "}
-              <span className="bg-blue-600 text-white px-2 py-0.5 rounded-full ml-1">
-                {milestoneTasks.length}
-              </span>
+              Total Tasks:{' '}
+              <span className="bg-blue-600 text-white px-2 py-0.5 rounded-full ml-1">{milestoneTasks.length}</span>
             </div>
           </div>
           <button
@@ -255,11 +222,7 @@ const MilestoneDetail = ({ projectId, milestoneId }: MilestoneDetailProps) => {
 
       <div className="rounded-lg p-6">
         {milestoneTasks.length > 0 ? (
-          <TaskList
-            projectId={projectId}
-            tasks={milestoneTasks}
-            milestones={projectMilestones}
-          />
+          <TaskList projectId={projectId} tasks={milestoneTasks} milestones={projectMilestones} />
         ) : (
           <div className="text-center py-8 text-gray-400">
             No tasks found for this milestone. Add a task to get started.

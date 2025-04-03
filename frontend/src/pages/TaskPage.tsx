@@ -1,7 +1,7 @@
-import { useParams, Link } from "react-router-dom";
-import { ProjectProvider } from "../context/ProjectContext";
-import TaskDetail from "../components/details/TaskDetail";
-import { useAuth } from "../hooks/useAuth";
+import { useParams, Link } from 'react-router-dom';
+import { ProjectProvider } from '../context/ProjectContext';
+import TaskDetail from '../components/details/TaskDetail';
+import { useAuth } from '../hooks/useAuth';
 
 const TaskPage = () => {
   const { loading } = useAuth();
