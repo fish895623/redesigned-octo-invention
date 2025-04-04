@@ -11,11 +11,11 @@ import com.projectmanage.main.model.Task;
 
 @Repository
 public interface TaskRepository extends JpaRepository<Task, Long> {
-    List<Task> findByProjectOrderByUpdatedAtDesc(Project project);
+  List<Task> findByProjectOrderByUpdatedAtDesc(Project project);
 
-    List<Task> findByProjectId(Long projectId);
+  List<Task> findByProjectId(Long projectId);
 
-    List<Task> findByMilestoneId(Long milestoneId);
+  List<Task> findByMilestoneId(Long milestoneId);
 
-    List<Task> findByMilestoneOrderByUpdatedAtDesc(Milestone milestone);
+  List<Task> findByMilestoneOrderByUpdatedAtDesc(Milestone milestone);
 }

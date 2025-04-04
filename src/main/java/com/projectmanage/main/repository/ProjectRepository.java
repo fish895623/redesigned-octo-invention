@@ -11,8 +11,8 @@ import com.projectmanage.main.model.Project;
 @Repository
 public interface ProjectRepository extends JpaRepository<Project, Long> {
 
-    @Query("select p from Project p where p.user.email = :email")
-    List<Project> findByUserEmail(String email);
+  @Query("select p from Project p where p.user.email = :email")
+  List<Project> findByUserEmail(String email);
 
-    boolean existsByTitle(String title);
+  boolean existsByTitle(String title);
 }

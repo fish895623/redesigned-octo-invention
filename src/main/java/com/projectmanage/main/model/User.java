@@ -19,20 +19,20 @@ import lombok.NoArgsConstructor;
 @Builder
 public class User {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @Column(nullable = false, unique = true)
-    private String email;
+  @Column(nullable = false, unique = true)
+  private String email;
 
-    private String name;
+  private String name;
 
-    private String picture;
+  private String picture;
 
-    private String role;
+  private String role;
 
-    private String username;
+  private String username;
 
-    private String password;
+  private String password;
 }

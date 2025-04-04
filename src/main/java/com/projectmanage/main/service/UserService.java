@@ -22,60 +22,60 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class UserService implements UserDetailsService {
 
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
+  private final UserRepository userRepository;
+  private final PasswordEncoder passwordEncoder;
 
-    @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Optional<User> userOptional = userRepository.findByEmail(email);
-        if (userOptional.isEmpty()) {
-            throw new UsernameNotFoundException("User not found with email: " + email);
-        }
-
-        return new CustomUserDetails(userOptional.get());
+  @Override
+  public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+    Optional<User> userOptional = userRepository.findByEmail(email);
+    if (userOptional.isEmpty()) {
+      throw new UsernameNotFoundException("User not found with email: " + email);
     }
 
-    public User authenticateUser(String email, String password) {
-        Optional<User> userOptional = userRepository.findByEmail(email);
-        if (userOptional.isEmpty()) {
-            throw new BadCredentialsException("Invalid email or password");
-        }
+    return new CustomUserDetails(userOptional.get());
+  }
 
-        User user = userOptional.get();
-        if (user.getPassword() == null || !passwordEncoder.matches(password, user.getPassword())) {
-            throw new BadCredentialsException("Invalid email or password");
-        }
-
-        return user;
+  public User authenticateUser(String email, String password) {
+    Optional<User> userOptional = userRepository.findByEmail(email);
+    if (userOptional.isEmpty()) {
+      throw new BadCredentialsException("Invalid email or password");
     }
 
-    public User registerUser(UserDTO userDTO) {
-        if (userRepository.findByEmail(userDTO.getEmail()).isPresent()) {
-            throw new IllegalArgumentException("Email already in use");
-        }
-
-        User user = User.builder().email(userDTO.getEmail()).name(userDTO.getName())
-                        .password(passwordEncoder.encode(userDTO.getPassword())).role("USER")
-                        .username(userDTO.getEmail()).build();
-
-        return userRepository.save(user);
+    User user = userOptional.get();
+    if (user.getPassword() == null || !passwordEncoder.matches(password, user.getPassword())) {
+      throw new BadCredentialsException("Invalid email or password");
     }
 
-    public User getUserFromPrincipal(CustomUserDetails principal) {
-        if (principal == null) {
-            log.error("Authentication error: User is not authenticated - principal is null");
-            throw new UsernameNotFoundException("User is not authenticated");
-        }
+    return user;
+  }
 
-        log.debug("Resolving user from CustomUserDetails principal: {}", principal.getUsername());
-
-        Optional<User> userOptional = userRepository.findByEmail(principal.getUsername());
-
-        if (!userOptional.isPresent()) {
-            log.error("User not found with email: {}", principal.getUsername());
-        }
-
-        return userOptional.orElseThrow(() -> new UsernameNotFoundException(
-                        "User not found with email: " + principal.getUsername()));
+  public User registerUser(UserDTO userDTO) {
+    if (userRepository.findByEmail(userDTO.getEmail()).isPresent()) {
+      throw new IllegalArgumentException("Email already in use");
     }
+
+    User user = User.builder().email(userDTO.getEmail()).name(userDTO.getName())
+        .password(passwordEncoder.encode(userDTO.getPassword())).role("USER")
+        .username(userDTO.getEmail()).build();
+
+    return userRepository.save(user);
+  }
+
+  public User getUserFromPrincipal(CustomUserDetails principal) {
+    if (principal == null) {
+      log.error("Authentication error: User is not authenticated - principal is null");
+      throw new UsernameNotFoundException("User is not authenticated");
+    }
+
+    log.debug("Resolving user from CustomUserDetails principal: {}", principal.getUsername());
+
+    Optional<User> userOptional = userRepository.findByEmail(principal.getUsername());
+
+    if (!userOptional.isPresent()) {
+      log.error("User not found with email: {}", principal.getUsername());
+    }
+
+    return userOptional.orElseThrow(() -> new UsernameNotFoundException(
+        "User not found with email: " + principal.getUsername()));
+  }
 }

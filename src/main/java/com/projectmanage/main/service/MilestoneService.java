@@ -12,85 +12,84 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class MilestoneService {
 
-    private final MilestoneRepository milestoneRepository;
+  private final MilestoneRepository milestoneRepository;
 
-    private final MilestoneMapper milestoneMapper;
+  private final MilestoneMapper milestoneMapper;
 
-    // 마일스톤 목록 읽기
-    public List<MilestoneDTO> getMilestoneList(Long projectId) {
-        return milestoneMapper.toDTOList(milestoneRepository.findByProjectId(projectId));
+  // 마일스톤 목록 읽기
+  public List<MilestoneDTO> getMilestoneList(Long projectId) {
+    return milestoneMapper.toDTOList(milestoneRepository.findByProjectId(projectId));
+  }
+
+  // 마일스톤 읽기
+  public MilestoneDTO getMilestone(Long milestoneId) {
+    return milestoneMapper.toDTO(milestoneRepository.findById(milestoneId).orElse(null));
+  }
+
+  // 마일스톤 추가
+  public MilestoneDTO addMilestone(Long projectId, MilestoneDTO milestoneDTO) {
+    milestoneDTO.setProjectId(projectId);
+    if (!isValidMilestone(milestoneDTO)) {
+      throw new IllegalArgumentException("Invalid milestone");
+    }
+    return milestoneMapper.toDTO(milestoneRepository.save(milestoneMapper.toEntity(milestoneDTO)));
+  }
+
+  // 마일스톤 수정
+  public void updateMilestone(Long milestoneId, MilestoneDTO milestoneDTO) {
+    try {
+      if (!Objects.equals(milestoneId, milestoneDTO.getId())) {
+        throw new IllegalArgumentException("Invalid milestone ID");
+      }
+      if (!isValidMilestoneTwo(milestoneDTO)) {
+        throw new IllegalArgumentException("Invalid milestone");
+      }
+      milestoneRepository.save(milestoneMapper.toEntity(milestoneDTO));
+    } catch (Exception e) {
+      System.out.println(e.getMessage());
+    }
+  }
+
+  // 마일스톤 삭제
+  public void deleteMilestone(Long milestoneId) {
+    try {
+      milestoneRepository.deleteById(milestoneId);
+    } catch (Exception e) {
+      System.out.println(e.getMessage());
+    }
+  }
+
+  // 마일스톤 검증
+  public boolean isValidMilestone(MilestoneDTO milestone) {
+
+    // 마일 스톤의 관련 속성들 유효성 확인
+    if (milestone == null || milestone.getTitle() == null || milestone.getDescription() == null
+        || milestone.getProjectId() == null) {
+      return false;
+    }
+    if (milestone.getTitle().trim().isEmpty() || milestone.getDescription().trim().isEmpty()) {
+      return false;
+    }
+    // 같은 프로젝트 내 중복여부 검증
+    if (milestoneRepository.existsByProjectIdAndTitle(milestone.getProjectId(),
+        milestone.getTitle())) {
+      return false;
     }
 
-    // 마일스톤 읽기
-    public MilestoneDTO getMilestone(Long milestoneId) {
-        return milestoneMapper.toDTO(milestoneRepository.findById(milestoneId).orElse(null));
+    return true;
+  }
+
+  // 마일스톤 검증2(제목, 설명 유효성만 검증)
+  public boolean isValidMilestoneTwo(MilestoneDTO milestone) {
+    // 마일 스톤의 관련 속성들 유효성 확인
+    if (milestone == null || milestone.getTitle() == null || milestone.getDescription() == null
+        || milestone.getProjectId() == null) {
+      return false;
+    }
+    if (milestone.getTitle().trim().isEmpty() || milestone.getDescription().trim().isEmpty()) {
+      return false;
     }
 
-    // 마일스톤 추가
-    public MilestoneDTO addMilestone(Long projectId, MilestoneDTO milestoneDTO) {
-        milestoneDTO.setProjectId(projectId);
-        if (!isValidMilestone(milestoneDTO)) {
-            throw new IllegalArgumentException("Invalid milestone");
-        }
-        return milestoneMapper
-                .toDTO(milestoneRepository.save(milestoneMapper.toEntity(milestoneDTO)));
-    }
-
-    // 마일스톤 수정
-    public void updateMilestone(Long milestoneId, MilestoneDTO milestoneDTO) {
-        try {
-            if (!Objects.equals(milestoneId, milestoneDTO.getId())) {
-                throw new IllegalArgumentException("Invalid milestone ID");
-            }
-            if (!isValidMilestoneTwo(milestoneDTO)) {
-                throw new IllegalArgumentException("Invalid milestone");
-            }
-            milestoneRepository.save(milestoneMapper.toEntity(milestoneDTO));
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-    }
-
-    // 마일스톤 삭제
-    public void deleteMilestone(Long milestoneId) {
-        try {
-            milestoneRepository.deleteById(milestoneId);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-    }
-
-    // 마일스톤 검증
-    public boolean isValidMilestone(MilestoneDTO milestone) {
-
-        // 마일 스톤의 관련 속성들 유효성 확인
-        if (milestone == null || milestone.getTitle() == null || milestone.getDescription() == null
-                || milestone.getProjectId() == null) {
-            return false;
-        }
-        if (milestone.getTitle().trim().isEmpty() || milestone.getDescription().trim().isEmpty()) {
-            return false;
-        }
-        // 같은 프로젝트 내 중복여부 검증
-        if (milestoneRepository.existsByProjectIdAndTitle(milestone.getProjectId(),
-                milestone.getTitle())) {
-            return false;
-        }
-
-        return true;
-    }
-
-    // 마일스톤 검증2(제목, 설명 유효성만 검증)
-    public boolean isValidMilestoneTwo(MilestoneDTO milestone) {
-        // 마일 스톤의 관련 속성들 유효성 확인
-        if (milestone == null || milestone.getTitle() == null || milestone.getDescription() == null
-                || milestone.getProjectId() == null) {
-            return false;
-        }
-        if (milestone.getTitle().trim().isEmpty() || milestone.getDescription().trim().isEmpty()) {
-            return false;
-        }
-
-        return true;
-    }
+    return true;
+  }
 }

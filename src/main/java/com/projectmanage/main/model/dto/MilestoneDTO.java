@@ -16,15 +16,15 @@ import lombok.NoArgsConstructor;
 @Builder
 public class MilestoneDTO {
 
-    private Long id;
-    private String title;
-    private String description;
-    private Long projectId;
-    private LocalDate startDate;
-    private LocalDate dueDate;
-    private boolean completed;
-    @Builder.Default
-    private List<TaskDTO> tasks = new ArrayList<>();
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+  private Long id;
+  private String title;
+  private String description;
+  private Long projectId;
+  private LocalDate startDate;
+  private LocalDate dueDate;
+  private boolean completed;
+  @Builder.Default
+  private List<TaskDTO> tasks = new ArrayList<>();
+  private LocalDateTime createdAt;
+  private LocalDateTime updatedAt;
 }
