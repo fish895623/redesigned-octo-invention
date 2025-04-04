@@ -66,16 +66,16 @@ public class MilestoneService {
   }
 
     // 마일스톤 삭제(DELETE CASCADE)
-    @Transactional
-    public void deleteMilestone(Long milestoneId) {
-        try {
-            List<Long> TaskIds =taskService.getTasksByMilestoneId(milestoneId).stream().map(TaskDTO::getId).toList();
-            TaskIds.stream().forEach(taskService::deleteTask);
-            milestoneRepository.deleteById(milestoneId);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-    }
+  @Transactional
+  public void deleteMilestone(Long milestoneId) {
+      try {
+          List<Long> TaskIds =taskService.getTasksByMilestoneId(milestoneId).stream().map(TaskDTO::getId).toList();
+          TaskIds.stream().forEach(taskService::deleteTask);
+          milestoneRepository.deleteById(milestoneId);
+      } catch (Exception e) {
+          System.out.println(e.getMessage());
+      }
+  }
 
   // 마일스톤 검증
   public boolean isValidMilestone(MilestoneDTO milestone) {
