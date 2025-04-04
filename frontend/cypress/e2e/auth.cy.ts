@@ -134,21 +134,4 @@ describe('Authentication Tests', () => {
       cy.contains('button', 'Add Project').should('exist');
     });
   });
-
-  describe('Real Authentication', () => {
-    // This test is skipped by default as it requires a real backend
-    it.skip('should login with real credentials successfully', () => {
-      // Use real authentication
-      cy.login('real_user@example.com', 'real_password123', { mock: false });
-
-      // Verify we're on a protected page
-      cy.url().should('include', '/project');
-
-      // Check for elements that indicate successful login - updated to match the actual UI
-      cy.get('.w-full.max-w-7xl, .bg-gray-900.rounded-lg').should('exist');
-
-      // Check for Add Project button which should only be visible when logged in
-      cy.contains('button', 'Add Project').should('exist');
-    });
-  });
 });
