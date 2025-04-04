@@ -65,9 +65,9 @@ public class MilestoneService {
   public void deleteMilestone(Long milestoneId, Boolean isCascadeDelete) {
     try {
       if (isCascadeDelete) {
-        List<Long> TaskIds =
+        List<Long> taskIds =
             taskService.getTasksByMilestoneId(milestoneId).stream().map(TaskDTO::getId).toList();
-        TaskIds.forEach(taskService::deleteTask);
+        taskIds.forEach(taskService::deleteTask);
       }
       milestoneRepository.deleteById(milestoneId);
     } catch (Exception e) {
