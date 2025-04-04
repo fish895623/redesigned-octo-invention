@@ -202,7 +202,7 @@ const MilestoneDetail = ({ projectId, milestoneId }: MilestoneDetailProps) => {
         </div>
       )}
 
-      <div className="rounded-lg p-6">
+      <div className="rounded-lg p-1">
         {milestoneTasks.length > 0 ? (
           <TaskList projectId={projectId} tasks={milestoneTasks} milestones={projectMilestones} />
         ) : (
