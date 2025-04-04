@@ -42,20 +42,15 @@ import com.projectmanage.main.service.UserService;
 @ActiveProfiles("test")
 class AuthControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+    @Autowired private MockMvc mockMvc;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    @Autowired private ObjectMapper objectMapper;
 
-    @MockBean
-    private UserService userService;
+    @MockBean private UserService userService;
 
-    @MockBean
-    private JWTUtil jwtUtil;
+    @MockBean private JWTUtil jwtUtil;
 
-    @MockBean
-    private RefreshTokenService refreshTokenService;
+    @MockBean private RefreshTokenService refreshTokenService;
 
     private User testUser;
     private UserDTO testUserDTO;
@@ -87,7 +82,8 @@ class AuthControllerTest {
 
         // Set up default authentication
         when(userService.loadUserByUsername("test@example.com")).thenReturn(testUserDetails);
-        when(jwtUtil.createJwt(anyString(), anyString(), any(Long.class))).thenReturn(testAccessToken);
+        when(jwtUtil.createJwt(anyString(), anyString(), any(Long.class)))
+                .thenReturn(testAccessToken);
     }
 
     @Test
@@ -95,12 +91,15 @@ class AuthControllerTest {
         when(userService.authenticateUser(anyString(), anyString())).thenReturn(testUser);
         when(refreshTokenService.createRefreshToken(anyString())).thenReturn(testRefreshToken);
 
-        mockMvc.perform(post("/api/auth/login")
-                .with(SecurityMockMvcRequestPostProcessors.csrf())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(Map.of(
-                        "email", "test@example.com",
-                        "password", "password"))))
+        mockMvc.perform(
+                        post("/api/auth/login")
+                                .with(SecurityMockMvcRequestPostProcessors.csrf())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(
+                                        objectMapper.writeValueAsString(
+                                                Map.of(
+                                                        "email", "test@example.com",
+                                                        "password", "password"))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.accessToken").value(testAccessToken))
                 .andExpect(jsonPath("$.refreshToken").value(testRefreshToken.getToken()))
@@ -115,10 +114,11 @@ class AuthControllerTest {
         when(userService.registerUser(any(UserDTO.class))).thenReturn(testUser);
         when(refreshTokenService.createRefreshToken(anyString())).thenReturn(testRefreshToken);
 
-        mockMvc.perform(post("/api/auth/register")
-                .with(SecurityMockMvcRequestPostProcessors.csrf())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(testUserDTO)))
+        mockMvc.perform(
+                        post("/api/auth/register")
+                                .with(SecurityMockMvcRequestPostProcessors.csrf())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(testUserDTO)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.accessToken").value(testAccessToken))
                 .andExpect(jsonPath("$.refreshToken").value(testRefreshToken.getToken()))
@@ -135,7 +135,8 @@ class AuthControllerTest {
         mockRefreshToken.setToken("refresh-token");
         mockRefreshToken.setUser(testUser);
 
-        when(refreshTokenService.findByToken("refresh-token")).thenReturn(Optional.of(mockRefreshToken));
+        when(refreshTokenService.findByToken("refresh-token"))
+                .thenReturn(Optional.of(mockRefreshToken));
         when(refreshTokenService.verifyExpiration(mockRefreshToken)).thenReturn(mockRefreshToken);
         when(jwtUtil.createJwt(anyString(), anyString(), anyLong())).thenReturn("new-access-token");
 
@@ -143,9 +144,10 @@ class AuthControllerTest {
         TokenRefreshRequest refreshRequest = new TokenRefreshRequest();
         refreshRequest.setRefreshToken("refresh-token");
 
-        mockMvc.perform(post("/api/auth/refresh")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(refreshRequest)))
+        mockMvc.perform(
+                        post("/api/auth/refresh")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(refreshRequest)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.accessToken").value("new-access-token"))
                 .andExpect(jsonPath("$.refreshToken").value("refresh-token"))
@@ -155,11 +157,12 @@ class AuthControllerTest {
     @Test
     @WithMockUser(username = "test@example.com", roles = "USER")
     void whenGetAuthStatus_withAuthenticatedUser_thenReturnUserDetails() throws Exception {
-        SecurityContextHolder.getContext().setAuthentication(
-                new UsernamePasswordAuthenticationToken(testUserDetails, null, testUserDetails.getAuthorities()));
+        SecurityContextHolder.getContext()
+                .setAuthentication(
+                        new UsernamePasswordAuthenticationToken(
+                                testUserDetails, null, testUserDetails.getAuthorities()));
 
-        mockMvc.perform(get("/api/auth/status")
-                .with(SecurityMockMvcRequestPostProcessors.csrf()))
+        mockMvc.perform(get("/api/auth/status").with(SecurityMockMvcRequestPostProcessors.csrf()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.authenticated").value(true))
                 .andExpect(jsonPath("$.email").value(testUser.getEmail()))
@@ -176,11 +179,12 @@ class AuthControllerTest {
     @Test
     @WithMockUser(username = "test@example.com", roles = "USER")
     void whenGetUser_withAuthenticatedUser_thenReturnUserDetails() throws Exception {
-        SecurityContextHolder.getContext().setAuthentication(
-                new UsernamePasswordAuthenticationToken(testUserDetails, null, testUserDetails.getAuthorities()));
+        SecurityContextHolder.getContext()
+                .setAuthentication(
+                        new UsernamePasswordAuthenticationToken(
+                                testUserDetails, null, testUserDetails.getAuthorities()));
 
-        mockMvc.perform(get("/api/auth/user")
-                .with(SecurityMockMvcRequestPostProcessors.csrf()))
+        mockMvc.perform(get("/api/auth/user").with(SecurityMockMvcRequestPostProcessors.csrf()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.authenticated").value(true))
                 .andExpect(jsonPath("$.email").value(testUser.getEmail()))
