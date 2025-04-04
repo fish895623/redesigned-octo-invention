@@ -69,7 +69,7 @@ public class ProjectService {
       }
       projectRepository.save(projectMapper.toEntity(project));
     } catch (Exception e) {
-      log.error("Error updating project: {}",e.getMessage());
+      log.error("Error updating project: {}", e.getMessage());
     }
   }
 
@@ -77,14 +77,16 @@ public class ProjectService {
   @Transactional
   public void deleteProject(Long projectId) {
     try {
-      List<Long> TasksId=taskService.getTasksByProjectId(projectId).stream().map(TaskDTO::getId).toList();
-      TasksId.forEach(taskService::deleteTask);
-      List<Long> MilestonesId=milestoneService.getMilestoneList(projectId).stream().map(MilestoneDTO::getId).toList();
-      MilestonesId.forEach((milestoneId)->milestoneService.deleteMilestone(milestoneId,true));
+      List<Long> tasksId = taskService.getTasksByProjectId(projectId).stream()
+        .map(TaskDTO::getId).toList();
+      tasksId.forEach(taskService::deleteTask);
+      List<Long> milestonesId = milestoneService.getMilestoneList(projectId).stream()
+        .map(MilestoneDTO::getId).toList();
+      milestonesId.forEach((milestoneId) -> milestoneService.deleteMilestone(milestoneId, true));
 
       projectRepository.deleteById(projectId);
     } catch (Exception e) {
-      log.error("Error deleting project: {}",e.getMessage());
+      log.error("Error deleting project: {}", e.getMessage());
     }
   }
 
