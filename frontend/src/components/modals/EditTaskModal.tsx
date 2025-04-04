@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useProject } from '../../context/ProjectContextDefinition';
+import { useProject } from '../../context/ProjectContext';
 import { Milestone, Task } from '../../types/project';
 
 interface EditTaskModalProps {

@@ -1,36 +1,8 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { useState, useEffect, ReactNode, useCallback } from 'react';
 import { Project, Milestone, Task } from '../types/project';
 import { API_ENDPOINTS, createHeaders } from '../config/api';
-
-export interface ProjectContextType {
-  projects: Project[];
-  milestones: Milestone[];
-  tasks: Task[];
-  loading: boolean;
-  error: string | null;
-  addProject: (project: Omit<Project, 'id' | 'createdAt' | 'updatedAt' | 'milestones' | 'tasks'>) => Promise<Project>;
-  updateProject: (project: Project) => Promise<void>;
-  deleteProject: (projectId: number) => Promise<void>;
-  addMilestone: (
-    projectId: number,
-    milestone: Omit<Milestone, 'id' | 'projectId' | 'createdAt' | 'updatedAt' | 'tasks'>,
-  ) => Promise<Milestone>;
-  updateMilestone: (milestone: Milestone) => Promise<void>;
-  deleteMilestone: (projectId: number, milestoneId: number) => Promise<void>;
-  addTask: (projectId: number, task: Omit<Task, 'id' | 'projectId' | 'createdAt' | 'updatedAt'>) => Promise<Task>;
-  updateTask: (task: Task) => Promise<void>;
-  deleteTask: (projectId: number, taskId: number) => Promise<void>;
-}
-
-export const ProjectContext = createContext<ProjectContextType | undefined>(undefined);
-
-export const useProject = () => {
-  const context = useContext(ProjectContext);
-  if (context === undefined) {
-    throw new Error('useProject must be used within a ProjectProvider');
-  }
-  return context;
-};
+import { ProjectContext } from './ProjectContext';
+import { adaptProject } from './ProjectUtils';
 
 interface ProjectProviderProps {
   children: ReactNode;
@@ -41,16 +13,8 @@ export const ProjectProvider = ({ children }: ProjectProviderProps) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Helper function to adapt projects for test compatibility
-  const adaptProject = (project: Project): Project & { name?: string } => {
-    return {
-      ...project,
-      name: project.title, // Add name property that mirrors title for test compatibility
-    };
-  };
-
   // Fetch projects function that can be reused
-  const fetchProjects = async () => {
+  const fetchProjects = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch(API_ENDPOINTS.projects.list, {
@@ -71,12 +35,12 @@ export const ProjectProvider = ({ children }: ProjectProviderProps) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   // Fetch all projects on component mount
   useEffect(() => {
     fetchProjects();
-  }, []);
+  }, [fetchProjects]);
 
   // Add a new project
   const addProject = async (

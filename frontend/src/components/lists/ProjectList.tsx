@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo } from 'react';
-import { useProject } from '../../context/ProjectContextDefinition';
+import { useProject } from '../../context/ProjectContext';
 import { Project } from '../../types/project';
 import CreateProjectModal from '../modals/CreateProjectModal';
 import EditProjectModal from '../modals/EditProjectModal';
@@ -12,7 +12,7 @@ interface ProjectListProps {
 // Main ProjectList component
 const ProjectList = ({ onSelectProject }: ProjectListProps) => {
   const navigate = useNavigate();
-  const { projects, updateProject, deleteProject, loading } = useProject();
+  const { projects, deleteProject, loading } = useProject();
   const [editingProject, setEditingProject] = useState<Project | null>(null);
   const [showProjectModal, setShowProjectModal] = useState(false);
   const [sortBy, setSortBy] = useState<'created' | 'updated'>('updated');

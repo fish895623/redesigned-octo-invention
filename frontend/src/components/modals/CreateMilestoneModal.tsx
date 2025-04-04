@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useProject } from '../../context/ProjectContextDefinition';
+import { useProject } from '../../context/ProjectContext';
 
 interface CreateMilestoneModalProps {
   projectId: number;

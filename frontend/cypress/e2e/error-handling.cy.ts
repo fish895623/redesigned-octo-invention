@@ -72,7 +72,7 @@ describe('Error Handling', () => {
         body: [
           {
             id: 1,
-            name: 'Test Project',
+            title: 'Test Project',
             description: 'Test Description',
             status: 'IN_PROGRESS',
             milestones: [],
@@ -134,7 +134,7 @@ describe('Error Handling', () => {
         body: [
           {
             id: 1,
-            name: 'Test Project',
+            title: 'Test Project',
             description: 'Test Description',
             status: 'IN_PROGRESS',
             milestones: [],
@@ -253,7 +253,7 @@ describe('Error Handling', () => {
         statusCode: 201,
         body: {
           id: 1,
-          name: 'Test Project',
+          title: 'Test Project',
           description: 'Test Description',
           status: 'PLANNED',
           milestones: [],
@@ -273,7 +273,7 @@ describe('Error Handling', () => {
       // Mock project details
       const project: Project = {
         id: 1,
-        name: 'Test Project',
+        title: 'Test Project',
         description: 'Test Description',
         status: 'IN_PROGRESS',
         milestones: [],
