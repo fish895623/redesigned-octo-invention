@@ -202,25 +202,7 @@ const MilestoneDetail = ({ projectId, milestoneId }: MilestoneDetailProps) => {
         </div>
       )}
 
-      <div className="flex flex-col p-4 border-b border-gray-700">
-        <div className="flex justify-between items-center">
-          <div className="flex items-center gap-4">
-            <h2 className="text-xl font-bold text-white">Tasks</h2>
-            <div className="text-sm text-blue-400 font-medium">
-              Total Tasks:{' '}
-              <span className="bg-blue-600 text-white px-2 py-0.5 rounded-full ml-1">{milestoneTasks.length}</span>
-            </div>
-          </div>
-          <button
-            onClick={() => setShowCreateTaskModal(true)}
-            className="px-3 py-1.5 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 transition-colors"
-          >
-            Add Task
-          </button>
-        </div>
-      </div>
-
-      <div className="rounded-lg p-6">
+      <div className="rounded-lg p-1">
         {milestoneTasks.length > 0 ? (
           <TaskList projectId={projectId} tasks={milestoneTasks} milestones={projectMilestones} />
         ) : (
