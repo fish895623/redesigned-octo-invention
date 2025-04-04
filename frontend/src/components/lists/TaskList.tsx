@@ -10,22 +10,30 @@ interface TaskListProps {
   milestones?: Milestone[];
 }
 
-// Main TaskList component
 const TaskList = ({ projectId, tasks = [], milestones = [] }: TaskListProps) => {
-  const { updateTask, deleteTask } = useProject();
+  const { updateTask, deleteTask, projects } = useProject();
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [showTaskModal, setShowTaskModal] = useState(false);
-  const [filter, setFilter] = useState<'all' | 'active' | 'completed'>('all');
-  const [refreshKey, setRefreshKey] = useState(0);
+  const [sortBy, setSortBy] = useState<'created' | 'updated'>('updated');
+
+  // Get tasks from the current project
+  const currentTasks = useMemo(() => {
+    const currentProject = projects.find((p) => p.id === projectId);
+    return currentProject?.tasks || tasks;
+  }, [projectId, projects, tasks]);
 
   // Callbacks to avoid unnecessary rerenders
   const handleToggleTask = useCallback(
-    (task: Task) => {
-      updateTask({
-        ...task,
-        completed: !task.completed,
-        updatedAt: new Date(),
-      });
+    async (task: Task) => {
+      try {
+        await updateTask({
+          ...task,
+          completed: !task.completed,
+          updatedAt: new Date(),
+        });
+      } catch (error) {
+        console.error('Error updating task:', error);
+      }
     },
     [updateTask],
   );
@@ -39,11 +47,8 @@ const TaskList = ({ projectId, tasks = [], milestones = [] }: TaskListProps) => 
       if (window.confirm('Are you sure you want to delete this task?')) {
         try {
           await deleteTask(projectId, taskId);
-          // Force refresh after successful deletion
-          setRefreshKey((prev) => prev + 1);
         } catch (error) {
           console.error('Error deleting task:', error);
-          // Show user-friendly error message
           alert('Failed to delete task. Please try again.');
         }
       }
@@ -51,58 +56,73 @@ const TaskList = ({ projectId, tasks = [], milestones = [] }: TaskListProps) => 
     [deleteTask, projectId],
   );
 
-  const handleTaskCreated = useCallback(() => {
-    setRefreshKey((prev) => prev + 1);
-  }, []);
-
-  // Sort tasks by update time
+  // Sort tasks by created/updated time
   const sortedTasks = useMemo(() => {
-    return [...tasks].sort((a, b) => {
-      const dateA = new Date(a.updatedAt);
-      const dateB = new Date(b.updatedAt);
-      return dateB.getTime() - dateA.getTime();
+    return [...currentTasks].sort((a, b) => {
+      if (sortBy === 'updated') {
+        return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
+      }
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
     });
-  }, [tasks, refreshKey]);
+  }, [currentTasks, sortBy]);
 
-  // Filter tasks based on completion status
-  const filteredTasks = useMemo(() => {
-    return sortedTasks.filter((task) => {
-      if (filter === 'active') return !task.completed;
-      if (filter === 'completed') return task.completed;
-      return true;
-    });
-  }, [sortedTasks, filter]);
+  // Calculate task counts
+  const taskCounts = useMemo(() => {
+    const completed = currentTasks.filter((task) => task.completed).length;
+    const active = currentTasks.length - completed;
+    return { total: currentTasks.length, active, completed };
+  }, [currentTasks]);
 
   return (
-    <div className="w-full">
-      <div className="flex justify-end mb-4">
-        <select
-          value={filter}
-          onChange={(e) => setFilter(e.target.value as typeof filter)}
-          className="px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white"
-        >
-          <option value="all">All Tasks</option>
-          <option value="active">Active Tasks</option>
-          <option value="completed">Completed Tasks</option>
-        </select>
+    <div className="w-full max-w-7xl mx-auto bg-gray-900 rounded-lg shadow-md overflow-hidden">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center p-4 border-b border-gray-700">
+        <div>
+          <h2 className="text-xl font-bold text-white">Tasks</h2>
+          <div className="text-sm text-blue-400 font-medium mt-1">
+            Total Tasks:{' '}
+            <span className="bg-blue-600 text-white px-2 py-0.5 rounded-full ml-1">{taskCounts.total}</span>
+            <span className="ml-2">
+              Active:{' '}
+              <span className="bg-yellow-600 text-white px-2 py-0.5 rounded-full ml-1">{taskCounts.active}</span>
+            </span>
+            <span className="ml-2">
+              Completed:{' '}
+              <span className="bg-green-600 text-white px-2 py-0.5 rounded-full ml-1">{taskCounts.completed}</span>
+            </span>
+          </div>
+        </div>
+        <div className="flex gap-4 items-center mt-4 sm:mt-0">
+          <select
+            className="p-2 border border-gray-700 rounded-md bg-gray-800 text-white"
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
+          >
+            <option value="updated">Sort by Updated</option>
+            <option value="created">Sort by Created</option>
+          </select>
+          <button
+            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+            onClick={() => setShowTaskModal(true)}
+          >
+            Create Task
+          </button>
+        </div>
       </div>
 
-      <div className="space-y-4">
-        {filteredTasks.length > 0 ? (
-          filteredTasks.map((task) => (
-            <div key={task.id} className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-              <div className="flex justify-between items-start">
-                <div className="text-left">
-                  <h3
-                    className={`text-lg font-semibold ${task.completed ? 'text-gray-400 line-through' : 'text-white'}`}
-                  >
-                    {task.title}
-                  </h3>
-                  {task.description && <p className="text-gray-400 mt-1">{task.description}</p>}
-                  <div className="mt-4 flex flex-wrap gap-4 text-sm text-gray-400">
-                    <div>Status: {task.completed ? 'Completed' : 'In Progress'}</div>
-                  </div>
-                </div>
+      <div className="p-4 flex flex-col gap-4">
+        {sortedTasks.map((task) => (
+          <div
+            key={task.id}
+            className="bg-gray-800 rounded-lg p-4 border border-gray-700 hover:border-gray-600 transition-colors"
+          >
+            <div className="flex justify-between items-start">
+              <div>
+                <h3 className={`text-lg font-semibold ${task.completed ? 'text-gray-400 line-through' : 'text-white'}`}>
+                  {task.title}
+                </h3>
+                {task.description && <p className="text-gray-400 mt-1">{task.description}</p>}
+              </div>
+              <div className="flex items-center gap-3">
                 <div
                   className={`px-3 py-1 rounded-full text-sm font-medium ${
                     task.completed ? 'bg-green-600 text-green-100' : 'bg-yellow-600 text-yellow-100'
@@ -110,33 +130,35 @@ const TaskList = ({ projectId, tasks = [], milestones = [] }: TaskListProps) => 
                 >
                   {task.completed ? 'Completed' : 'In Progress'}
                 </div>
-              </div>
-              <div className="mt-2 flex space-x-2 justify-end">
                 <input
                   type="checkbox"
                   checked={task.completed}
                   onChange={() => handleToggleTask(task)}
-                  className="mr-1 mt-1 h-4 w-4 rounded bg-gray-700 border-gray-600 text-blue-600"
+                  className="h-4 w-4 rounded bg-gray-700 border-gray-600 text-blue-600"
                 />
                 <button
                   onClick={() => handleEditTask(task)}
-                  className="px-2 py-1 bg-gray-700 text-white text-xs rounded hover:bg-gray-600"
+                  className="px-3 py-1 bg-gray-700 text-white text-sm rounded-md hover:bg-gray-600 transition-colors"
                 >
                   Edit
                 </button>
                 <button
                   onClick={() => handleDeleteTask(task.id)}
-                  className="px-2 py-1 bg-red-700 text-white text-xs rounded hover:bg-red-600"
+                  className="px-3 py-1 bg-red-600 hover:bg-red-700 text-white text-sm rounded-md transition-colors"
                 >
                   Delete
                 </button>
               </div>
             </div>
-          ))
-        ) : (
-          <div className="text-center text-gray-400 py-8">
-            No tasks found for this milestone. Add a task to get started.
+            <div className="mt-4 flex flex-wrap gap-4 text-sm text-gray-400">
+              <div>Created: {new Date(task.createdAt).toLocaleDateString()}</div>
+              <div>Updated: {new Date(task.updatedAt).toLocaleDateString()}</div>
+              {task.milestoneId && <div>Milestone: {milestones.find((m) => m.id === task.milestoneId)?.title}</div>}
+            </div>
           </div>
+        ))}
+        {sortedTasks.length === 0 && (
+          <div className="text-center text-gray-400 py-8">No tasks found. Create one to get started!</div>
         )}
       </div>
 
@@ -145,7 +167,7 @@ const TaskList = ({ projectId, tasks = [], milestones = [] }: TaskListProps) => 
           projectId={projectId}
           milestones={milestones}
           onClose={() => setShowTaskModal(false)}
-          onTaskCreated={handleTaskCreated}
+          onTaskCreated={() => setShowTaskModal(false)}
         />
       )}
 
@@ -155,7 +177,7 @@ const TaskList = ({ projectId, tasks = [], milestones = [] }: TaskListProps) => 
           projectId={projectId}
           milestones={milestones}
           onClose={() => setEditingTask(null)}
-          onTaskEdited={handleTaskCreated}
+          onTaskEdited={() => setEditingTask(null)}
         />
       )}
     </div>
