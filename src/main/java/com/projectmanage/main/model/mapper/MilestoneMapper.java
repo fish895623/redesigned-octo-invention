@@ -25,24 +25,18 @@ public class MilestoneMapper {
         }
 
         List<TaskDTO> tasks =
-                milestone.getTasks() != null
-                        ? milestone.getTasks().stream()
-                                .map(taskMapper::toDTO)
-                                .collect(Collectors.toList())
-                        : List.of();
+                        milestone.getTasks() != null
+                                        ? milestone.getTasks().stream().map(taskMapper::toDTO)
+                                                        .collect(Collectors.toList())
+                                        : List.of();
 
-        return MilestoneDTO.builder()
-                .id(milestone.getId())
-                .title(milestone.getTitle())
-                .description(milestone.getDescription())
-                .projectId(milestone.getProject().getId())
-                .startDate(milestone.getStartDate())
-                .dueDate(milestone.getDueDate())
-                .completed(milestone.isCompleted())
-                .tasks(tasks)
-                .createdAt(milestone.getCreatedAt())
-                .updatedAt(milestone.getUpdatedAt())
-                .build();
+        return MilestoneDTO.builder().id(milestone.getId()).title(milestone.getTitle())
+                        .description(milestone.getDescription())
+                        .projectId(milestone.getProject().getId())
+                        .startDate(milestone.getStartDate()).dueDate(milestone.getDueDate())
+                        .completed(milestone.isCompleted()).tasks(tasks)
+                        .createdAt(milestone.getCreatedAt()).updatedAt(milestone.getUpdatedAt())
+                        .build();
     }
 
     public List<MilestoneDTO> toDTOList(List<Milestone> milestones) {
@@ -54,12 +48,9 @@ public class MilestoneMapper {
             return null;
         }
 
-        Milestone.MilestoneBuilder builder =
-                Milestone.builder()
-                        .title(milestoneDTO.getTitle())
+        Milestone.MilestoneBuilder builder = Milestone.builder().title(milestoneDTO.getTitle())
                         .description(milestoneDTO.getDescription())
-                        .startDate(milestoneDTO.getStartDate())
-                        .dueDate(milestoneDTO.getDueDate())
+                        .startDate(milestoneDTO.getStartDate()).dueDate(milestoneDTO.getDueDate())
                         .completed(milestoneDTO.isCompleted());
 
         if (milestoneDTO.getId() != null) {

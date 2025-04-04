@@ -27,17 +27,11 @@ public class UserMapper {
             return null;
         }
 
-        return UserDTO.builder()
-                .id(user.getId())
-                .username(user.getUsername())
-                .email(user.getEmail())
-                .name(user.getName())
-                .picture(user.getPicture())
-                .roles(
-                        user.getRole() != null
-                                ? Collections.singletonList(user.getRole())
-                                : Collections.emptyList())
-                .build();
+        return UserDTO.builder().id(user.getId()).username(user.getUsername())
+                        .email(user.getEmail()).name(user.getName()).picture(user.getPicture())
+                        .roles(user.getRole() != null ? Collections.singletonList(user.getRole())
+                                        : Collections.emptyList())
+                        .build();
     }
 
     /**
@@ -51,17 +45,13 @@ public class UserMapper {
             return null;
         }
 
-        return User.builder()
-                .id(userDTO.getId())
-                .username(userDTO.getUsername())
-                .email(userDTO.getEmail())
-                .name(userDTO.getName())
-                .picture(userDTO.getPicture())
-                .role(
-                        userDTO.getRoles() != null && !userDTO.getRoles().isEmpty()
-                                ? userDTO.getRoles().get(0)
-                                : null)
-                .build();
+        return User.builder().id(userDTO.getId()).username(userDTO.getUsername())
+                        .email(userDTO.getEmail()).name(userDTO.getName())
+                        .picture(userDTO.getPicture())
+                        .role(userDTO.getRoles() != null && !userDTO.getRoles().isEmpty()
+                                        ? userDTO.getRoles().get(0)
+                                        : null)
+                        .build();
     }
 
     /**

@@ -26,8 +26,8 @@ public class CustomUserDetails implements UserDetails {
         this.password = user.getUsername(); // Note: In a real app, you'd store password hash
         this.name = user.getName();
         this.picture = user.getPicture();
-        this.authorities =
-                Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + user.getRole()));
+        this.authorities = Collections
+                        .singletonList(new SimpleGrantedAuthority("ROLE_" + user.getRole()));
         this.enabled = true;
     }
 

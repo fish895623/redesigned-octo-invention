@@ -31,16 +31,15 @@ public class ProjectController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping
     public ResponseEntity<?> getAllProjects(
-            @AuthenticationPrincipal CustomUserDetails userDetails) {
+                    @AuthenticationPrincipal CustomUserDetails userDetails) {
         return ResponseEntity.ok(projectService.getProjectListByUser(userDetails.getUsername()));
     }
 
     // 프로젝트 등록
     @PreAuthorize("isAuthenticated()")
     @PostMapping
-    public ResponseEntity<?> postProject(
-            @AuthenticationPrincipal CustomUserDetails userDetails,
-            @RequestBody ProjectDTO projectDTO) {
+    public ResponseEntity<?> postProject(@AuthenticationPrincipal CustomUserDetails userDetails,
+                    @RequestBody ProjectDTO projectDTO) {
         projectDTO.setUserId(userService.getUserFromPrincipal(userDetails).getId());
         ProjectDTO newProject = projectService.addProject(projectDTO);
         return ResponseEntity.ok(newProject);
@@ -48,8 +47,8 @@ public class ProjectController {
 
     // 프로젝트 하나 읽기
     @GetMapping("/{projectId}")
-    public ResponseEntity<?> getProjectById(
-            @PathVariable Long projectId, @AuthenticationPrincipal CustomUserDetails userDetails) {
+    public ResponseEntity<?> getProjectById(@PathVariable Long projectId,
+                    @AuthenticationPrincipal CustomUserDetails userDetails) {
         ProjectDTO projectDTO = projectService.getProjectById(projectId);
         return ResponseEntity.ok(projectDTO);
     }
@@ -57,10 +56,8 @@ public class ProjectController {
     // 프로젝트 수정
     @PreAuthorize("isAuthenticated()")
     @PutMapping("/{projectId}")
-    public ResponseEntity<?> updateProject(
-            @AuthenticationPrincipal CustomUserDetails userDetails,
-            @PathVariable Long projectId,
-            @RequestBody ProjectDTO projectDTO) {
+    public ResponseEntity<?> updateProject(@AuthenticationPrincipal CustomUserDetails userDetails,
+                    @PathVariable Long projectId, @RequestBody ProjectDTO projectDTO) {
         projectService.updateProject(projectId, projectDTO);
         return ResponseEntity.ok("Project updated successfully");
     }
@@ -68,8 +65,8 @@ public class ProjectController {
     // 프로젝트 삭제
     @PreAuthorize("isAuthenticated()")
     @DeleteMapping("/{projectId}")
-    public ResponseEntity<?> deleteProject(
-            @AuthenticationPrincipal CustomUserDetails userDetails, @PathVariable Long projectId) {
+    public ResponseEntity<?> deleteProject(@AuthenticationPrincipal CustomUserDetails userDetails,
+                    @PathVariable Long projectId) {
         projectService.deleteProject(projectId);
         return ResponseEntity.ok("Project deleted successfully");
     }

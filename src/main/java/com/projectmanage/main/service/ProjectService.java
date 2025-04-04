@@ -25,7 +25,7 @@ public class ProjectService {
     @Transactional(readOnly = true)
     public List<ProjectDTO> getProjectListByUser(String userEmail) {
         List<ProjectDTO> projects =
-                projectMapper.toDTOList(projectRepository.findByUserEmail(userEmail));
+                        projectMapper.toDTOList(projectRepository.findByUserEmail(userEmail));
         return projects;
     }
 

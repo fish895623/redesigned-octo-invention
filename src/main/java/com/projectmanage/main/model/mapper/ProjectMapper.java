@@ -24,20 +24,14 @@ public class ProjectMapper {
             return null;
         }
 
-        ProjectDTO.ProjectDTOBuilder builder =
-                ProjectDTO.builder()
-                        .id(project.getId())
-                        .title(project.getTitle())
-                        .description(project.getDescription())
-                        .userId(project.getUser().getId())
-                        .createdAt(project.getCreatedAt())
+        ProjectDTO.ProjectDTOBuilder builder = ProjectDTO.builder().id(project.getId())
+                        .title(project.getTitle()).description(project.getDescription())
+                        .userId(project.getUser().getId()).createdAt(project.getCreatedAt())
                         .updatedAt(project.getUpdatedAt());
 
         // Safely handle milestones that might be null
         if (project.getMilestones() != null) {
-            builder.milestones(
-                    project.getMilestones().stream()
-                            .map(milestoneMapper::toDTO)
+            builder.milestones(project.getMilestones().stream().map(milestoneMapper::toDTO)
                             .collect(Collectors.toList()));
         } else {
             builder.milestones(List.of());
@@ -45,9 +39,7 @@ public class ProjectMapper {
 
         // Safely handle tasks that might be null
         if (project.getTasks() != null) {
-            builder.tasks(
-                    project.getTasks().stream()
-                            .map(taskMapper::toDTO)
+            builder.tasks(project.getTasks().stream().map(taskMapper::toDTO)
                             .collect(Collectors.toList()));
         } else {
             builder.tasks(List.of());
@@ -65,9 +57,7 @@ public class ProjectMapper {
             return null;
         }
 
-        Project.ProjectBuilder builder =
-                Project.builder()
-                        .title(projectDTO.getTitle())
+        Project.ProjectBuilder builder = Project.builder().title(projectDTO.getTitle())
                         .description(projectDTO.getDescription());
 
         if (projectDTO.getId() != null) {

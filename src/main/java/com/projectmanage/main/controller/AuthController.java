@@ -43,7 +43,7 @@ public class AuthController {
 
     @GetMapping("/status")
     public ResponseEntity<Map<String, Object>> getAuthStatus(
-            @AuthenticationPrincipal CustomUserDetails principal) {
+                    @AuthenticationPrincipal CustomUserDetails principal) {
         Map<String, Object> response = new HashMap<>();
 
         if (principal != null) {
@@ -59,8 +59,8 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Map<String, Object>> login(
-            @RequestBody Map<String, String> loginRequest, HttpServletResponse response) {
+    public ResponseEntity<Map<String, Object>> login(@RequestBody Map<String, String> loginRequest,
+                    HttpServletResponse response) {
         String email = loginRequest.get("email");
         String password = loginRequest.get("password");
 
@@ -69,7 +69,7 @@ public class AuthController {
 
             // Create access token
             String accessToken =
-                    jwtUtil.createJwt(user.getUsername(), user.getRole(), JWT_EXPIRATION);
+                            jwtUtil.createJwt(user.getUsername(), user.getRole(), JWT_EXPIRATION);
 
             // Create refresh token
             RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getUsername());
@@ -94,20 +94,20 @@ public class AuthController {
             return ResponseEntity.ok(result);
         } catch (Exception e) {
             log.error("Authentication failed: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("authenticated", false, "message", "Invalid email or password"));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map
+                            .of("authenticated", false, "message", "Invalid email or password"));
         }
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Map<String, Object>> register(
-            @RequestBody UserDTO userDTO, HttpServletResponse response) {
+    public ResponseEntity<Map<String, Object>> register(@RequestBody UserDTO userDTO,
+                    HttpServletResponse response) {
         try {
             User user = userService.registerUser(userDTO);
 
             // Create access token
             String accessToken =
-                    jwtUtil.createJwt(user.getUsername(), user.getRole(), JWT_EXPIRATION);
+                            jwtUtil.createJwt(user.getUsername(), user.getRole(), JWT_EXPIRATION);
 
             // Create refresh token
             RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getUsername());
@@ -132,7 +132,7 @@ public class AuthController {
         } catch (Exception e) {
             log.error("Registration failed: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(Map.of("authenticated", false, "message", e.getMessage()));
+                            .body(Map.of("authenticated", false, "message", e.getMessage()));
         }
     }
 
@@ -140,29 +140,21 @@ public class AuthController {
     public ResponseEntity<?> refreshToken(@RequestBody TokenRefreshRequest request) {
         String requestRefreshToken = request.getRefreshToken();
 
-        return refreshTokenService
-                .findByToken(requestRefreshToken)
-                .map(refreshTokenService::verifyExpiration)
-                .map(RefreshToken::getUser)
-                .map(
-                        user -> {
-                            String newAccessToken =
-                                    jwtUtil.createJwt(
-                                            user.getUsername(), user.getRole(), JWT_EXPIRATION);
+        return refreshTokenService.findByToken(requestRefreshToken)
+                        .map(refreshTokenService::verifyExpiration).map(RefreshToken::getUser)
+                        .map(user -> {
+                            String newAccessToken = jwtUtil.createJwt(user.getUsername(), user
+                                            .getRole(), JWT_EXPIRATION);
 
-                            return ResponseEntity.ok(
-                                    new TokenRefreshResponse(
-                                            newAccessToken, requestRefreshToken, "Bearer"));
-                        })
-                .orElseThrow(
-                        () ->
-                                new TokenRefreshException(
-                                        requestRefreshToken, "Refresh token is not in database!"));
+                            return ResponseEntity.ok(new TokenRefreshResponse(newAccessToken,
+                                            requestRefreshToken, "Bearer"));
+                        }).orElseThrow(() -> new TokenRefreshException(requestRefreshToken,
+                                        "Refresh token is not in database!"));
     }
 
     @GetMapping("/user")
     public ResponseEntity<Map<String, Object>> getUser(
-            @AuthenticationPrincipal CustomUserDetails principal) {
+                    @AuthenticationPrincipal CustomUserDetails principal) {
         if (principal == null) {
             return ResponseEntity.ok(Map.of("authenticated", false));
         }

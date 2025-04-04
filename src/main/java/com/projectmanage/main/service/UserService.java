@@ -54,14 +54,9 @@ public class UserService implements UserDetailsService {
             throw new IllegalArgumentException("Email already in use");
         }
 
-        User user =
-                User.builder()
-                        .email(userDTO.getEmail())
-                        .name(userDTO.getName())
-                        .password(passwordEncoder.encode(userDTO.getPassword()))
-                        .role("USER")
-                        .username(userDTO.getEmail())
-                        .build();
+        User user = User.builder().email(userDTO.getEmail()).name(userDTO.getName())
+                        .password(passwordEncoder.encode(userDTO.getPassword())).role("USER")
+                        .username(userDTO.getEmail()).build();
 
         return userRepository.save(user);
     }
@@ -80,9 +75,7 @@ public class UserService implements UserDetailsService {
             log.error("User not found with email: {}", principal.getUsername());
         }
 
-        return userOptional.orElseThrow(
-                () ->
-                        new UsernameNotFoundException(
-                                "User not found with email: " + principal.getUsername()));
+        return userOptional.orElseThrow(() -> new UsernameNotFoundException(
+                        "User not found with email: " + principal.getUsername()));
     }
 }

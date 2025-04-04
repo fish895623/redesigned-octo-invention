@@ -24,16 +24,10 @@ public class TaskMapper {
             return null;
         }
 
-        TaskDTO.TaskDTOBuilder builder =
-                TaskDTO.builder()
-                        .id(task.getId())
-                        .title(task.getTitle())
-                        .description(task.getDescription())
-                        .completed(task.isCompleted())
-                        .projectId(task.getProject().getId())
-                        .dueDate(task.getDueDate())
-                        .createdAt(task.getCreatedAt())
-                        .updatedAt(task.getUpdatedAt());
+        TaskDTO.TaskDTOBuilder builder = TaskDTO.builder().id(task.getId()).title(task.getTitle())
+                        .description(task.getDescription()).completed(task.isCompleted())
+                        .projectId(task.getProject().getId()).dueDate(task.getDueDate())
+                        .createdAt(task.getCreatedAt()).updatedAt(task.getUpdatedAt());
 
         if (task.getMilestone() != null) {
             builder.milestoneId(task.getMilestone().getId());
@@ -51,11 +45,8 @@ public class TaskMapper {
             return null;
         }
 
-        Task.TaskBuilder builder =
-                Task.builder()
-                        .title(taskDTO.getTitle())
-                        .description(taskDTO.getDescription())
-                        .completed(taskDTO.isCompleted())
+        Task.TaskBuilder builder = Task.builder().title(taskDTO.getTitle())
+                        .description(taskDTO.getDescription()).completed(taskDTO.isCompleted())
                         .dueDate(taskDTO.getDueDate());
 
         if (taskDTO.getId() != null) {

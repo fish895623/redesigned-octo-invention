@@ -23,7 +23,8 @@ public class MilestoneDTO {
     private LocalDate startDate;
     private LocalDate dueDate;
     private boolean completed;
-    @Builder.Default private List<TaskDTO> tasks = new ArrayList<>();
+    @Builder.Default
+    private List<TaskDTO> tasks = new ArrayList<>();
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

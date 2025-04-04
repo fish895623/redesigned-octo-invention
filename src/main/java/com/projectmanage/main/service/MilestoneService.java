@@ -2,13 +2,10 @@ package com.projectmanage.main.service;
 
 import java.util.List;
 import java.util.Objects;
-
 import org.springframework.stereotype.Service;
-
 import com.projectmanage.main.model.dto.MilestoneDTO;
 import com.projectmanage.main.model.mapper.MilestoneMapper;
 import com.projectmanage.main.repository.MilestoneRepository;
-
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -35,8 +32,8 @@ public class MilestoneService {
         if (!isValidMilestone(milestoneDTO)) {
             throw new IllegalArgumentException("Invalid milestone");
         }
-        return milestoneMapper.toDTO(
-                milestoneRepository.save(milestoneMapper.toEntity(milestoneDTO)));
+        return milestoneMapper
+                .toDTO(milestoneRepository.save(milestoneMapper.toEntity(milestoneDTO)));
     }
 
     // 마일스톤 수정
@@ -67,9 +64,7 @@ public class MilestoneService {
     public boolean isValidMilestone(MilestoneDTO milestone) {
 
         // 마일 스톤의 관련 속성들 유효성 확인
-        if (milestone == null
-                || milestone.getTitle() == null
-                || milestone.getDescription() == null
+        if (milestone == null || milestone.getTitle() == null || milestone.getDescription() == null
                 || milestone.getProjectId() == null) {
             return false;
         }
@@ -77,8 +72,8 @@ public class MilestoneService {
             return false;
         }
         // 같은 프로젝트 내 중복여부 검증
-        if (milestoneRepository.existsByProjectIdAndTitle(
-                milestone.getProjectId(), milestone.getTitle())) {
+        if (milestoneRepository.existsByProjectIdAndTitle(milestone.getProjectId(),
+                milestone.getTitle())) {
             return false;
         }
 
@@ -88,9 +83,7 @@ public class MilestoneService {
     // 마일스톤 검증2(제목, 설명 유효성만 검증)
     public boolean isValidMilestoneTwo(MilestoneDTO milestone) {
         // 마일 스톤의 관련 속성들 유효성 확인
-        if (milestone == null
-                || milestone.getTitle() == null
-                || milestone.getDescription() == null
+        if (milestone == null || milestone.getTitle() == null || milestone.getDescription() == null
                 || milestone.getProjectId() == null) {
             return false;
         }
