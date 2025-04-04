@@ -78,10 +78,12 @@ public class ProjectService {
   public void deleteProject(Long projectId) {
     try {
       List<Long> tasksId =
-              taskService.getTasksByProjectId(projectId).stream().map(TaskDTO::getId).toList();
+              taskService.getTasksByProjectId(projectId)
+                      .stream().map(TaskDTO::getId).toList();
       tasksId.forEach(taskService::deleteTask);
       List<Long> milestonesId =
-              milestoneService.getMilestoneList(projectId).stream().map(MilestoneDTO::getId).toList();
+              milestoneService.getMilestoneList(projectId)
+                      .stream().map(MilestoneDTO::getId).toList();
       milestonesId.forEach((milestoneId) -> milestoneService.deleteMilestone(milestoneId, true));
 
       projectRepository.deleteById(projectId);
