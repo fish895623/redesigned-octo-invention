@@ -3,14 +3,7 @@ package com.projectmanage.main.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.projectmanage.main.dto.CustomUserDetails;
 import com.projectmanage.main.model.dto.MilestoneDTO;
@@ -66,8 +59,9 @@ public class MilestoneController {
   @DeleteMapping("/{milestoneId}")
   public ResponseEntity<?> deleteMilestone(@AuthenticationPrincipal CustomUserDetails userDetails,
       @PathVariable(name = "projectId") Long projectId,
-      @PathVariable(name = "milestoneId") Long milestoneId) {
-    milestoneService.deleteMilestone(milestoneId);
+      @PathVariable(name = "milestoneId") Long milestoneId,
+      @RequestParam(name = "isCascadeDelete") boolean isCascadeDelete) {
+    milestoneService.deleteMilestone(milestoneId, isCascadeDelete);
     return ResponseEntity.ok("Milestone deleted successfully");
   }
 }

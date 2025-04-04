@@ -6,6 +6,7 @@ import java.util.Objects;
 
 import com.projectmanage.main.model.dto.MilestoneDTO;
 import com.projectmanage.main.model.dto.TaskDTO;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +17,7 @@ import com.projectmanage.main.repository.ProjectRepository;
 
 import lombok.RequiredArgsConstructor;
 
+@Log4j2
 @Service
 @RequiredArgsConstructor
 public class ProjectService {
@@ -67,7 +69,7 @@ public class ProjectService {
       }
       projectRepository.save(projectMapper.toEntity(project));
     } catch (Exception e) {
-      System.out.println(e.getMessage());
+      log.error("Error updating project: {}",e.getMessage());
     }
   }
 
@@ -76,13 +78,13 @@ public class ProjectService {
   public void deleteProject(Long projectId) {
     try {
       List<Long> TasksId=taskService.getTasksByProjectId(projectId).stream().map(TaskDTO::getId).toList();
-      TasksId.stream().forEach(taskService::deleteTask);
+      TasksId.forEach(taskService::deleteTask);
       List<Long> MilestonesId=milestoneService.getMilestoneList(projectId).stream().map(MilestoneDTO::getId).toList();
-      MilestonesId.stream().forEach(milestoneService::deleteMilestone);
+      MilestonesId.forEach((milestoneId)->milestoneService.deleteMilestone(milestoneId,true));
 
       projectRepository.deleteById(projectId);
     } catch (Exception e) {
-      System.out.println(e.getMessage());
+      log.error("Error deleting project: {}",e.getMessage());
     }
   }
 

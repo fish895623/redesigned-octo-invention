@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Objects;
 
 import com.projectmanage.main.model.dto.TaskDTO;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 import com.projectmanage.main.model.dto.MilestoneDTO;
@@ -15,6 +16,7 @@ import com.projectmanage.main.repository.TaskRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 
+@Log4j2
 @Service
 @RequiredArgsConstructor
 public class MilestoneService {
@@ -61,19 +63,21 @@ public class MilestoneService {
       }
       milestoneRepository.save(milestoneMapper.toEntity(milestoneDTO));
     } catch (Exception e) {
-      System.out.println(e.getMessage());
+      log.error("Error occurred while updating milestone: {}", e.getMessage());
     }
   }
 
     // 마일스톤 삭제(DELETE CASCADE)
   @Transactional
-  public void deleteMilestone(Long milestoneId) {
+  public void deleteMilestone(Long milestoneId, Boolean isCascadeDelete) {
       try {
+        if (isCascadeDelete) {
           List<Long> TaskIds =taskService.getTasksByMilestoneId(milestoneId).stream().map(TaskDTO::getId).toList();
-          TaskIds.stream().forEach(taskService::deleteTask);
+          TaskIds.forEach(taskService::deleteTask);
+        }
           milestoneRepository.deleteById(milestoneId);
       } catch (Exception e) {
-          System.out.println(e.getMessage());
+        log.error("Error occurred while deleting milestone: {}", e.getMessage());
       }
   }
 
