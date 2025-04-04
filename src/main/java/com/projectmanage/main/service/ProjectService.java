@@ -4,6 +4,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
+import com.projectmanage.main.model.dto.MilestoneDTO;
+import com.projectmanage.main.model.dto.TaskDTO;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,9 +17,13 @@ import com.projectmanage.main.repository.ProjectRepository;
 
 import lombok.RequiredArgsConstructor;
 
+@Log4j2
 @Service
 @RequiredArgsConstructor
 public class ProjectService {
+
+  private final MilestoneService milestoneService;
+  private final TaskService taskService;
 
   private final ProjectRepository projectRepository;
   private final ProjectMapper projectMapper;
@@ -50,6 +57,7 @@ public class ProjectService {
   }
 
   // 프로젝트 수정
+  @Transactional
   public void updateProject(Long projectId, ProjectDTO project) {
     // 프로젝트 아이디, 프로젝트 객체 내 아이디 동일 여부 검증
     try {
@@ -61,16 +69,22 @@ public class ProjectService {
       }
       projectRepository.save(projectMapper.toEntity(project));
     } catch (Exception e) {
-      System.out.println(e.getMessage());
+      log.error("Error updating project: {}",e.getMessage());
     }
   }
 
-  // 프로젝트 삭제
+  // 프로젝트 삭제(DELETE CASCADE)
+  @Transactional
   public void deleteProject(Long projectId) {
     try {
+      List<Long> TasksId=taskService.getTasksByProjectId(projectId).stream().map(TaskDTO::getId).toList();
+      TasksId.forEach(taskService::deleteTask);
+      List<Long> MilestonesId=milestoneService.getMilestoneList(projectId).stream().map(MilestoneDTO::getId).toList();
+      MilestonesId.forEach((milestoneId)->milestoneService.deleteMilestone(milestoneId,true));
+
       projectRepository.deleteById(projectId);
     } catch (Exception e) {
-      System.out.println(e.getMessage());
+      log.error("Error deleting project: {}",e.getMessage());
     }
   }
 

@@ -2,31 +2,47 @@ package com.projectmanage.main.service;
 
 import java.util.List;
 import java.util.Objects;
+
+import com.projectmanage.main.model.dto.TaskDTO;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
+
 import com.projectmanage.main.model.dto.MilestoneDTO;
 import com.projectmanage.main.model.mapper.MilestoneMapper;
 import com.projectmanage.main.repository.MilestoneRepository;
-import lombok.RequiredArgsConstructor;
+import com.projectmanage.main.repository.ProjectRepository;
+import com.projectmanage.main.repository.TaskRepository;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
+
+@Log4j2
 @Service
 @RequiredArgsConstructor
 public class MilestoneService {
 
+  private final TaskService taskService;
+
   private final MilestoneRepository milestoneRepository;
+  private final ProjectRepository projectRepository;
+  private final TaskRepository taskRepository;
 
   private final MilestoneMapper milestoneMapper;
 
   // 마일스톤 목록 읽기
+  @Transactional(readOnly = true)
   public List<MilestoneDTO> getMilestoneList(Long projectId) {
     return milestoneMapper.toDTOList(milestoneRepository.findByProjectId(projectId));
   }
 
   // 마일스톤 읽기
+  @Transactional(readOnly = true)
   public MilestoneDTO getMilestone(Long milestoneId) {
     return milestoneMapper.toDTO(milestoneRepository.findById(milestoneId).orElse(null));
   }
 
   // 마일스톤 추가
+  @Transactional
   public MilestoneDTO addMilestone(Long projectId, MilestoneDTO milestoneDTO) {
     milestoneDTO.setProjectId(projectId);
     if (!isValidMilestone(milestoneDTO)) {
@@ -36,6 +52,7 @@ public class MilestoneService {
   }
 
   // 마일스톤 수정
+  @Transactional
   public void updateMilestone(Long milestoneId, MilestoneDTO milestoneDTO) {
     try {
       if (!Objects.equals(milestoneId, milestoneDTO.getId())) {
@@ -46,17 +63,22 @@ public class MilestoneService {
       }
       milestoneRepository.save(milestoneMapper.toEntity(milestoneDTO));
     } catch (Exception e) {
-      System.out.println(e.getMessage());
+      log.error("Error occurred while updating milestone: {}", e.getMessage());
     }
   }
 
-  // 마일스톤 삭제
-  public void deleteMilestone(Long milestoneId) {
-    try {
-      milestoneRepository.deleteById(milestoneId);
-    } catch (Exception e) {
-      System.out.println(e.getMessage());
-    }
+    // 마일스톤 삭제(DELETE CASCADE)
+  @Transactional
+  public void deleteMilestone(Long milestoneId, Boolean isCascadeDelete) {
+      try {
+        if (isCascadeDelete) {
+          List<Long> TaskIds =taskService.getTasksByMilestoneId(milestoneId).stream().map(TaskDTO::getId).toList();
+          TaskIds.forEach(taskService::deleteTask);
+        }
+          milestoneRepository.deleteById(milestoneId);
+      } catch (Exception e) {
+        log.error("Error occurred while deleting milestone: {}", e.getMessage());
+      }
   }
 
   // 마일스톤 검증
