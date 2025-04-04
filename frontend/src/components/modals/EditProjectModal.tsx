@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useProjects } from '../../hooks/useProjects';
+import { useProject } from '../../context/ProjectContextDefinition';
 import { Project } from '../../types/project';
 
 interface EditProjectModalProps {
@@ -11,14 +11,14 @@ const EditProjectModal: React.FC<EditProjectModalProps> = ({ project, onClose })
   const [title, setTitle] = useState(project.title);
   const [description, setDescription] = useState(project.description || '');
   const [titleError, setTitleError] = useState('');
-  const { updateProject } = useProjects();
+  const { updateProject } = useProject();
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value);
     if (titleError) setTitleError('');
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!title.trim()) {
@@ -26,15 +26,20 @@ const EditProjectModal: React.FC<EditProjectModalProps> = ({ project, onClose })
       return;
     }
 
-    const updatedProject = {
-      ...project,
-      title: title.trim(),
-      description: description.trim() || undefined,
-      updatedAt: new Date(),
-    };
+    try {
+      const updatedProject = {
+        ...project,
+        title: title.trim(),
+        description: description.trim() || undefined,
+        updatedAt: new Date(),
+      };
 
-    updateProject(updatedProject);
-    onClose();
+      await updateProject(updatedProject);
+      onClose();
+    } catch (error) {
+      console.error('Error updating project:', error);
+      alert('프로젝트 수정에 실패했습니다. 다시 시도해주세요.');
+    }
   };
 
   return (

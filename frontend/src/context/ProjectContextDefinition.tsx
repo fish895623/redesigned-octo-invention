@@ -41,32 +41,6 @@ export const ProjectProvider = ({ children }: ProjectProviderProps) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Fetch all projects on component mount
-  useEffect(() => {
-    const fetchProjects = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch(API_ENDPOINTS.projects.list, {
-          headers: createHeaders(),
-        });
-
-        if (!response.ok) {
-          throw new Error(`Error fetching projects: ${response.statusText}`);
-        }
-
-        const data = await response.json();
-        setProjects(data);
-        setError(null);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : String(err));
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProjects();
-  }, []);
-
   // Helper function to adapt projects for test compatibility
   const adaptProject = (project: Project): Project & { name?: string } => {
     return {
@@ -75,31 +49,32 @@ export const ProjectProvider = ({ children }: ProjectProviderProps) => {
     };
   };
 
+  // Fetch projects function that can be reused
+  const fetchProjects = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(API_ENDPOINTS.projects.list, {
+        headers: createHeaders(),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error fetching projects: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      // Add name property to each project for test compatibility
+      const adaptedProjects = data.map(adaptProject);
+      setProjects(adaptedProjects);
+      setError(null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Fetch all projects on component mount
   useEffect(() => {
-    const fetchProjects = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch(API_ENDPOINTS.projects.list, {
-          headers: createHeaders(),
-        });
-
-        if (!response.ok) {
-          throw new Error(`Error fetching projects: ${response.statusText}`);
-        }
-
-        const data = await response.json();
-        // Add name property to each project for test compatibility
-        const adaptedProjects = data.map(adaptProject);
-        setProjects(adaptedProjects);
-        setError(null);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : String(err));
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchProjects();
   }, []);
 
@@ -171,7 +146,8 @@ export const ProjectProvider = ({ children }: ProjectProviderProps) => {
         throw new Error(`Error deleting project: ${response.statusText}`);
       }
 
-      setProjects((prevProjects) => prevProjects.filter((p) => p.id !== Number(projectId)));
+      // 프로젝트 삭제 후 목록을 새로 가져옵니다
+      await fetchProjects();
       setError(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));

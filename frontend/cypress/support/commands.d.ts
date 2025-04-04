@@ -7,9 +7,10 @@ declare namespace Cypress {
   interface Chainable<Subject = any> {
     /**
      * Custom command to simulate user login
-     * @example cy.login('test@example.com', 'password123')
+     * @example cy.login('test@example.com', 'password123') - Uses mocked authentication by default
+     * @example cy.login('test@example.com', 'password123', { mock: false }) - Uses real authentication
      */
-    login(email?: string, password?: string): void;
+    login(email?: string, password?: string, options?: { mock?: boolean }): void;
 
     /**
      * Custom command to mock projects API response

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Milestone } from '../../types/project';
-import { API_ENDPOINTS, createHeaders } from '../../config/api';
+import { useProject } from '../../context/ProjectContextDefinition';
 
 interface CreateTaskModalProps {
   projectId: number;
@@ -17,6 +17,7 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
   onTaskCreated,
   selectedMilestoneId,
 }) => {
+  const { addTask } = useProject();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [milestoneId, setMilestoneId] = useState<number | undefined>(undefined);
@@ -43,17 +44,12 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
     }
 
     try {
-      const response = await fetch(API_ENDPOINTS.tasks.create(projectId), {
-        method: 'POST',
-        credentials: 'include',
-        headers: createHeaders(),
-        body: JSON.stringify({
-          title,
-          description,
-          milestoneId,
-        }),
+      await addTask(projectId, {
+        title,
+        description,
+        milestoneId,
+        completed: false,
       });
-      await response.json();
 
       // Call onTaskCreated if provided to refresh the task list
       if (onTaskCreated) {

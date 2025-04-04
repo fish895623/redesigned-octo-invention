@@ -9,6 +9,7 @@ const CreateProjectModal: React.FC<CreateProjectModalProps> = ({ onClose }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [titleError, setTitleError] = useState('');
+  const [apiError, setApiError] = useState('');
   const { addProject } = useProjects();
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -16,16 +17,22 @@ const CreateProjectModal: React.FC<CreateProjectModalProps> = ({ onClose }) => {
     if (titleError) setTitleError('');
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setApiError('');
 
     if (!title.trim()) {
       setTitleError('Project title is required');
       return;
     }
 
-    addProject({ title, description });
-    onClose();
+    try {
+      await addProject({ title, description });
+      onClose();
+    } catch (error) {
+      console.error('Error creating project:', error);
+      setApiError(error instanceof Error ? error.message : 'Failed to create project');
+    }
   };
 
   return (
@@ -53,6 +60,7 @@ const CreateProjectModal: React.FC<CreateProjectModalProps> = ({ onClose }) => {
               onChange={handleTitleChange}
               placeholder="Enter project title"
               autoFocus
+              data-testid="create-project-title"
               className={`w-full px-3 py-2 bg-gray-700 border rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                 titleError ? 'border-red-500' : 'border-gray-600'
               }`}
@@ -67,6 +75,7 @@ const CreateProjectModal: React.FC<CreateProjectModalProps> = ({ onClose }) => {
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Enter project description (optional)"
               rows={4}
+              data-testid="create-project-description"
               className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
             />
           </div>
@@ -76,16 +85,26 @@ const CreateProjectModal: React.FC<CreateProjectModalProps> = ({ onClose }) => {
               type="button"
               className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white font-medium rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500"
               onClick={onClose}
+              data-testid="cancel-create-project"
             >
               Cancel
             </button>
             <button
               type="submit"
               className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+              data-testid="submit-create-project"
             >
               Create Project
             </button>
           </div>
+          {apiError && (
+            <div
+              className="mt-4 p-2 bg-red-500 bg-opacity-10 border border-red-500 rounded text-red-500"
+              data-testid="create-project-error"
+            >
+              {apiError}
+            </div>
+          )}
         </form>
       </div>
     </div>

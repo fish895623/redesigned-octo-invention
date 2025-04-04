@@ -11,11 +11,10 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "clean": "rm -rf dist node_modules/.vite",
-    "test": "cypress run",
-    "test:open": "cypress open",
-    "test:e2e": "cypress run --e2e",
-    "test:e2e:open": "cypress open --e2e",
-    "test:component": "cypress run --component"
+    "test": "concurrently \"npm run dev\" \"cypress run\"",
+    "test:open": "concurrently \"npm run dev\" \"cypress open\"",
+    "test:e2e": "concurrently \"npm run dev\" \"cypress run --e2e -b firefox\"",
+    "test:e2e:open": "concurrently \"npm run dev\" \"cypress open --e2e -b firefox\""
   },
   "dependencies": {
     "@material-tailwind/react": "^2.1.10",
@@ -33,7 +32,9 @@
     "@types/react-dom": "^18.0.0",
     "@vitejs/plugin-react": "^4.3.4",
     "autoprefixer": "^10.4.21",
+    "concurrently": "^9.1.2",
     "cypress": "^14.2.1",
+    "cypress-terminal-report": "^7.1.0",
     "cypress-vite": "^1.6.0",
     "eslint": "^9.21.0",
     "eslint-plugin-react-hooks": "^5.1.0",
