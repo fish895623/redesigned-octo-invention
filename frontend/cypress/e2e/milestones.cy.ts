@@ -13,13 +13,13 @@ describe('Milestone Management Tests', () => {
       // Define test project with milestones
       const testProject: Project = {
         id: 1,
-        name: 'Test Project',
+        title: 'Test Project',
         description: 'Project description',
         status: 'IN_PROGRESS',
         milestones: [
           {
             id: 1,
-            name: 'Milestone 1',
+            title: 'Milestone 1',
             description: 'First milestone',
             dueDate: '2023-12-31',
             status: 'IN_PROGRESS',
@@ -27,7 +27,7 @@ describe('Milestone Management Tests', () => {
           },
           {
             id: 2,
-            name: 'Milestone 2',
+            title: 'Milestone 2',
             description: 'Second milestone',
             dueDate: '2024-01-31',
             status: 'PLANNED',
@@ -72,7 +72,7 @@ describe('Milestone Management Tests', () => {
       // Define milestone details
       const milestone: Milestone = {
         id: 1,
-        name: 'Milestone 1',
+        title: 'Milestone 1',
         description: 'First milestone',
         dueDate: '2023-12-31',
         status: 'IN_PROGRESS',
@@ -101,7 +101,7 @@ describe('Milestone Management Tests', () => {
       // Define a new milestone
       const newMilestone: Milestone = {
         id: 3,
-        name: 'New Milestone',
+        title: 'New Milestone',
         description: 'New milestone description',
         dueDate: '2024-02-28',
         status: 'PLANNED',
@@ -118,7 +118,7 @@ describe('Milestone Management Tests', () => {
       cy.contains('button', 'Create Milestone').click();
 
       // Fill out the form
-      cy.get('input[id="milestoneName"]').type(newMilestone.name);
+      cy.get('input[id="milestoneTitle"]').type(newMilestone.title);
       cy.get('textarea[id="milestoneDescription"]').type(newMilestone.description);
       cy.get('input[id="milestoneDueDate"]').type(newMilestone.dueDate);
       cy.get('select[id="milestoneStatus"]').select(newMilestone.status);
@@ -154,7 +154,7 @@ describe('Milestone Management Tests', () => {
       });
 
       // Verify the new milestone appears in the list
-      cy.contains(newMilestone.name).should('be.visible');
+      cy.contains(newMilestone.title).should('be.visible');
       cy.contains(newMilestone.description).should('be.visible');
     });
   });
@@ -164,13 +164,13 @@ describe('Milestone Management Tests', () => {
       // Define test project with a milestone and task
       const testProject: Project = {
         id: 1,
-        name: 'Test Project',
+        title: 'Test Project',
         description: 'Project description',
         status: 'IN_PROGRESS',
         milestones: [
           {
             id: 1,
-            name: 'Milestone 1',
+            title: 'Milestone 1',
             description: 'First milestone',
             dueDate: '2023-12-31',
             status: 'IN_PROGRESS',
@@ -180,7 +180,7 @@ describe('Milestone Management Tests', () => {
         tasks: [
           {
             id: 1,
-            name: 'Task 1',
+            title: 'Task 1',
             description: 'First task',
             status: 'TODO',
             priority: 'HIGH',
@@ -244,7 +244,7 @@ describe('Milestone Management Tests', () => {
       // Define updated milestone
       const updatedMilestone: Milestone = {
         id: 1,
-        name: 'Updated Milestone',
+        title: 'Updated Milestone',
         description: 'Updated milestone description',
         dueDate: '2024-03-15',
         status: 'COMPLETED',
@@ -261,9 +261,15 @@ describe('Milestone Management Tests', () => {
       cy.contains('button', 'Edit Milestone').click();
 
       // Update form fields
-      cy.get('input[id="milestoneName"]').clear().type(updatedMilestone.name);
-      cy.get('textarea[id="milestoneDescription"]').clear().type(updatedMilestone.description);
-      cy.get('input[id="milestoneDueDate"]').clear().type(updatedMilestone.dueDate);
+      cy.get('input[id="milestoneName"]')
+        .clear()
+        .type(updatedMilestone.title);
+      cy.get('textarea[id="milestoneDescription"]')
+        .clear()
+        .type(updatedMilestone.description);
+      cy.get('input[id="milestoneDueDate"]')
+        .clear()
+        .type(updatedMilestone.dueDate);
       cy.get('select[id="milestoneStatus"]').select(updatedMilestone.status);
 
       // Submit the form
@@ -273,7 +279,7 @@ describe('Milestone Management Tests', () => {
       cy.wait('@updateMilestoneRequest');
 
       // Verify updated details are displayed
-      cy.contains(updatedMilestone.name).should('be.visible');
+      cy.contains(updatedMilestone.title).should('be.visible');
       cy.contains(updatedMilestone.description).should('be.visible');
       cy.contains(updatedMilestone.dueDate).should('be.visible');
       cy.contains(updatedMilestone.status).should('be.visible');
