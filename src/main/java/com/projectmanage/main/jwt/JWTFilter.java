@@ -1,17 +1,14 @@
 package com.projectmanage.main.jwt;
 
 import java.io.IOException;
-
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
-
 import com.projectmanage.main.dto.CustomUserDetails;
 import com.projectmanage.main.model.User;
 import com.projectmanage.main.repository.UserRepository;
-
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -27,8 +24,8 @@ public class JWTFilter extends OncePerRequestFilter {
     private final UserRepository userRepository;
 
     protected void doFilterInternal(@NonNull HttpServletRequest request,
-                    @NonNull HttpServletResponse response, @NonNull FilterChain filterChain)
-                    throws ServletException, IOException {
+            @NonNull HttpServletResponse response, @NonNull FilterChain filterChain)
+            throws ServletException, IOException {
 
         // Skip token processing for token refresh endpoint
         if (request.getRequestURI().equals("/api/auth/refresh")) {
@@ -78,7 +75,8 @@ public class JWTFilter extends OncePerRequestFilter {
             String username = jwtUtil.getUsername(token);
             String role = jwtUtil.getRole(token);
 
-            log.debug("Processing authenticated request for user: {} with role: {}", username, role);
+            log.debug("Processing authenticated request for user: {} with role: {}", username,
+                    role);
 
             User user = userRepository.findByEmail(username).orElse(null);
 
@@ -91,7 +89,7 @@ public class JWTFilter extends OncePerRequestFilter {
             CustomUserDetails customUserDetails = new CustomUserDetails(user);
 
             Authentication authToken = new UsernamePasswordAuthenticationToken(customUserDetails,
-                            null, customUserDetails.getAuthorities());
+                    null, customUserDetails.getAuthorities());
 
             SecurityContextHolder.getContext().setAuthentication(authToken);
         } catch (Exception e) {
