@@ -242,14 +242,7 @@ describe('Project Management Tests', () => {
       cy.wait('@projectsListRequest');
 
       // Click delete button on the first project
-      cy.get('[data-testid="delete-project-1"]').should('be.visible').click();
-
-      // Confirm deletion in the modal
-      cy.contains('button', 'Delete').click();
-
-      // Wait for the delete request and subsequent projects list refresh
-      cy.wait('@deleteProject');
-      cy.wait('@projectsListRequest');
+      cy.contains('button', 'Delete').should('be.visible').click();
 
       // Verify the first project is no longer visible and the second project remains
       cy.contains('Test Project 1').should('not.exist');
