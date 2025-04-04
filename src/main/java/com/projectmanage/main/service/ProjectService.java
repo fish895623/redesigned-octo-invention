@@ -77,7 +77,10 @@ public class ProjectService {
     // 프로젝트 검증
     public boolean isValidProject(ProjectDTO project) {
         // 프로젝트의 각 속성 존재여부 검증
-        if (project.getTitle().length() <= 0 || project.getDescription().length() <= 0) {
+        if(project==null || project.getTitle()==null || project.getDescription()==null){
+            return false;
+        }
+        if(project.getTitle().trim().isEmpty() || project.getDescription().trim().isEmpty()){
             return false;
         }
 
@@ -90,7 +93,10 @@ public class ProjectService {
 
     // 프로젝트 검증2(제목, 설명 유효성만 검증)
     public boolean isValidProject2(ProjectDTO project) {
-        if (project.getTitle().length() <= 0 || project.getDescription().length() <= 0) {
+        if(project==null || project.getTitle()==null || project.getDescription()==null){
+            return false;
+        }
+        if(project.getTitle().trim().isEmpty() || project.getDescription().trim().isEmpty()){
             return false;
         }
 

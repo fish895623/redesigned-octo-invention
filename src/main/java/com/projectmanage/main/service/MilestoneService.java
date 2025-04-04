@@ -36,7 +36,7 @@ public class MilestoneService {
     // 마일스톤 추가
     public MilestoneDTO addMilestone(Long projectId, MilestoneDTO milestoneDTO) {
         milestoneDTO.setProjectId(projectId);
-        if (!invalidMilestone(milestoneDTO)) {
+        if (!isValidMilestone(milestoneDTO)) {
             throw new IllegalArgumentException("Invalid milestone");
         }
         return milestoneMapper.toDTO(
@@ -49,7 +49,7 @@ public class MilestoneService {
             if (!Objects.equals(milestoneId, milestoneDTO.getId())) {
                 throw new IllegalArgumentException("Invalid milestone ID");
             }
-            if (!invalidMilestoneTwo(milestoneDTO)) {
+            if (!isValidMilestoneTwo(milestoneDTO)) {
                 throw new IllegalArgumentException("Invalid milestone");
             }
             milestoneRepository.save(milestoneMapper.toEntity(milestoneDTO));
@@ -67,11 +67,15 @@ public class MilestoneService {
         }
     }
 
-    // 마일스톤 검증
-    public boolean invalidMilestone(MilestoneDTO milestone) {
+    //마일스톤 검증
+    public boolean isValidMilestone(MilestoneDTO milestone){
 
-        // 마일 스톤의 제목, 설명 검증
-        if (milestone.getTitle().length() <= 0 || milestone.getDescription().length() <= 0) {
+        //마일 스톤의 관련 속성들 유효성 확인
+        if(milestone==null || milestone.getTitle()==null ||
+                milestone.getDescription()==null || milestone.getProjectId()==null){
+            return false;
+        }
+        if(milestone.getTitle().trim().isEmpty() || milestone.getDescription().trim().isEmpty()){
             return false;
         }
         // 같은 프로젝트 내 중복여부 검증
@@ -83,11 +87,17 @@ public class MilestoneService {
         return true;
     }
 
-    // 마일스톤 검증2(제목, 설명 유효성만 검증)
-    public boolean invalidMilestoneTwo(MilestoneDTO milestone) {
-        if (milestone.getTitle().length() <= 0 || milestone.getDescription().length() <= 0) {
+    //마일스톤 검증2(제목, 설명 유효성만 검증)
+    public boolean isValidMilestoneTwo(MilestoneDTO milestone){
+        //마일 스톤의 관련 속성들 유효성 확인
+        if(milestone==null || milestone.getTitle()==null ||
+                milestone.getDescription()==null || milestone.getProjectId()==null){
             return false;
         }
+        if(milestone.getTitle().trim().isEmpty() || milestone.getDescription().trim().isEmpty()){
+            return false;
+        }
+
         return true;
     }
 
