@@ -24,7 +24,8 @@ public class ProjectService {
     // 특정 회원의 프로젝트 목록 읽기
     @Transactional(readOnly = true)
     public List<ProjectDTO> getProjectListByUser(String userEmail) {
-        List<ProjectDTO> projects = projectMapper.toDTOList(projectRepository.findByUserEmail(userEmail));
+        List<ProjectDTO> projects =
+                projectMapper.toDTOList(projectRepository.findByUserEmail(userEmail));
         return projects;
     }
 
@@ -49,26 +50,26 @@ public class ProjectService {
     }
 
     // 프로젝트 수정
-    public void updateProject(Long ProjectId, ProjectDTO project){
-        //프로젝트 아이디, 프로젝트 객체 내 아이디 동일 여부 검증
+    public void updateProject(Long projectId, ProjectDTO project) {
+        // 프로젝트 아이디, 프로젝트 객체 내 아이디 동일 여부 검증
         try {
-            if (!Objects.equals(ProjectId, project.getId())) {
+            if (!Objects.equals(projectId, project.getId())) {
                 throw new IllegalArgumentException("Invalid project id");
             }
-            if(!isValidProject2(project)){
+            if (!isValidProject2(project)) {
                 throw new IllegalArgumentException("Invalid project");
             }
             projectRepository.save(projectMapper.toEntity(project));
-        }catch (Exception e){
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }
 
     // 프로젝트 삭제
-    public void deleteProject(Long projectId){
+    public void deleteProject(Long projectId) {
         try {
             projectRepository.deleteById(projectId);
-        }catch(Exception e){
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }
@@ -76,7 +77,7 @@ public class ProjectService {
     // 프로젝트 검증
     public boolean isValidProject(ProjectDTO project) {
         // 프로젝트의 각 속성 존재여부 검증
-        if(project.getTitle().length()<=0||project.getDescription().length()<=0){
+        if (project.getTitle().length() <= 0 || project.getDescription().length() <= 0) {
             return false;
         }
 
@@ -87,12 +88,16 @@ public class ProjectService {
         return true;
     }
 
-    //프로젝트 검증2(제목, 설명 유효성만 검증)
+    // 프로젝트 검증2(제목, 설명 유효성만 검증)
     public boolean isValidProject2(ProjectDTO project) {
-        if(project.getTitle().length()<=0||project.getDescription().length()<=0){
+        if (project.getTitle().length() <= 0 || project.getDescription().length() <= 0) {
             return false;
         }
 
         return true;
+    }
+
+    private void projectId(Long id) {
+        // ... existing code ...
     }
 }

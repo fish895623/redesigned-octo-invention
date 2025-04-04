@@ -1,16 +1,16 @@
 package com.projectmanage.main.repository;
 
-import com.projectmanage.main.model.Milestone;
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-
-import java.util.List;
+import com.projectmanage.main.model.Milestone;
 
 @Repository
-public interface MilestoneRepository  extends JpaRepository<Milestone, Long> {
+public interface MilestoneRepository extends JpaRepository<Milestone, Long> {
 
-    List<Milestone> findByProject_Id(Long id);
+    List<Milestone> findByProjectId(Long projectId);
 
-    boolean existsByProject_IdAndTitle(Long id, String title);
+    boolean existsByProjectIdAndTitle(Long projectId, String title);
 }

@@ -42,7 +42,8 @@ public class AuthController {
     private static final Long JWT_EXPIRATION = 1000L * 60 * 60;
 
     @GetMapping("/status")
-    public ResponseEntity<Map<String, Object>> getAuthStatus(@AuthenticationPrincipal CustomUserDetails principal) {
+    public ResponseEntity<Map<String, Object>> getAuthStatus(
+            @AuthenticationPrincipal CustomUserDetails principal) {
         Map<String, Object> response = new HashMap<>();
 
         if (principal != null) {
@@ -58,8 +59,8 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Map<String, Object>> login(@RequestBody Map<String, String> loginRequest,
-            HttpServletResponse response) {
+    public ResponseEntity<Map<String, Object>> login(
+            @RequestBody Map<String, String> loginRequest, HttpServletResponse response) {
         String email = loginRequest.get("email");
         String password = loginRequest.get("password");
 
@@ -67,7 +68,8 @@ public class AuthController {
             User user = userService.authenticateUser(email, password);
 
             // Create access token
-            String accessToken = jwtUtil.createJwt(user.getUsername(), user.getRole(), JWT_EXPIRATION);
+            String accessToken =
+                    jwtUtil.createJwt(user.getUsername(), user.getRole(), JWT_EXPIRATION);
 
             // Create refresh token
             RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getUsername());
@@ -99,13 +101,13 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<Map<String, Object>> register(
-            @RequestBody UserDTO userDTO,
-            HttpServletResponse response) {
+            @RequestBody UserDTO userDTO, HttpServletResponse response) {
         try {
             User user = userService.registerUser(userDTO);
 
             // Create access token
-            String accessToken = jwtUtil.createJwt(user.getUsername(), user.getRole(), JWT_EXPIRATION);
+            String accessToken =
+                    jwtUtil.createJwt(user.getUsername(), user.getRole(), JWT_EXPIRATION);
 
             // Create refresh token
             RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getUsername());
@@ -138,26 +140,29 @@ public class AuthController {
     public ResponseEntity<?> refreshToken(@RequestBody TokenRefreshRequest request) {
         String requestRefreshToken = request.getRefreshToken();
 
-        return refreshTokenService.findByToken(requestRefreshToken)
+        return refreshTokenService
+                .findByToken(requestRefreshToken)
                 .map(refreshTokenService::verifyExpiration)
                 .map(RefreshToken::getUser)
-                .map(user -> {
-                    String newAccessToken = jwtUtil.createJwt(
-                            user.getUsername(),
-                            user.getRole(),
-                            JWT_EXPIRATION);
+                .map(
+                        user -> {
+                            String newAccessToken =
+                                    jwtUtil.createJwt(
+                                            user.getUsername(), user.getRole(), JWT_EXPIRATION);
 
-                    return ResponseEntity.ok(new TokenRefreshResponse(
-                            newAccessToken,
-                            requestRefreshToken,
-                            "Bearer"));
-                })
-                .orElseThrow(() -> new TokenRefreshException(requestRefreshToken,
-                        "Refresh token is not in database!"));
+                            return ResponseEntity.ok(
+                                    new TokenRefreshResponse(
+                                            newAccessToken, requestRefreshToken, "Bearer"));
+                        })
+                .orElseThrow(
+                        () ->
+                                new TokenRefreshException(
+                                        requestRefreshToken, "Refresh token is not in database!"));
     }
 
     @GetMapping("/user")
-    public ResponseEntity<Map<String, Object>> getUser(@AuthenticationPrincipal CustomUserDetails principal) {
+    public ResponseEntity<Map<String, Object>> getUser(
+            @AuthenticationPrincipal CustomUserDetails principal) {
         if (principal == null) {
             return ResponseEntity.ok(Map.of("authenticated", false));
         }

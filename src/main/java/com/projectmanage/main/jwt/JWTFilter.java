@@ -29,7 +29,8 @@ public class JWTFilter extends OncePerRequestFilter {
     protected void doFilterInternal(
             @NonNull HttpServletRequest request,
             @NonNull HttpServletResponse response,
-            @NonNull FilterChain filterChain) throws ServletException, IOException {
+            @NonNull FilterChain filterChain)
+            throws ServletException, IOException {
 
         // Skip token processing for token refresh endpoint
         if (request.getRequestURI().equals("/api/auth/refresh")) {
@@ -79,10 +80,10 @@ public class JWTFilter extends OncePerRequestFilter {
             String username = jwtUtil.getUsername(token);
             String role = jwtUtil.getRole(token);
 
-            log.debug("Processing authenticated request for user: {} with role: {}", username, role);
+            log.debug(
+                    "Processing authenticated request for user: {} with role: {}", username, role);
 
-            User user = userRepository.findByEmail(username)
-                    .orElse(null);
+            User user = userRepository.findByEmail(username).orElse(null);
 
             if (user == null) {
                 log.debug("User not found with email: {}", username);
@@ -92,8 +93,9 @@ public class JWTFilter extends OncePerRequestFilter {
 
             CustomUserDetails customUserDetails = new CustomUserDetails(user);
 
-            Authentication authToken = new UsernamePasswordAuthenticationToken(
-                    customUserDetails, null, customUserDetails.getAuthorities());
+            Authentication authToken =
+                    new UsernamePasswordAuthenticationToken(
+                            customUserDetails, null, customUserDetails.getAuthorities());
 
             SecurityContextHolder.getContext().setAuthentication(authToken);
         } catch (Exception e) {

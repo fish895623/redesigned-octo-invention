@@ -11,9 +11,7 @@ import com.projectmanage.main.model.dto.UserDTO;
 
 import lombok.RequiredArgsConstructor;
 
-/**
- * Mapper for converting between User entity and UserDTO
- */
+/** Mapper for converting between User entity and UserDTO */
 @Component
 @RequiredArgsConstructor
 public class UserMapper {
@@ -35,7 +33,10 @@ public class UserMapper {
                 .email(user.getEmail())
                 .name(user.getName())
                 .picture(user.getPicture())
-                .roles(user.getRole() != null ? Collections.singletonList(user.getRole()) : Collections.emptyList())
+                .roles(
+                        user.getRole() != null
+                                ? Collections.singletonList(user.getRole())
+                                : Collections.emptyList())
                 .build();
     }
 
@@ -56,7 +57,10 @@ public class UserMapper {
                 .email(userDTO.getEmail())
                 .name(userDTO.getName())
                 .picture(userDTO.getPicture())
-                .role(userDTO.getRoles() != null && !userDTO.getRoles().isEmpty() ? userDTO.getRoles().get(0) : null)
+                .role(
+                        userDTO.getRoles() != null && !userDTO.getRoles().isEmpty()
+                                ? userDTO.getRoles().get(0)
+                                : null)
                 .build();
     }
 
@@ -71,15 +75,13 @@ public class UserMapper {
             return Collections.emptyList();
         }
 
-        return users.stream()
-                .map(this::toDto)
-                .collect(Collectors.toList());
+        return users.stream().map(this::toDto).collect(Collectors.toList());
     }
 
     /**
      * Update a User entity with data from UserDTO
      *
-     * @param user    the User entity to update
+     * @param user the User entity to update
      * @param userDTO the UserDTO with updated data
      * @return the updated User entity
      */

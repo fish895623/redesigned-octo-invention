@@ -24,15 +24,16 @@ public class TaskMapper {
             return null;
         }
 
-        TaskDTO.TaskDTOBuilder builder = TaskDTO.builder()
-                .id(task.getId())
-                .title(task.getTitle())
-                .description(task.getDescription())
-                .completed(task.isCompleted())
-                .projectId(task.getProject().getId())
-                .dueDate(task.getDueDate())
-                .createdAt(task.getCreatedAt())
-                .updatedAt(task.getUpdatedAt());
+        TaskDTO.TaskDTOBuilder builder =
+                TaskDTO.builder()
+                        .id(task.getId())
+                        .title(task.getTitle())
+                        .description(task.getDescription())
+                        .completed(task.isCompleted())
+                        .projectId(task.getProject().getId())
+                        .dueDate(task.getDueDate())
+                        .createdAt(task.getCreatedAt())
+                        .updatedAt(task.getUpdatedAt());
 
         if (task.getMilestone() != null) {
             builder.milestoneId(task.getMilestone().getId());
@@ -42,9 +43,7 @@ public class TaskMapper {
     }
 
     public List<TaskDTO> toDTOList(List<Task> tasks) {
-        return tasks.stream()
-                .map(this::toDTO)
-                .collect(Collectors.toList());
+        return tasks.stream().map(this::toDTO).collect(Collectors.toList());
     }
 
     public Task toEntity(TaskDTO taskDTO) {
@@ -52,24 +51,23 @@ public class TaskMapper {
             return null;
         }
 
-        Task.TaskBuilder builder = Task.builder()
-                .title(taskDTO.getTitle())
-                .description(taskDTO.getDescription())
-                .completed(taskDTO.isCompleted())
-                .dueDate(taskDTO.getDueDate());
+        Task.TaskBuilder builder =
+                Task.builder()
+                        .title(taskDTO.getTitle())
+                        .description(taskDTO.getDescription())
+                        .completed(taskDTO.isCompleted())
+                        .dueDate(taskDTO.getDueDate());
 
         if (taskDTO.getId() != null) {
             builder.id(taskDTO.getId());
         }
 
         if (taskDTO.getProjectId() != null) {
-            projectRepository.findById(taskDTO.getProjectId())
-                    .ifPresent(builder::project);
+            projectRepository.findById(taskDTO.getProjectId()).ifPresent(builder::project);
         }
 
         if (taskDTO.getMilestoneId() != null) {
-            milestoneRepository.findById(taskDTO.getMilestoneId())
-                    .ifPresent(builder::milestone);
+            milestoneRepository.findById(taskDTO.getMilestoneId()).ifPresent(builder::milestone);
         }
 
         return builder.build();

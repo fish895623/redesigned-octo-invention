@@ -23,5 +23,4 @@ public class TaskDTO {
     private LocalDate dueDate;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-
 }

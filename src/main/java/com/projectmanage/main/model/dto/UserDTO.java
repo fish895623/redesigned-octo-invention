@@ -9,9 +9,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * Data Transfer Object for User information
- * Used for transferring user data across application layers
- * and in JWT authentication processes
+ * Data Transfer Object for User information Used for transferring user data across application
+ * layers and in JWT authentication processes
  */
 @Getter
 @NoArgsConstructor

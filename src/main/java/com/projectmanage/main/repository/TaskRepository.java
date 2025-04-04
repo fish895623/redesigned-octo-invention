@@ -1,16 +1,16 @@
 package com.projectmanage.main.repository;
 
-import com.projectmanage.main.model.Task;
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import com.projectmanage.main.model.Task;
 
 @Repository
-public interface TaskRepository  extends JpaRepository<Task, Long> {
+public interface TaskRepository extends JpaRepository<Task, Long> {
 
-    List<Task> findByProject_Id(Long id);
+    List<Task> findByProjectId(Long projectId);
 
-    List<Task> findByMilestone_Id(Long id);
-
+    List<Task> findByMilestoneId(Long milestoneId);
 }

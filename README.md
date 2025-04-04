@@ -6,7 +6,7 @@ This is a comprehensive project management web application built with Spring Boo
 
 ### Key Features
 
-- **User Management**: Register, authenticate, and manage user profiles with both traditional login and OAuth2 integration (Google) 
+- **User Management**: Register, authenticate, and manage user profiles with both traditional login and OAuth2 integration (Google)
 - **Project Management**: Create, view, and manage multiple projects
 - **Milestone Tracking**: Define and monitor project milestones for better progress tracking
 - **Task Management**: Create, assign, and track tasks within projects
