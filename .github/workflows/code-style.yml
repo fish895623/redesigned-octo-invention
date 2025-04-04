@@ -36,7 +36,7 @@ jobs:
 
       - name: Upload formatting patch if changes needed
         if: failure()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: formatting-patch
           path: formatting.patch
