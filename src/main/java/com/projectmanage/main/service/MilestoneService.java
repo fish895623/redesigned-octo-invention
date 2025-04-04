@@ -2,31 +2,24 @@ package com.projectmanage.main.service;
 
 import java.util.List;
 import java.util.Objects;
-
-import com.projectmanage.main.model.dto.TaskDTO;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
-
+import org.springframework.transaction.annotation.Transactional;
 import com.projectmanage.main.model.dto.MilestoneDTO;
+import com.projectmanage.main.model.dto.TaskDTO;
 import com.projectmanage.main.model.mapper.MilestoneMapper;
 import com.projectmanage.main.repository.MilestoneRepository;
-import com.projectmanage.main.repository.ProjectRepository;
-import com.projectmanage.main.repository.TaskRepository;
-
 import lombok.RequiredArgsConstructor;
-import org.springframework.transaction.annotation.Transactional;
+import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 @Service
 @RequiredArgsConstructor
 public class MilestoneService {
-
+  // Service
   private final TaskService taskService;
-
+  // Repository
   private final MilestoneRepository milestoneRepository;
-  private final ProjectRepository projectRepository;
-  private final TaskRepository taskRepository;
-
+  // Mapper
   private final MilestoneMapper milestoneMapper;
 
   // 마일스톤 목록 읽기
@@ -67,18 +60,19 @@ public class MilestoneService {
     }
   }
 
-    // 마일스톤 삭제(DELETE CASCADE)
+  // 마일스톤 삭제(DELETE CASCADE)
   @Transactional
   public void deleteMilestone(Long milestoneId, Boolean isCascadeDelete) {
-      try {
-        if (isCascadeDelete) {
-          List<Long> TaskIds =taskService.getTasksByMilestoneId(milestoneId).stream().map(TaskDTO::getId).toList();
-          TaskIds.forEach(taskService::deleteTask);
-        }
-          milestoneRepository.deleteById(milestoneId);
-      } catch (Exception e) {
-        log.error("Error occurred while deleting milestone: {}", e.getMessage());
+    try {
+      if (isCascadeDelete) {
+        List<Long> TaskIds =
+            taskService.getTasksByMilestoneId(milestoneId).stream().map(TaskDTO::getId).toList();
+        TaskIds.forEach(taskService::deleteTask);
       }
+      milestoneRepository.deleteById(milestoneId);
+    } catch (Exception e) {
+      log.error("Error occurred while deleting milestone: {}", e.getMessage());
+    }
   }
 
   // 마일스톤 검증
