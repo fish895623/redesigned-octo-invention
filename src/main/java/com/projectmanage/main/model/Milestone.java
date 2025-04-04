@@ -31,59 +31,59 @@ import lombok.NoArgsConstructor;
 @Builder
 public class Milestone {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @Column(nullable = false)
-    private String title;
+  @Column(nullable = false)
+  private String title;
 
-    @Column(name = "description", nullable = true)
-    private String description;
+  @Column(name = "description", nullable = true)
+  private String description;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "project_id", nullable = false)
-    private Project project;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "project_id", nullable = false)
+  private Project project;
 
-    @Column(name = "start_date", nullable = true)
-    private LocalDate startDate;
+  @Column(name = "start_date", nullable = true)
+  private LocalDate startDate;
 
-    @Column(name = "due_date", nullable = true)
-    private LocalDate dueDate;
+  @Column(name = "due_date", nullable = true)
+  private LocalDate dueDate;
 
-    @Column(nullable = true)
-    @Builder.Default
-    private boolean completed = false;
+  @Column(nullable = true)
+  @Builder.Default
+  private boolean completed = false;
 
-    @OneToMany(mappedBy = "milestone", cascade = CascadeType.ALL)
-    @Builder.Default
-    private List<Task> tasks = new ArrayList<>();
+  @OneToMany(mappedBy = "milestone", cascade = CascadeType.ALL)
+  @Builder.Default
+  private List<Task> tasks = new ArrayList<>();
 
-    @Column(name = "created_at", nullable = true)
-    private LocalDateTime createdAt;
+  @Column(name = "created_at", nullable = true)
+  private LocalDateTime createdAt;
 
-    @Column(name = "updated_at", nullable = true)
-    private LocalDateTime updatedAt;
+  @Column(name = "updated_at", nullable = true)
+  private LocalDateTime updatedAt;
 
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
-    }
+  @PrePersist
+  protected void onCreate() {
+    createdAt = LocalDateTime.now();
+    updatedAt = LocalDateTime.now();
+  }
 
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
-    }
+  @PreUpdate
+  protected void onUpdate() {
+    updatedAt = LocalDateTime.now();
+  }
 
-    // Helper methods to maintain bidirectional relationship
-    public void addTask(Task task) {
-        tasks.add(task);
-        task.setMilestone(this);
-    }
+  // Helper methods to maintain bidirectional relationship
+  public void addTask(Task task) {
+    tasks.add(task);
+    task.setMilestone(this);
+  }
 
-    public void removeTask(Task task) {
-        tasks.remove(task);
-        task.setMilestone(null);
-    }
+  public void removeTask(Task task) {
+    tasks.remove(task);
+    task.setMilestone(null);
+  }
 }

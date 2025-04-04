@@ -3,7 +3,7 @@ import { Project, Milestone, Task } from '../types/project';
 import { API_ENDPOINTS } from '../config/api';
 import { apiClient } from '../api/apiClient';
 import { useAuth } from './AuthContextDefinition';
-import { ProjectContext } from './ProjectContextDefinition';
+import { ProjectContext } from './ProjectContext';
 
 interface ProjectProviderProps {
   children: ReactNode;

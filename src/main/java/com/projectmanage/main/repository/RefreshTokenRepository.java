@@ -11,10 +11,10 @@ import com.projectmanage.main.model.User;
 
 @Repository
 public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long> {
-    Optional<RefreshToken> findByToken(String token);
+  Optional<RefreshToken> findByToken(String token);
 
-    Optional<RefreshToken> findByUser(User user);
+  Optional<RefreshToken> findByUser(User user);
 
-    @Modifying
-    int deleteByUser(User user);
+  @Modifying
+  int deleteByUser(User user);
 }

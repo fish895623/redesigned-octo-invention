@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo } from 'react';
-import { useProject } from '../../context/ProjectContextDefinition';
+import { useProject } from '../../context/ProjectContext';
 import { Task, Milestone } from '../../types/project';
 import CreateTaskModal from '../modals/CreateTaskModal';
 import EditTaskModal from '../modals/EditTaskModal';

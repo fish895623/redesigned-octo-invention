@@ -14,13 +14,13 @@ import lombok.NoArgsConstructor;
 @Builder
 public class TaskDTO {
 
-    private Long id;
-    private String title;
-    private String description;
-    private boolean completed;
-    private Long projectId;
-    private Long milestoneId;
-    private LocalDate dueDate;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+  private Long id;
+  private String title;
+  private String description;
+  private boolean completed;
+  private Long projectId;
+  private Long milestoneId;
+  private LocalDate dueDate;
+  private LocalDateTime createdAt;
+  private LocalDateTime updatedAt;
 }

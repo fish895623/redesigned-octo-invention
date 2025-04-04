@@ -7,7 +7,7 @@ import { useParams } from 'react-router-dom';
 import { ProjectProvider } from '../context/ProjectContext';
 import { useAuth } from '../hooks/useAuth';
 import MilestoneList from '../components/lists/MilestoneList';
-import { useProject } from '../context/ProjectContextDefinition';
+import { useProject } from '../context/ProjectContext';
 
 const MilestoneListContent = () => {
   const { projectId: projectIdStr } = useParams<{ projectId: string }>();

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useProject } from '../../context/ProjectContextDefinition';
+import { useProject } from '../../context/ProjectContext';
 import { Project } from '../../types/project';
 import MilestoneList from '../lists/MilestoneList';
 import TaskList from '../lists/TaskList';

@@ -30,62 +30,62 @@ import lombok.NoArgsConstructor;
 @Builder
 public class Project {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @Column(nullable = false)
-    private String title;
+  @Column(nullable = false)
+  private String title;
 
-    private String description;
+  private String description;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "user_id", nullable = false)
+  private User user;
 
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
-    private List<Milestone> milestones = new ArrayList<>();
+  @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+  @Builder.Default
+  private List<Milestone> milestones = new ArrayList<>();
 
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
-    private List<Task> tasks = new ArrayList<>();
+  @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+  @Builder.Default
+  private List<Task> tasks = new ArrayList<>();
 
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
+  @Column(name = "created_at", nullable = false)
+  private LocalDateTime createdAt;
 
-    @Column(name = "updated_at", nullable = false)
-    private LocalDateTime updatedAt;
+  @Column(name = "updated_at", nullable = false)
+  private LocalDateTime updatedAt;
 
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
-    }
+  @PrePersist
+  protected void onCreate() {
+    createdAt = LocalDateTime.now();
+    updatedAt = LocalDateTime.now();
+  }
 
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
-    }
+  @PreUpdate
+  protected void onUpdate() {
+    updatedAt = LocalDateTime.now();
+  }
 
-    // Helper methods to maintain bidirectional relationship
-    public void addMilestone(Milestone milestone) {
-        milestones.add(milestone);
-        milestone.setProject(this);
-    }
+  // Helper methods to maintain bidirectional relationship
+  public void addMilestone(Milestone milestone) {
+    milestones.add(milestone);
+    milestone.setProject(this);
+  }
 
-    public void removeMilestone(Milestone milestone) {
-        milestones.remove(milestone);
-        milestone.setProject(null);
-    }
+  public void removeMilestone(Milestone milestone) {
+    milestones.remove(milestone);
+    milestone.setProject(null);
+  }
 
-    public void addTask(Task task) {
-        tasks.add(task);
-        task.setProject(this);
-    }
+  public void addTask(Task task) {
+    tasks.add(task);
+    task.setProject(this);
+  }
 
-    public void removeTask(Task task) {
-        tasks.remove(task);
-        task.setProject(null);
-    }
+  public void removeTask(Task task) {
+    tasks.remove(task);
+    task.setProject(null);
+  }
 }

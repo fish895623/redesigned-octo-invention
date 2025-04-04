@@ -19,34 +19,34 @@ import lombok.Setter;
 @Setter
 public class UserDTO {
 
-    private Long id;
-    private String username;
-    private String email;
-    private String name;
-    private String password;
-    private String picture;
-    private List<String> roles;
+  private Long id;
+  private String username;
+  private String email;
+  private String name;
+  private String password;
+  private String picture;
+  private List<String> roles;
 
-    // Additional fields for JWT authentication
-    private String token;
-    private boolean authenticated;
+  // Additional fields for JWT authentication
+  private String token;
+  private boolean authenticated;
 
-    /**
-     * Returns whether the user has admin privileges
-     *
-     * @return true if user has admin role
-     */
-    public boolean isAdmin() {
-        return roles != null && roles.contains("ROLE_ADMIN");
-    }
+  /**
+   * Returns whether the user has admin privileges
+   *
+   * @return true if user has admin role
+   */
+  public boolean isAdmin() {
+    return roles != null && roles.contains("ROLE_ADMIN");
+  }
 
-    /**
-     * Returns whether the user has the specified role
-     *
-     * @param role the role to check
-     * @return true if user has the specified role
-     */
-    public boolean hasRole(String role) {
-        return roles != null && roles.contains(role);
-    }
+  /**
+   * Returns whether the user has the specified role
+   *
+   * @param role the role to check
+   * @return true if user has the specified role
+   */
+  public boolean hasRole(String role) {
+    return roles != null && roles.contains(role);
+  }
 }

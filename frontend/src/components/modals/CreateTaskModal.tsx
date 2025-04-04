@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Milestone } from '../../types/project';
-import { useProject } from '../../context/ProjectContextDefinition';
+import { useProject } from '../../context/ProjectContext';
 
 interface CreateTaskModalProps {
   projectId: number;

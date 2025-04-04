@@ -20,64 +20,51 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class RefreshTokenService {
 
-    @Value("${app.jwt.refresh-token.expiration}")
-    private Long refreshTokenDurationMs;
+  @Value("${app.jwt.refresh-token.expiration}")
+  private Long refreshTokenDurationMs;
 
-    private final RefreshTokenRepository refreshTokenRepository;
-    private final UserRepository userRepository;
+  private final RefreshTokenRepository refreshTokenRepository;
+  private final UserRepository userRepository;
 
-    public Optional<RefreshToken> findByToken(String token) {
-        return refreshTokenRepository.findByToken(token);
+  public Optional<RefreshToken> findByToken(String token) {
+    return refreshTokenRepository.findByToken(token);
+  }
+
+  public RefreshToken createRefreshToken(String username) {
+    User user = userRepository.findByEmail(username)
+        .orElseThrow(() -> new RuntimeException("User not found with email: " + username));
+
+    // First, check if user already has a refresh token
+    Optional<RefreshToken> existingToken = refreshTokenRepository.findByUser(user);
+    if (existingToken.isPresent()) {
+      // Update existing token
+      RefreshToken refreshToken = existingToken.get();
+      refreshToken.setExpiryDate(Instant.now().plusMillis(refreshTokenDurationMs));
+      return refreshTokenRepository.save(refreshToken);
     }
 
-    public RefreshToken createRefreshToken(String username) {
-        User user =
-                userRepository
-                        .findByEmail(username)
-                        .orElseThrow(
-                                () ->
-                                        new RuntimeException(
-                                                "User not found with email: " + username));
+    // Create new token if none exists
+    RefreshToken refreshToken =
+        RefreshToken.builder().user(user).token(UUID.randomUUID().toString())
+            .expiryDate(Instant.now().plusMillis(refreshTokenDurationMs)).build();
 
-        // First, check if user already has a refresh token
-        Optional<RefreshToken> existingToken = refreshTokenRepository.findByUser(user);
-        if (existingToken.isPresent()) {
-            // Update existing token
-            RefreshToken refreshToken = existingToken.get();
-            refreshToken.setExpiryDate(Instant.now().plusMillis(refreshTokenDurationMs));
-            return refreshTokenRepository.save(refreshToken);
-        }
+    return refreshTokenRepository.save(refreshToken);
+  }
 
-        // Create new token if none exists
-        RefreshToken refreshToken =
-                RefreshToken.builder()
-                        .user(user)
-                        .token(UUID.randomUUID().toString())
-                        .expiryDate(Instant.now().plusMillis(refreshTokenDurationMs))
-                        .build();
-
-        return refreshTokenRepository.save(refreshToken);
+  public RefreshToken verifyExpiration(RefreshToken token) {
+    if (token.getExpiryDate().compareTo(Instant.now()) < 0) {
+      refreshTokenRepository.delete(token);
+      throw new TokenRefreshException(token.getToken(),
+          "Refresh token was expired. Please make a new login request");
     }
 
-    public RefreshToken verifyExpiration(RefreshToken token) {
-        if (token.getExpiryDate().compareTo(Instant.now()) < 0) {
-            refreshTokenRepository.delete(token);
-            throw new TokenRefreshException(
-                    token.getToken(), "Refresh token was expired. Please make a new login request");
-        }
+    return token;
+  }
 
-        return token;
-    }
-
-    @Transactional
-    public void deleteByUserId(String username) {
-        User user =
-                userRepository
-                        .findByEmail(username)
-                        .orElseThrow(
-                                () ->
-                                        new RuntimeException(
-                                                "User not found with email: " + username));
-        refreshTokenRepository.deleteByUser(user);
-    }
+  @Transactional
+  public void deleteByUserId(String username) {
+    User user = userRepository.findByEmail(username)
+        .orElseThrow(() -> new RuntimeException("User not found with email: " + username));
+    refreshTokenRepository.deleteByUser(user);
+  }
 }

@@ -4,7 +4,7 @@
  * Authentication is requested.
  */
 import React, { useState, useEffect, useCallback } from 'react';
-import { useProject } from '../../context/ProjectContextDefinition';
+import { useProject } from '../../context/ProjectContext';
 import { Milestone, Task } from '../../types/project';
 import TaskList from '../lists/TaskList';
 import CreateTaskModal from '../modals/CreateTaskModal';

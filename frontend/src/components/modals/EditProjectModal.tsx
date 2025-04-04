@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useProject } from '../../context/ProjectContextDefinition';
+import { useProject } from '../../context/ProjectContext';
 import { Project } from '../../types/project';
 
 interface EditProjectModalProps {

@@ -10,7 +10,7 @@ import com.projectmanage.main.model.Milestone;
 @Repository
 public interface MilestoneRepository extends JpaRepository<Milestone, Long> {
 
-    List<Milestone> findByProjectId(Long projectId);
+  List<Milestone> findByProjectId(Long projectId);
 
-    boolean existsByProjectIdAndTitle(Long projectId, String title);
+  boolean existsByProjectIdAndTitle(Long projectId, String title);
 }

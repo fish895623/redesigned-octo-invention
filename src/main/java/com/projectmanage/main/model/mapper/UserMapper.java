@@ -16,100 +16,89 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserMapper {
 
-    /**
-     * Convert User entity to UserDTO
-     *
-     * @param user the User entity
-     * @return the UserDTO
-     */
-    public UserDTO toDto(User user) {
-        if (user == null) {
-            return null;
-        }
-
-        return UserDTO.builder()
-                .id(user.getId())
-                .username(user.getUsername())
-                .email(user.getEmail())
-                .name(user.getName())
-                .picture(user.getPicture())
-                .roles(
-                        user.getRole() != null
-                                ? Collections.singletonList(user.getRole())
-                                : Collections.emptyList())
-                .build();
+  /**
+   * Convert User entity to UserDTO
+   *
+   * @param user the User entity
+   * @return the UserDTO
+   */
+  public UserDTO toDto(User user) {
+    if (user == null) {
+      return null;
     }
 
-    /**
-     * Convert UserDTO to User entity
-     *
-     * @param userDTO the UserDTO
-     * @return the User entity
-     */
-    public User toEntity(UserDTO userDTO) {
-        if (userDTO == null) {
-            return null;
-        }
+    return UserDTO.builder().id(user.getId()).username(user.getUsername()).email(user.getEmail())
+        .name(user.getName()).picture(user.getPicture())
+        .roles(user.getRole() != null ? Collections.singletonList(user.getRole())
+            : Collections.emptyList())
+        .build();
+  }
 
-        return User.builder()
-                .id(userDTO.getId())
-                .username(userDTO.getUsername())
-                .email(userDTO.getEmail())
-                .name(userDTO.getName())
-                .picture(userDTO.getPicture())
-                .role(
-                        userDTO.getRoles() != null && !userDTO.getRoles().isEmpty()
-                                ? userDTO.getRoles().get(0)
-                                : null)
-                .build();
+  /**
+   * Convert UserDTO to User entity
+   *
+   * @param userDTO the UserDTO
+   * @return the User entity
+   */
+  public User toEntity(UserDTO userDTO) {
+    if (userDTO == null) {
+      return null;
     }
 
-    /**
-     * Convert a list of User entities to a list of UserDTOs
-     *
-     * @param users list of User entities
-     * @return list of UserDTOs
-     */
-    public List<UserDTO> toDtoList(List<User> users) {
-        if (users == null) {
-            return Collections.emptyList();
-        }
+    return User.builder().id(userDTO.getId()).username(userDTO.getUsername())
+        .email(userDTO.getEmail()).name(userDTO.getName()).picture(userDTO.getPicture())
+        .role(
+            userDTO.getRoles() != null && !userDTO.getRoles().isEmpty() ? userDTO.getRoles().get(0)
+                : null)
+        .build();
+  }
 
-        return users.stream().map(this::toDto).collect(Collectors.toList());
+  /**
+   * Convert a list of User entities to a list of UserDTOs
+   *
+   * @param users list of User entities
+   * @return list of UserDTOs
+   */
+  public List<UserDTO> toDtoList(List<User> users) {
+    if (users == null) {
+      return Collections.emptyList();
     }
 
-    /**
-     * Update a User entity with data from UserDTO
-     *
-     * @param user the User entity to update
-     * @param userDTO the UserDTO with updated data
-     * @return the updated User entity
-     */
-    public User updateEntityFromDto(User user, UserDTO userDTO) {
-        if (user == null || userDTO == null) {
-            return user;
-        }
+    return users.stream().map(this::toDto).collect(Collectors.toList());
+  }
 
-        // Only update fields that are typically allowed to be updated
-        if (userDTO.getUsername() != null) {
-            user.setUsername(userDTO.getUsername());
-        }
-
-        if (userDTO.getName() != null) {
-            user.setName(userDTO.getName());
-        }
-
-        if (userDTO.getPicture() != null) {
-            user.setPicture(userDTO.getPicture());
-        }
-
-        // Roles are typically managed separately for security reasons
-        // This is just a simple example - in production you'd likely have more complex
-        // role management
-        if (userDTO.getRoles() != null && !userDTO.getRoles().isEmpty()) {
-            user.setRole(userDTO.getRoles().get(0));
-        }
-
-        return user;
+  /**
+   * Update a User entity with data from UserDTO
+   *
+   * @param user the User entity to update
+   * @param userDTO the UserDTO with updated data
+   * @return the updated User entity
+   */
+  public User updateEntityFromDto(User user, UserDTO userDTO) {
+    if (user == null || userDTO == null) {
+      return user;
     }
+
+    // Only update fields that are typically allowed to be updated
+    if (userDTO.getUsername() != null) {
+      user.setUsername(userDTO.getUsername());
+    }
+
+    if (userDTO.getName() != null) {
+      user.setName(userDTO.getName());
+    }
+
+    if (userDTO.getPicture() != null) {
+      user.setPicture(userDTO.getPicture());
+    }
+
+    // Roles are typically managed separately for security reasons
+    // This is just a simple example - in production you'd likely have more complex
+    // role management
+    if (userDTO.getRoles() != null && !userDTO.getRoles().isEmpty()) {
+      user.setRole(userDTO.getRoles().get(0));
+    }
+
+    return user;
+  }
 }

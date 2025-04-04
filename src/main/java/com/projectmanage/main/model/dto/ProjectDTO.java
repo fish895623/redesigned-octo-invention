@@ -15,12 +15,14 @@ import lombok.NoArgsConstructor;
 @Builder
 public class ProjectDTO {
 
-    private Long id;
-    private String title;
-    private String description;
-    private Long userId;
-    @Builder.Default private List<MilestoneDTO> milestones = new ArrayList<>();
-    @Builder.Default private List<TaskDTO> tasks = new ArrayList<>();
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+  private Long id;
+  private String title;
+  private String description;
+  private Long userId;
+  @Builder.Default
+  private List<MilestoneDTO> milestones = new ArrayList<>();
+  @Builder.Default
+  private List<TaskDTO> tasks = new ArrayList<>();
+  private LocalDateTime createdAt;
+  private LocalDateTime updatedAt;
 }

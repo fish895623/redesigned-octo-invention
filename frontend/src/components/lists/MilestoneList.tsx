@@ -6,7 +6,7 @@
 import { useState } from 'react';
 import { Milestone } from '../../types/project';
 import CreateMilestoneModal from '../modals/CreateMilestoneModal';
-import { useProject } from '../../context/ProjectContextDefinition';
+import { useProject } from '../../context/ProjectContext';
 
 interface MilestoneListProps {
   projectId: number;
