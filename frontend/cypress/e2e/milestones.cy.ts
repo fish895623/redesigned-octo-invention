@@ -16,7 +16,7 @@ describe('Milestone Management Tests', () => {
 
   describe('Milestone List Page', () => {
     beforeEach(() => {
-      // Define test project with milestones
+      // Define test project with milestones aligned with backend MilestoneDTO structure
       const testProject: Project = {
         id: 1,
         title: 'Test Project',
@@ -30,7 +30,8 @@ describe('Milestone Management Tests', () => {
             dueDate: '2023-12-31',
             status: 'IN_PROGRESS',
             projectId: 1,
-            task: [],
+            completed: false,
+            startDate: null,
             tasks: [],
           },
           {
@@ -40,7 +41,8 @@ describe('Milestone Management Tests', () => {
             dueDate: '2024-01-31',
             status: 'PLANNED',
             projectId: 1,
-            task: [],
+            completed: false,
+            startDate: null,
             tasks: [],
           },
         ],
@@ -68,11 +70,7 @@ describe('Milestone Management Tests', () => {
 
     it('should display milestone list correctly', () => {
       // Visit the milestone page
-      cy.visit('/project/1/milestone', {
-        onBeforeLoad(win) {
-          cy.spy(win, 'fetch').as('fetchSpy');
-        },
-      });
+      cy.visit('/project/1/milestone');
 
       // Wait for critical API responses with proper timeout
       cy.wait('@authCheck', { timeout: 10000 });
@@ -87,7 +85,7 @@ describe('Milestone Management Tests', () => {
 
       // Try to wait for project details, but continue test if it fails
       cy.get('body').then(() => {
-        // Set up a way to handle the timeout without using .catch() or the second parameter of .then()
+        // Set up a way to handle the timeout without using .catch()
         Cypress.on('fail', (error) => {
           if (error.message.includes('@projectsListRequest') && error.message.includes('timed out')) {
             console.log('Projects list request not intercepted - continuing test');
@@ -111,11 +109,12 @@ describe('Milestone Management Tests', () => {
       });
     });
 
-    it.skip('should navigate to milestone details when clicking on a milestone', () => {
+    it('should navigate to milestone details when clicking on a milestone', () => {
+      // Visit the milestones page
       cy.visit('/project/1/milestone');
       cy.wait('@authCheck');
 
-      // Define milestone details
+      // Define milestone details aligned with MilestoneDTO
       const milestone = {
         id: 1,
         title: 'Milestone 1',
@@ -124,8 +123,18 @@ describe('Milestone Management Tests', () => {
         projectId: 1,
         completed: false,
         startDate: null,
-        task: [],
-        tasks: [],
+        tasks: [
+          {
+            id: 1,
+            title: 'Task 1',
+            description: 'First task',
+            status: 'TODO',
+            priority: 'HIGH',
+            dueDate: '2023-12-15',
+            projectId: 1,
+            milestoneId: 1,
+          },
+        ],
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
@@ -136,6 +145,12 @@ describe('Milestone Management Tests', () => {
         body: milestone,
       }).as('milestoneDetailsRequest');
 
+      // Also mock any tasks request that might happen
+      cy.intercept('GET', '/api/projects/1/milestones/1/tasks', {
+        statusCode: 200,
+        body: milestone.tasks,
+      }).as('milestoneTasksRequest');
+
       // Wait for the page to load and milestones to render
       cy.contains('Milestone 1', { timeout: 10000 })
         .should('be.visible')
@@ -143,6 +158,22 @@ describe('Milestone Management Tests', () => {
 
       // Should navigate to milestone details page
       cy.url().should('include', '/project/1/milestone/1');
+
+      // Wait for milestone details request to complete
+      cy.wait('@milestoneDetailsRequest', { timeout: 10000 }).then(() => {
+        // Verify the milestone details are displayed correctly
+        cy.contains(milestone.title).should('be.visible');
+        cy.contains(milestone.description).should('be.visible');
+
+        // Check for due date display - this may vary based on date formatting in UI
+        const dueDate = new Date(milestone.dueDate).toLocaleDateString();
+        cy.contains(dueDate).should('exist');
+
+        // If tasks are shown on the milestone detail page, verify them too
+        if (milestone.tasks && milestone.tasks.length > 0) {
+          cy.contains('Task 1').should('exist');
+        }
+      });
     });
 
     it.skip('should create a new milestone', () => {
@@ -152,7 +183,7 @@ describe('Milestone Management Tests', () => {
       // Wait for the page to load and elements to appear
       cy.contains('Milestones', { timeout: 10000 }).should('be.visible');
 
-      // Define a new milestone matching the backend DTO structure
+      // Define a new milestone matching the backend MilestoneDTO structure
       const newMilestone = {
         id: 3,
         title: 'New Milestone',
@@ -161,7 +192,6 @@ describe('Milestone Management Tests', () => {
         startDate: null,
         dueDate: '2024-02-28',
         completed: false,
-        task: [],
         tasks: [],
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
@@ -173,10 +203,10 @@ describe('Milestone Management Tests', () => {
         body: newMilestone,
       }).as('createMilestoneRequest');
 
-      // Open the create milestone modal - check for different possible button texts
+      // Open the create milestone modal
       cy.contains('button', /Add Milestone|Create Milestone/, { timeout: 10000 }).click();
 
-      // Fill out the form with fields matching the actual component - use more flexible selectors
+      // Fill out the form with fields matching the actual component
       cy.get('input[type="text"]')
         .first()
         .clear()
@@ -193,7 +223,7 @@ describe('Milestone Management Tests', () => {
           .type(newMilestone.dueDate.split('T')[0]);
       }
 
-      // Submit the form - be flexible with button text
+      // Submit the form
       cy.contains('button', /Create|Create Milestone|Submit/).click();
 
       // Wait for the create request
@@ -210,7 +240,8 @@ describe('Milestone Management Tests', () => {
             dueDate: '2023-12-31',
             status: 'IN_PROGRESS',
             projectId: 1,
-            task: [],
+            completed: false,
+            startDate: null,
             tasks: [],
           },
           {
@@ -220,7 +251,8 @@ describe('Milestone Management Tests', () => {
             dueDate: '2024-01-31',
             status: 'PLANNED',
             projectId: 1,
-            task: [],
+            completed: false,
+            startDate: null,
             tasks: [],
           },
           newMilestone,
@@ -249,7 +281,9 @@ describe('Milestone Management Tests', () => {
             dueDate: '2023-12-31',
             status: 'IN_PROGRESS',
             projectId: 1,
-            task: [
+            completed: false,
+            startDate: null,
+            tasks: [
               {
                 id: 1,
                 title: 'Task 1',
@@ -261,7 +295,6 @@ describe('Milestone Management Tests', () => {
                 milestoneId: 1,
               },
             ],
-            tasks: [],
           },
         ],
         tasks: [
@@ -295,7 +328,7 @@ describe('Milestone Management Tests', () => {
         statusCode: 200,
         body: {
           ...testProject.milestones[0],
-          task: testProject.tasks.filter((t) => t.milestoneId === 1),
+          tasks: testProject.tasks.filter((t) => t.milestoneId === 1),
         },
       }).as('milestoneDetailsRequest');
 
@@ -346,7 +379,6 @@ describe('Milestone Management Tests', () => {
         startDate: null,
         dueDate: '2024-03-15',
         completed: true,
-        task: [],
         tasks: [],
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
@@ -358,10 +390,10 @@ describe('Milestone Management Tests', () => {
         body: updatedMilestone,
       }).as('updateMilestoneRequest');
 
-      // Click edit button - use more flexible selector
+      // Click edit button
       cy.contains(/Edit|Edit Milestone/).click();
 
-      // Update form fields based on actual component structure - use more reliable selectors
+      // Update form fields
       cy.get('input[type="text"]')
         .first()
         .clear()
@@ -371,7 +403,7 @@ describe('Milestone Management Tests', () => {
         .clear()
         .type(updatedMilestone.description);
 
-      // Handle date field if present in UI
+      // Handle date field if present
       if (updatedMilestone.dueDate) {
         cy.get('input[type="date"]')
           .eq(1)
@@ -382,7 +414,7 @@ describe('Milestone Management Tests', () => {
       // Set completed checkbox
       cy.get('input[type="checkbox"]').check();
 
-      // Submit the form - use more flexible selector
+      // Submit the form
       cy.contains(/Save Changes|Update|Submit/).click();
 
       // Wait for the update request
@@ -400,8 +432,8 @@ describe('Milestone Management Tests', () => {
       // Wait for the page to load
       cy.contains('Milestone 1', { timeout: 10000 }).should('be.visible');
 
-      // Mock the milestone delete API response - wildcards catch query params
-      cy.intercept('DELETE', '/api/projects/1/milestones/1*', {
+      // Mock the milestone delete API response with cascade parameter
+      cy.intercept('DELETE', '/api/projects/1/milestones/1?isCascadeDelete=true', {
         statusCode: 200,
         body: { success: true },
       }).as('deleteMilestoneRequest');
@@ -409,7 +441,7 @@ describe('Milestone Management Tests', () => {
       // Stub window.confirm to return true
       cy.on('window:confirm', () => true);
 
-      // Click delete button - use more flexible selector
+      // Click delete button
       cy.contains(/Delete|Delete Milestone/).click();
 
       // Wait for the delete request

@@ -39,8 +39,8 @@ const MilestoneDetail = ({ projectId, milestoneId }: MilestoneDetailProps) => {
         setMilestone(foundMilestone);
         setTitle(foundMilestone.title);
         setDescription(foundMilestone.description || '');
-        setStartDate(foundMilestone.startDate ? foundMilestone.startDate.toISOString().split('T')[0] : '');
-        setDueDate(foundMilestone.dueDate ? foundMilestone.dueDate.toISOString().split('T')[0] : '');
+        setStartDate(foundMilestone.startDate ? new Date(foundMilestone.startDate).toISOString().split('T')[0] : '');
+        setDueDate(foundMilestone.dueDate ? new Date(foundMilestone.dueDate).toISOString().split('T')[0] : '');
         setCompleted(foundMilestone.completed);
         setLoading(false);
       } else {
