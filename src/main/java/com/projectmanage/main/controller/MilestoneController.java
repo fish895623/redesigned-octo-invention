@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.projectmanage.main.dto.CustomUserDetails;
 import com.projectmanage.main.model.dto.MilestoneDTO;
 import com.projectmanage.main.service.MilestoneService;
-import com.projectmanage.main.service.ProjectService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,7 +24,6 @@ import lombok.RequiredArgsConstructor;
 public class MilestoneController {
 
     private final MilestoneService milestoneService;
-    private final ProjectService projectService;
 
     // 마일스톤 목록 읽기
     @PreAuthorize("isAuthenticated()")

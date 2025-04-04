@@ -15,10 +15,10 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -46,11 +46,11 @@ class AuthControllerTest {
 
     @Autowired private ObjectMapper objectMapper;
 
-    @MockBean private UserService userService;
+    @Mock private UserService userService;
 
-    @MockBean private JWTUtil jwtUtil;
+    @Mock private JWTUtil jwtUtil;
 
-    @MockBean private RefreshTokenService refreshTokenService;
+    @Mock private RefreshTokenService refreshTokenService;
 
     private User testUser;
     private UserDTO testUserDTO;
@@ -87,7 +87,7 @@ class AuthControllerTest {
     }
 
     @Test
-    void whenLogin_thenReturnAuthenticationResponse() throws Exception {
+    void testLoginReturnsAuthenticationResponse() throws Exception {
         when(userService.authenticateUser(anyString(), anyString())).thenReturn(testUser);
         when(refreshTokenService.createRefreshToken(anyString())).thenReturn(testRefreshToken);
 
@@ -98,8 +98,10 @@ class AuthControllerTest {
                                 .content(
                                         objectMapper.writeValueAsString(
                                                 Map.of(
-                                                        "email", "test@example.com",
-                                                        "password", "password"))))
+                                                        "email",
+                                                        "test@example.com",
+                                                        "password",
+                                                        "password"))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.accessToken").value(testAccessToken))
                 .andExpect(jsonPath("$.refreshToken").value(testRefreshToken.getToken()))
@@ -110,7 +112,7 @@ class AuthControllerTest {
     }
 
     @Test
-    void whenRegister_thenReturnCreatedUser() throws Exception {
+    void testRegisterReturnsCreatedUser() throws Exception {
         when(userService.registerUser(any(UserDTO.class))).thenReturn(testUser);
         when(refreshTokenService.createRefreshToken(anyString())).thenReturn(testRefreshToken);
 
@@ -129,7 +131,7 @@ class AuthControllerTest {
     }
 
     @Test
-    void whenRefreshToken_thenReturnNewAccessToken() throws Exception {
+    void testRefreshTokenReturnsNewAccessToken() throws Exception {
         // Mock refresh token service behavior
         RefreshToken mockRefreshToken = new RefreshToken();
         mockRefreshToken.setToken("refresh-token");
@@ -156,7 +158,7 @@ class AuthControllerTest {
 
     @Test
     @WithMockUser(username = "test@example.com", roles = "USER")
-    void whenGetAuthStatus_withAuthenticatedUser_thenReturnUserDetails() throws Exception {
+    void testGetAuthStatusWithAuthenticatedUserReturnsUserDetails() throws Exception {
         SecurityContextHolder.getContext()
                 .setAuthentication(
                         new UsernamePasswordAuthenticationToken(
@@ -170,7 +172,7 @@ class AuthControllerTest {
     }
 
     @Test
-    void whenGetAuthStatus_withUnauthenticatedUser_thenReturnUnauthorized() throws Exception {
+    void testGetAuthStatusWithUnauthenticatedUserReturnsUnauthorized() throws Exception {
         mockMvc.perform(get("/api/auth/status"))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.authenticated").value(false));
@@ -178,7 +180,7 @@ class AuthControllerTest {
 
     @Test
     @WithMockUser(username = "test@example.com", roles = "USER")
-    void whenGetUser_withAuthenticatedUser_thenReturnUserDetails() throws Exception {
+    void testGetUserWithAuthenticatedUserReturnsUserDetails() throws Exception {
         SecurityContextHolder.getContext()
                 .setAuthentication(
                         new UsernamePasswordAuthenticationToken(
@@ -192,7 +194,7 @@ class AuthControllerTest {
     }
 
     @Test
-    void whenGetUser_withUnauthenticatedUser_thenReturnUnauthenticated() throws Exception {
+    void testGetUserWithUnauthenticatedUserReturnsUnauthenticated() throws Exception {
         mockMvc.perform(get("/api/auth/user"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.authenticated").value(false));

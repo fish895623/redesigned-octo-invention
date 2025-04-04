@@ -8,8 +8,6 @@ import org.springframework.stereotype.Service;
 import com.projectmanage.main.model.dto.MilestoneDTO;
 import com.projectmanage.main.model.mapper.MilestoneMapper;
 import com.projectmanage.main.repository.MilestoneRepository;
-import com.projectmanage.main.repository.ProjectRepository;
-import com.projectmanage.main.repository.TaskRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -18,8 +16,6 @@ import lombok.RequiredArgsConstructor;
 public class MilestoneService {
 
     private final MilestoneRepository milestoneRepository;
-    private final ProjectRepository projectRepository;
-    private final TaskRepository taskRepository;
 
     private final MilestoneMapper milestoneMapper;
 
@@ -67,15 +63,17 @@ public class MilestoneService {
         }
     }
 
-    //마일스톤 검증
-    public boolean isValidMilestone(MilestoneDTO milestone){
+    // 마일스톤 검증
+    public boolean isValidMilestone(MilestoneDTO milestone) {
 
-        //마일 스톤의 관련 속성들 유효성 확인
-        if(milestone==null || milestone.getTitle()==null ||
-                milestone.getDescription()==null || milestone.getProjectId()==null){
+        // 마일 스톤의 관련 속성들 유효성 확인
+        if (milestone == null
+                || milestone.getTitle() == null
+                || milestone.getDescription() == null
+                || milestone.getProjectId() == null) {
             return false;
         }
-        if(milestone.getTitle().trim().isEmpty() || milestone.getDescription().trim().isEmpty()){
+        if (milestone.getTitle().trim().isEmpty() || milestone.getDescription().trim().isEmpty()) {
             return false;
         }
         // 같은 프로젝트 내 중복여부 검증
@@ -87,25 +85,19 @@ public class MilestoneService {
         return true;
     }
 
-    //마일스톤 검증2(제목, 설명 유효성만 검증)
-    public boolean isValidMilestoneTwo(MilestoneDTO milestone){
-        //마일 스톤의 관련 속성들 유효성 확인
-        if(milestone==null || milestone.getTitle()==null ||
-                milestone.getDescription()==null || milestone.getProjectId()==null){
+    // 마일스톤 검증2(제목, 설명 유효성만 검증)
+    public boolean isValidMilestoneTwo(MilestoneDTO milestone) {
+        // 마일 스톤의 관련 속성들 유효성 확인
+        if (milestone == null
+                || milestone.getTitle() == null
+                || milestone.getDescription() == null
+                || milestone.getProjectId() == null) {
             return false;
         }
-        if(milestone.getTitle().trim().isEmpty() || milestone.getDescription().trim().isEmpty()){
+        if (milestone.getTitle().trim().isEmpty() || milestone.getDescription().trim().isEmpty()) {
             return false;
         }
 
         return true;
-    }
-
-    private void invalidMilestone(Long id) {
-        // ... existing code ...
-    }
-
-    private void invalidMilestoneTwo(Long id) {
-        // ... existing code ...
     }
 }
