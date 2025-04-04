@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -22,7 +21,7 @@ import java.util.List;
 @RequestMapping("/api/projects/{projectId}/tasks")
 public class TaskController {
 
-    public final TaskService taskService;
+    private final TaskService taskService;
 
     // 테스트 목록 읽기
     @PreAuthorize("isAuthenticated()")
@@ -64,7 +63,7 @@ public class TaskController {
     @PreAuthorize("isAuthenticated()")
     @DeleteMapping("/{taskId}")
     public ResponseEntity<?> deleteTask(@PathVariable(name = "projectId") Long projectId,
-        @PathVariable(name = "taskId") Long taskId){
+        @PathVariable(name = "taskId") Long taskId) {
         taskService.deleteTask(taskId);
         return ResponseEntity.ok("Task deleted successfully");
     }
