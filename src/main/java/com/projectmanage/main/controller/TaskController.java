@@ -27,8 +27,8 @@ public class TaskController {
   @PreAuthorize("isAuthenticated()")
   @GetMapping
   public ResponseEntity<?> getTasks(@PathVariable(name = "projectId") Long projectId) {
-        List<TaskDTO> taskDTOList = taskService.getTasksByProjectId(projectId);
-        return ResponseEntity.ok(taskDTOList);
+    List<TaskDTO> taskDTOList = taskService.getTasksByProjectId(projectId);
+    return ResponseEntity.ok(taskDTOList);
   }
 
   // 테스크 등록하기
@@ -36,8 +36,8 @@ public class TaskController {
   @PostMapping
   public ResponseEntity<?> createTask(@PathVariable(name = "projectId") Long projectId,
       @RequestBody TaskDTO taskDTO) {
-      TaskDTO createdTaskDTO = taskService.createTask(taskDTO, projectId);
-      return ResponseEntity.ok(createdTaskDTO);
+    TaskDTO createdTaskDTO = taskService.createTask(taskDTO, projectId);
+    return ResponseEntity.ok(createdTaskDTO);
   }
 
   // 테스크 하나 읽기
@@ -45,26 +45,25 @@ public class TaskController {
   @GetMapping("/{taskId}")
   public ResponseEntity<?> getTask(@PathVariable(name = "projectId") Long projectId,
       @PathVariable(name = "taskId") Long taskId) {
-      TaskDTO readTaskDTO = taskService.getTaskById(taskId);
-      return ResponseEntity.ok(readTaskDTO);
+    TaskDTO readTaskDTO = taskService.getTaskById(taskId);
+    return ResponseEntity.ok(readTaskDTO);
   }
 
   // 테스크 수정
   @PreAuthorize("isAuthenticated()")
   @PutMapping("/{taskId}")
   public ResponseEntity<?> updateTask(@PathVariable(name = "projectId") Long projectId,
-      @PathVariable(name = "taskId") Long taskId,
-      @RequestBody TaskDTO taskDTO) {
-      TaskDTO updatedTask = taskService.updateTask(taskId, taskDTO);
-      return ResponseEntity.ok(updatedTask);
+      @PathVariable(name = "taskId") Long taskId, @RequestBody TaskDTO taskDTO) {
+    TaskDTO updatedTask = taskService.updateTask(taskId, taskDTO);
+    return ResponseEntity.ok(updatedTask);
   }
 
-    // 테스크 삭제
+  // 테스크 삭제
   @PreAuthorize("isAuthenticated()")
   @DeleteMapping("/{taskId}")
   public ResponseEntity<?> deleteTask(@PathVariable(name = "projectId") Long projectId,
       @PathVariable(name = "taskId") Long taskId) {
-      taskService.deleteTask(taskId);
-      return ResponseEntity.ok("Task deleted successfully");
+    taskService.deleteTask(taskId);
+    return ResponseEntity.ok("Task deleted successfully");
   }
 }
