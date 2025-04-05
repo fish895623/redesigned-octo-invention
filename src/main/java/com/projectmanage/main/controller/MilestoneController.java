@@ -1,5 +1,6 @@
 package com.projectmanage.main.controller;
 
+import com.projectmanage.main.service.TaskService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -25,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 public class MilestoneController {
 
   private final MilestoneService milestoneService;
+  private final TaskService taskService;
 
   // 마일스톤 목록 읽기
   @PreAuthorize("isAuthenticated()")
@@ -71,5 +73,12 @@ public class MilestoneController {
       @RequestParam(name = "isCascadeDelete") boolean isCascadeDelete) {
     milestoneService.deleteMilestone(milestoneId, isCascadeDelete);
     return ResponseEntity.ok("Milestone deleted successfully");
+  }
+
+  // 마일 스톤에 속하는 테스크 목록 읽기
+  @PreAuthorize("isAuthenticated()")
+  @GetMapping("/{milestoneId}/tasks")
+  public ResponseEntity<?> getTasks(@PathVariable(name = "milestoneId") Long milestoneId) {
+    return ResponseEntity.ok(taskService.getTasksByMilestoneId(milestoneId));
   }
 }
