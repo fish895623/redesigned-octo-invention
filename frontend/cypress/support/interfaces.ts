@@ -27,6 +27,12 @@ export interface Milestone {
   dueDate: string;
   status: 'PLANNED' | 'IN_PROGRESS' | 'COMPLETED';
   projectId: number;
+  task?: Task[];
+  tasks?: Task[];
+  startDate?: string | null;
+  completed?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface Project {

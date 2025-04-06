@@ -31,7 +31,13 @@ public class MilestoneService {
   // 마일스톤 읽기
   @Transactional(readOnly = true)
   public MilestoneDTO getMilestone(Long milestoneId) {
-    return milestoneMapper.toDTO(milestoneRepository.findById(milestoneId).orElse(null));
+    try {
+      return milestoneMapper.toDTO(milestoneRepository.findById(milestoneId).orElseThrow(
+          () -> new IllegalArgumentException("Milestone not found with id: " + milestoneId)));
+    } catch (Exception e) {
+      log.error("Error fetching milestone with id {}: {}", milestoneId, e.getMessage());
+      throw e;
+    }
   }
 
   // 마일스톤 추가
