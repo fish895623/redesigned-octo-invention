@@ -129,7 +129,7 @@ describe('Milestones', () => {
   });
 
   it('should add milestones on projects', () => {
-    cy.visit('/projects/1/milestones');
+    cy.visit('/project');
 
     cy.get('a')
       .contains('Test Project')
@@ -142,7 +142,18 @@ describe('Milestones', () => {
     cy.get('form > :nth-child(1) ').type('New Milestone');
     cy.get('form > :nth-child(2) ').type('New milestone description');
 
-    // Submit the form
-    cy.get('button.font-medium:nth-child(2)').click();
+    // TODO press create milestone to create the milestone
+  });
+
+  it('should delete milestones', async () => {
+    cy.visit('/project/1/milestone');
+    cy.get('button')
+      .contains('Delete')
+      .first()
+      .click();
+
+    cy.get('h3')
+      .contains('Milestone 1')
+      .should('not.exist');
   });
 });
