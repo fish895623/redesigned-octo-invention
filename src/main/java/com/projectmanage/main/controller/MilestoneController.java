@@ -1,7 +1,5 @@
 package com.projectmanage.main.controller;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -17,15 +15,18 @@ import org.springframework.web.bind.annotation.RestController;
 import com.projectmanage.main.dto.CustomUserDetails;
 import com.projectmanage.main.model.dto.MilestoneDTO;
 import com.projectmanage.main.service.MilestoneService;
+import com.projectmanage.main.service.TaskService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/projects/{projectId}/milestones")
 public class MilestoneController {
 
   private final MilestoneService milestoneService;
-  private static final Logger log = LoggerFactory.getLogger(MilestoneController.class);
+  private final TaskService taskService;
 
   // 마일스톤 목록 읽기
   @PreAuthorize("isAuthenticated()")
@@ -81,5 +82,12 @@ public class MilestoneController {
       @RequestParam(name = "isCascadeDelete") boolean isCascadeDelete) {
     milestoneService.deleteMilestone(milestoneId, isCascadeDelete);
     return ResponseEntity.ok("Milestone deleted successfully");
+  }
+
+  // 마일 스톤에 속하는 테스크 목록 읽기
+  @PreAuthorize("isAuthenticated()")
+  @GetMapping("/{milestoneId}/tasks")
+  public ResponseEntity<?> getTasks(@PathVariable(name = "milestoneId") Long milestoneId) {
+    return ResponseEntity.ok(taskService.getTasksByMilestoneId(milestoneId));
   }
 }
