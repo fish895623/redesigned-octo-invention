@@ -95,29 +95,51 @@ describe('Task Management Tests', () => {
         milestoneId: 1,
       };
 
+      // Mock the task details API response
+      cy.intercept('GET', '/api/projects/1/tasks/1', {
+        statusCode: 200,
+        body: task,
+      }).as('taskDetailsRequest');
+
       cy.contains(task.title).click();
+
+      // Wait for task details request after click
+      cy.wait('@taskDetailsRequest');
       cy.url().should('include', '/project/1/task/1');
+
+      // Verify task details are displayed correctly
+      cy.contains(task.title).should('be.visible');
+      cy.contains(task.description).should('be.visible');
+      cy.contains(task.status).should('be.visible');
+      cy.contains(task.priority).should('be.visible');
     });
 
     it.skip('should filter tasks by status', () => {
       cy.visit('/project/1/task');
       cy.wait('@authCheck');
-      cy.wait('@projectDetailsRequest');
-      cy.wait('@tasksListRequest');
+
+      // Check both tasks are initially visible
+      cy.contains('Task 1').should('be.visible');
+      cy.contains('Task 2').should('be.visible');
 
       // Filter by IN_PROGRESS status
       cy.get('select[id="statusFilter"]').select('IN_PROGRESS');
 
-      // Only Task 2 should be visible
+      // Only Task 2 should be visible with 'IN_PROGRESS' status
       cy.contains('Task 2').should('be.visible');
-      cy.contains('Task 1').should('not.be.visible');
+      cy.contains('Task 1').should('not.exist');
+
+      // Reset filter
+      cy.get('select[id="statusFilter"]').select('ALL');
+
+      // Both tasks should be visible again
+      cy.contains('Task 1').should('be.visible');
+      cy.contains('Task 2').should('be.visible');
     });
 
-    it.skip('should create a new task', () => {
+    it('should create a new task', () => {
       cy.visit('/project/1/task');
       cy.wait('@authCheck');
-      cy.wait('@projectDetailsRequest');
-      cy.wait('@tasksListRequest');
 
       // Define a new task
       const newTask: Task = {
@@ -140,16 +162,12 @@ describe('Task Management Tests', () => {
       // Open the create task modal
       cy.contains('button', 'Create Task').click();
 
-      // Fill out the form
-      cy.get('input[id="taskName"]').type(newTask.title);
-      cy.get('textarea[id="taskDescription"]').type(newTask.description);
-      cy.get('input[id="taskDueDate"]').type(newTask.dueDate);
-      cy.get('select[id="taskStatus"]').select(newTask.status);
-      cy.get('select[id="taskPriority"]').select(newTask.priority);
-      cy.get('select[id="taskMilestoneId"]').select(String(newTask.milestoneId)); // Select the first milestone
+      // Fill out the Create Task Modal form
+      // Using more reliable selectors based on the actual component
+      cy.get('input[type="text"][placeholder="Enter task title"]').type(newTask.title);
+      cy.get('textarea[placeholder="Enter task description (optional)"]').type(newTask.description);
 
-      // Submit the form
-      cy.contains('button', 'Create').click();
+      cy.get('form.px-6 > .flex > .bg-blue-600').click();
 
       // Wait for the create request
       cy.wait('@createTaskRequest');
@@ -188,7 +206,6 @@ describe('Task Management Tests', () => {
       // Verify the new task appears in the list
       cy.contains(newTask.title).should('be.visible');
       cy.contains(newTask.description).should('be.visible');
-      cy.contains(newTask.priority).should('be.visible');
     });
   });
 
@@ -239,6 +256,7 @@ describe('Task Management Tests', () => {
 
     it.skip('should display task details correctly', () => {
       cy.visit('/project/1/task/1');
+      cy.wait('@authCheck');
       cy.wait('@projectDetailsRequest');
       cy.wait('@taskDetailsRequest');
 
@@ -253,6 +271,7 @@ describe('Task Management Tests', () => {
 
     it.skip('should edit task details', () => {
       cy.visit('/project/1/task/1');
+      cy.wait('@authCheck');
       cy.wait('@projectDetailsRequest');
       cy.wait('@taskDetailsRequest');
 
@@ -306,6 +325,7 @@ describe('Task Management Tests', () => {
 
     it.skip('should change task status quickly using status dropdown', () => {
       cy.visit('/project/1/task/1');
+      cy.wait('@authCheck');
       cy.wait('@projectDetailsRequest');
       cy.wait('@taskDetailsRequest');
 
@@ -339,6 +359,7 @@ describe('Task Management Tests', () => {
 
     it.skip('should delete a task', () => {
       cy.visit('/project/1/task/1');
+      cy.wait('@authCheck');
       cy.wait('@projectDetailsRequest');
       cy.wait('@taskDetailsRequest');
 

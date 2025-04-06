@@ -133,7 +133,7 @@ const CreateTaskModal: React.FC<CreateTaskModalProps> = ({
               type="submit"
               className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              Create Task
+              Create
             </button>
           </div>
         </form>
