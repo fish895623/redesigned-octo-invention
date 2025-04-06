@@ -57,7 +57,7 @@ declare global {
 Cypress.Commands.add('login', (email = 'test@example.com', password = 'password123', options = { mock: true }) => {
   if (options.mock) {
     // Mock authentication approach
-    const user = {
+    const user: User = {
       authenticated: true,
       id: 1,
       name: 'Test User',
@@ -87,20 +87,26 @@ Cypress.Commands.add('login', (email = 'test@example.com', password = 'password1
     cy.visit('/login');
 
     // Fill out the login form
-    cy.get('[data-testid="email-input"], input[type="email"], input[name="email"]').should('be.visible').type(email);
+    cy.get('[data-testid="email-input"], input[type="email"], input[name="email"]')
+      .should('be.visible')
+      .type(email);
 
     cy.get('[data-testid="password-input"], input[type="password"], input[name="password"]')
       .should('be.visible')
       .type(password);
 
     // Submit the form
-    cy.get('[data-testid="login-button"], button[type="submit"]').should('be.visible').click();
+    cy.get('[data-testid="login-button"], button[type="submit"]')
+      .should('be.visible')
+      .click();
 
     // Wait for navigation and authentication to complete
     cy.url().should('not.include', '/login');
 
     // Verify authentication state
-    cy.window().its('localStorage.accessToken').should('exist');
+    cy.window()
+      .its('localStorage.accessToken')
+      .should('exist');
   }
 });
 
