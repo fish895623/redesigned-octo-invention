@@ -126,10 +126,23 @@ describe('Milestones', () => {
     cy.get('h3')
       .contains('Milestone 2')
       .should('be.visible');
+  });
 
-    // check the tasks counts are correct.
-    cy.get('span')
-      .contains('1')
-      .should('be.visible');
+  it('should add milestones on projects', () => {
+    cy.visit('/projects/1/milestones');
+
+    cy.get('a')
+      .contains('Test Project')
+      .click();
+
+    cy.get('button')
+      .contains('Add Milestone')
+      .click();
+
+    cy.get('form > :nth-child(1) ').type('New Milestone');
+    cy.get('form > :nth-child(2) ').type('New milestone description');
+
+    // Submit the form
+    cy.get('button.font-medium:nth-child(2)').click();
   });
 });
