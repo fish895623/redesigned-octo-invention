@@ -3,21 +3,18 @@ package com.projectmanage.main.service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
-
-import com.projectmanage.main.model.dto.MilestoneDTO;
-import com.projectmanage.main.model.dto.TaskDTO;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import com.projectmanage.main.model.Project;
+import com.projectmanage.main.model.dto.MilestoneDTO;
 import com.projectmanage.main.model.dto.ProjectDTO;
+import com.projectmanage.main.model.dto.TaskDTO;
 import com.projectmanage.main.model.mapper.ProjectMapper;
 import com.projectmanage.main.repository.ProjectRepository;
-
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
-@Log4j2
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ProjectService {

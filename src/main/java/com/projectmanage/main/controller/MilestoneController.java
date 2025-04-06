@@ -1,22 +1,22 @@
 package com.projectmanage.main.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
+import org.springframework.web.bind.annotation.RestController;
 import com.projectmanage.main.dto.CustomUserDetails;
 import com.projectmanage.main.model.dto.MilestoneDTO;
 import com.projectmanage.main.service.MilestoneService;
-
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -25,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 public class MilestoneController {
 
   private final MilestoneService milestoneService;
+  private static final Logger log = LoggerFactory.getLogger(MilestoneController.class);
 
   // 마일스톤 목록 읽기
   @PreAuthorize("isAuthenticated()")
@@ -45,10 +46,19 @@ public class MilestoneController {
   // 마일스톤 하나 읽기
   @PreAuthorize("isAuthenticated()")
   @GetMapping("/{milestoneId}")
-  public ResponseEntity<?> getMilestoneById(@PathVariable(name = "projectId") Long projectId,
+  public ResponseEntity<MilestoneDTO> getMilestoneById(
+      @PathVariable(name = "projectId") Long projectId,
       @PathVariable(name = "milestoneId") Long milestoneId) {
-    MilestoneDTO milestone = milestoneService.getMilestone(milestoneId);
-    return ResponseEntity.ok(milestone);
+    try {
+      MilestoneDTO milestone = milestoneService.getMilestone(milestoneId);
+      if (milestone == null) {
+        return ResponseEntity.notFound().build();
+      }
+      return ResponseEntity.ok(milestone);
+    } catch (Exception e) {
+      log.error("Error fetching milestone: {}", e.getMessage(), e);
+      return ResponseEntity.internalServerError().build();
+    }
   }
 
   // 마일스톤 수정
