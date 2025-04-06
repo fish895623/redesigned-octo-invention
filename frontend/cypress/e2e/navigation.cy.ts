@@ -76,7 +76,7 @@ describe('Navigation and Redirect Tests', () => {
       // Mock project details
       const projectDetails: Project = {
         id: 1,
-        name: 'Test Project 1',
+        title: 'Test Project 1',
         description: 'Project 1 description',
         status: 'IN_PROGRESS',
         milestones: [],
@@ -129,7 +129,7 @@ describe('Navigation and Redirect Tests', () => {
       const projects: Project[] = [
         {
           id: 1,
-          name: 'Test Project 1',
+          title: 'Test Project 1',
           description: 'Project 1 description',
           status: 'IN_PROGRESS',
           milestones: [],
@@ -137,7 +137,7 @@ describe('Navigation and Redirect Tests', () => {
         },
         {
           id: 2,
-          name: 'Test Project 2',
+          title: 'Test Project 2',
           description: 'Project 2 description',
           status: 'PLANNED',
           milestones: [],
@@ -172,7 +172,7 @@ describe('Navigation and Redirect Tests', () => {
       const projects: Project[] = [
         {
           id: 1,
-          name: 'Test Project 1',
+          title: 'Test Project 1',
           description: 'Project 1 description',
           status: 'IN_PROGRESS',
           milestones: [],
@@ -180,7 +180,7 @@ describe('Navigation and Redirect Tests', () => {
         },
         {
           id: 2,
-          name: 'Test Project 2',
+          title: 'Test Project 2',
           description: 'Project 2 description',
           status: 'PLANNED',
           milestones: [],
@@ -196,13 +196,13 @@ describe('Navigation and Redirect Tests', () => {
       // Mock project details
       const projectDetails: Project = {
         id: 1,
-        name: 'Test Project 1',
+        title: 'Test Project 1',
         description: 'Project 1 description',
         status: 'IN_PROGRESS',
         milestones: [
           {
             id: 1,
-            name: 'Milestone 1',
+            title: 'Milestone 1',
             description: 'First milestone',
             dueDate: '2023-12-31',
             status: 'IN_PROGRESS',
@@ -212,7 +212,7 @@ describe('Navigation and Redirect Tests', () => {
         tasks: [
           {
             id: 1,
-            name: 'Task 1',
+            title: 'Task 1',
             description: 'First task',
             status: 'TODO',
             priority: 'HIGH',
@@ -242,7 +242,7 @@ describe('Navigation and Redirect Tests', () => {
       const milestones: Milestone[] = [
         {
           id: 1,
-          name: 'Milestone 1',
+          title: 'Milestone 1',
           description: 'First milestone',
           dueDate: '2023-12-31',
           status: 'IN_PROGRESS',
@@ -262,7 +262,7 @@ describe('Navigation and Redirect Tests', () => {
       // Click on a milestone
       const milestone: Milestone = {
         id: 1,
-        name: 'Milestone 1',
+        title: 'Milestone 1',
         description: 'First milestone',
         dueDate: '2023-12-31',
         status: 'IN_PROGRESS',
@@ -286,7 +286,7 @@ describe('Navigation and Redirect Tests', () => {
       const tasks: Task[] = [
         {
           id: 1,
-          name: 'Task 1',
+          title: 'Task 1',
           description: 'First task',
           status: 'TODO',
           priority: 'HIGH',
@@ -308,7 +308,7 @@ describe('Navigation and Redirect Tests', () => {
       // Click on a task
       const task: Task = {
         id: 1,
-        name: 'Task 1',
+        title: 'Task 1',
         description: 'First task',
         status: 'TODO',
         priority: 'HIGH',
@@ -341,7 +341,7 @@ describe('Navigation and Redirect Tests', () => {
       const projects: Project[] = [
         {
           id: 1,
-          name: 'Test Project 1',
+          title: 'Test Project 1',
           description: 'Project 1 description',
           status: 'IN_PROGRESS',
           milestones: [],
