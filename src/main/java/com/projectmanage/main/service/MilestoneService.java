@@ -2,6 +2,8 @@ package com.projectmanage.main.service;
 
 import java.util.List;
 import java.util.Objects;
+
+import com.projectmanage.main.model.Milestone;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.projectmanage.main.model.dto.MilestoneDTO;
@@ -52,7 +54,7 @@ public class MilestoneService {
 
   // 마일스톤 수정
   @Transactional
-  public void updateMilestone(Long milestoneId, MilestoneDTO milestoneDTO) {
+  public MilestoneDTO updateMilestone(Long milestoneId, MilestoneDTO milestoneDTO) {
     try {
       if (!Objects.equals(milestoneId, milestoneDTO.getId())) {
         throw new IllegalArgumentException("Invalid milestone ID");
@@ -60,10 +62,12 @@ public class MilestoneService {
       if (!isValidMilestoneTwo(milestoneDTO)) {
         throw new IllegalArgumentException("Invalid milestone");
       }
-      milestoneRepository.save(milestoneMapper.toEntity(milestoneDTO));
+      Milestone newMilestone = milestoneRepository.save(milestoneMapper.toEntity(milestoneDTO));
+      return milestoneMapper.toDTO(newMilestone);
     } catch (Exception e) {
       log.error("Error occurred while updating milestone: {}", e.getMessage());
     }
+    return null;
   }
 
   // 마일스톤 삭제(DELETE CASCADE)

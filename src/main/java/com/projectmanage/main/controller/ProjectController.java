@@ -55,8 +55,7 @@ public class ProjectController {
   @PutMapping("/{projectId}")
   public ResponseEntity<?> updateProject(@AuthenticationPrincipal CustomUserDetails userDetails,
       @PathVariable(name = "projectId") Long projectId, @RequestBody ProjectDTO projectDTO) {
-    projectService.updateProject(projectId, projectDTO);
-    return ResponseEntity.ok("Project updated successfully");
+    return ResponseEntity.ok(projectService.updateProject(projectId, projectDTO));
   }
 
   // 프로젝트 삭제

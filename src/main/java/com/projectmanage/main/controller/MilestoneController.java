@@ -69,8 +69,7 @@ public class MilestoneController {
       @PathVariable(name = "projectId") Long projectId,
       @PathVariable(name = "milestoneId") Long milestoneId,
       @RequestBody MilestoneDTO milestoneDTO) {
-    milestoneService.updateMilestone(milestoneId, milestoneDTO);
-    return ResponseEntity.ok("Milestone updated successfully");
+    return ResponseEntity.ok(milestoneService.updateMilestone(milestoneId, milestoneDTO));
   }
 
   // 마일스톤 삭제
