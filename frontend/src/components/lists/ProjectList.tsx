@@ -3,7 +3,7 @@ import { useProject } from '../../context/ProjectContext';
 import { Project } from '../../types/project';
 import CreateProjectModal from '../modals/CreateProjectModal';
 import EditProjectModal from '../modals/EditProjectModal';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import BaseCard from '../ui/Card/BaseCard';
 
 interface ProjectListProps {
@@ -115,7 +115,7 @@ const ProjectList = ({ onSelectProject }: ProjectListProps) => {
                 if (onSelectProject) onSelectProject(project.id);
                 else navigate(`/project/${project.id}/milestone`);
               }}
-              headerLeft={
+              headerRight={
                 <div className="flex gap-2">
                   <button
                     className="inline-block px-3 py-1 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"

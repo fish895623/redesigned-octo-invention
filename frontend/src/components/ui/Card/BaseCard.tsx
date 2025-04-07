@@ -3,7 +3,9 @@ import React, { ReactNode } from 'react';
 export interface BaseCardProps {
   title?: string;
   description?: string;
-  headerLeft?: ReactNode;
+  assignees?: ReactNode;
+  reviewers?: ReactNode;
+  headerRight?: ReactNode;
   footer?: ReactNode;
   children?: ReactNode;
   onClick?: () => void;
@@ -13,7 +15,9 @@ export interface BaseCardProps {
 const BaseCard: React.FC<BaseCardProps> = ({
   title,
   description,
-  headerLeft,
+  assignees,
+  reviewers,
+  headerRight,
   footer,
   children,
   onClick,
@@ -26,7 +30,7 @@ const BaseCard: React.FC<BaseCardProps> = ({
       } ${className}`}
       onClick={onClick}
     >
-      {(title || headerLeft) && (
+      {(title || headerRight) && (
         <div className="flex justify-between items-start">
           {title && (
             <div>
@@ -34,13 +38,17 @@ const BaseCard: React.FC<BaseCardProps> = ({
               {description && <p className="text-gray-400 mt-1">{description}</p>}
             </div>
           )}
-          {headerLeft && <div className="flex items-center gap-3">{headerLeft}</div>}
+          {headerRight && <div className="flex items-center gap-4 ml-auto">{headerRight}</div>}
         </div>
       )}
 
       {children && <div className="mt-4">{children}</div>}
 
-      {footer && <div className="mt-4 flex flex-wrap gap-4 text-sm text-gray-400">{footer}</div>}
+      <div>
+        {footer && <div className="mt-4 flex flex-wrap gap-4 text-sm text-gray-400">{footer}</div>}
+        {assignees && <div className="mt-4 flex flex-wrap gap-4 text-sm text-gray-400">{assignees}</div>}
+        {reviewers && <div className="mt-4 flex flex-wrap gap-4 text-sm text-gray-400">{reviewers}</div>}
+      </div>
     </div>
   );
 };

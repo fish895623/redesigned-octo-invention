@@ -70,23 +70,14 @@ const MilestoneList = ({ projectId, milestones }: MilestoneListProps) => {
             key={milestone.id}
             title={milestone.title}
             description={milestone.description || undefined}
-            headerLeft={
-              <>
-                <div
-                  className={`px-3 py-1 rounded-full text-sm font-medium ${
-                    milestone.completed ? 'bg-green-600 text-green-100' : 'bg-yellow-600 text-yellow-100'
-                  }`}
-                >
-                  {milestone.completed ? 'Completed' : 'In Progress'}
-                </div>
-                <button
-                  onClick={(e) => handleDelete(milestone.id, e)}
-                  className="px-3 py-1 bg-red-600 hover:bg-red-700 text-white text-sm rounded-md transition-colors"
-                  title="Delete milestone"
-                >
-                  Delete
-                </button>
-              </>
+            headerRight={
+              <button
+                onClick={(e) => handleDelete(milestone.id, e)}
+                className="px-3 py-1 bg-red-600 hover:bg-red-700 text-white text-sm rounded-md transition-colors"
+                title="Delete milestone"
+              >
+                Delete
+              </button>
             }
             footer={
               <>
