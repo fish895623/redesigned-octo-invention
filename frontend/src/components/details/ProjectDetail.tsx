@@ -1,22 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useProject } from '../../context/ProjectContext';
 import { Project } from '../../types/project';
 import MilestoneList from '../lists/MilestoneList';
 import TaskList from '../lists/TaskList';
 import CreateMilestoneModal from '../modals/CreateMilestoneModal';
-import { useNavigate } from 'react-router-dom';
 
 interface ProjectDetailProps {
   projectId: number;
 }
 
 const ProjectDetail = ({ projectId }: ProjectDetailProps) => {
-  const navigate = useNavigate();
-  const { projects, updateProject, deleteProject } = useProject();
+  const { projects } = useProject();
   const [project, setProject] = useState<Project | null>(null);
-  const [isEditing, setIsEditing] = useState(false);
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
   const [activeTab, setActiveTab] = useState<'milestones' | 'tasks'>('milestones');
   const [showMilestoneModal, setShowMilestoneModal] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -31,8 +26,6 @@ const ProjectDetail = ({ projectId }: ProjectDetailProps) => {
     const foundProject = projects.find((p) => p.id === projectId);
     if (foundProject) {
       setProject(foundProject);
-      setTitle(foundProject.title);
-      setDescription(foundProject.description || '');
       setLoading(false);
     } else if (projects.length > 0) {
       // If we have projects but didn't find this one
