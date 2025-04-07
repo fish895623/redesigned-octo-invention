@@ -115,7 +115,7 @@ const ProjectList = ({ onSelectProject }: ProjectListProps) => {
                 if (onSelectProject) onSelectProject(project.id);
                 else navigate(`/project/${project.id}/milestone`);
               }}
-              headerRight={
+              headerLeft={
                 <div className="flex gap-2">
                   <button
                     className="inline-block px-3 py-1 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"

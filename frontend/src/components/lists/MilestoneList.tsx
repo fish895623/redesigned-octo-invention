@@ -70,7 +70,7 @@ const MilestoneList = ({ projectId, milestones }: MilestoneListProps) => {
             key={milestone.id}
             title={milestone.title}
             description={milestone.description || undefined}
-            headerRight={
+            headerLeft={
               <>
                 <div
                   className={`px-3 py-1 rounded-full text-sm font-medium ${

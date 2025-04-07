@@ -116,7 +116,7 @@ const TaskList = ({ projectId, tasks = [], milestones = [] }: TaskListProps) => 
             key={task.id}
             title={task.title}
             description={task.description || undefined}
-            headerRight={
+            headerLeft={
               <>
                 <div
                   className={`px-3 py-1 rounded-full text-sm font-medium ${

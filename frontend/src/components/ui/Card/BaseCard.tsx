@@ -3,7 +3,6 @@ import React, { ReactNode } from 'react';
 export interface BaseCardProps {
   title?: string;
   description?: string;
-  headerRight?: ReactNode;
   headerLeft?: ReactNode;
   footer?: ReactNode;
   children?: ReactNode;
@@ -14,7 +13,6 @@ export interface BaseCardProps {
 const BaseCard: React.FC<BaseCardProps> = ({
   title,
   description,
-  headerRight,
   headerLeft,
   footer,
   children,
@@ -28,7 +26,7 @@ const BaseCard: React.FC<BaseCardProps> = ({
       } ${className}`}
       onClick={onClick}
     >
-      {(title || headerRight) && (
+      {(title || headerLeft) && (
         <div className="flex justify-between items-start">
           {title && (
             <div>
@@ -37,7 +35,6 @@ const BaseCard: React.FC<BaseCardProps> = ({
             </div>
           )}
           {headerLeft && <div className="flex items-center gap-3">{headerLeft}</div>}
-          {headerRight && <div className="flex items-center gap-3">{headerRight}</div>}
         </div>
       )}
 
