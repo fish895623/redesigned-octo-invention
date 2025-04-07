@@ -91,10 +91,5 @@ tasks.named('test') {
 spotless {
 	java {
 	    eclipse().configFile('./.github/spotless/eclipse-formatter.xml')
-		// removeUnusedImports()
-		// importOrder('java', 'javax', 'org', 'com', '')
-		// trimTrailingWhitespace()
-		// indentWithSpaces(4)
-		// endWithNewline()
 	}
 }
