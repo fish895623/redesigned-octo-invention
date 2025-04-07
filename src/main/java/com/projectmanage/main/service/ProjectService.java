@@ -55,7 +55,7 @@ public class ProjectService {
 
   // 프로젝트 수정
   @Transactional
-  public void updateProject(Long projectId, ProjectDTO project) {
+  public ProjectDTO updateProject(Long projectId, ProjectDTO project) {
     // 프로젝트 아이디, 프로젝트 객체 내 아이디 동일 여부 검증
     try {
       if (!Objects.equals(projectId, project.getId())) {
@@ -64,10 +64,12 @@ public class ProjectService {
       if (!isValidProject2(project)) {
         throw new IllegalArgumentException("Invalid project");
       }
-      projectRepository.save(projectMapper.toEntity(project));
+      Project newProject = projectRepository.save(projectMapper.toEntity(project));
+      return projectMapper.toDTO(newProject);
     } catch (Exception e) {
       log.error("Error updating project: {}", e.getMessage());
     }
+    return null;
   }
 
   // 프로젝트 삭제(DELETE CASCADE)
