@@ -85,13 +85,10 @@ public class MilestoneService {
   public boolean isValidMilestone(MilestoneDTO milestone) {
 
     // 마일 스톤의 관련 속성들 유효성 확인
-    if (milestone == null || milestone.getTitle() == null || milestone.getDescription() == null
-        || milestone.getProjectId() == null) {
+    if (milestone == null || milestone.getTitle() == null || milestone.getProjectId() == null) {
       return false;
     }
-    if (milestone.getTitle().trim().isEmpty() || milestone.getDescription().trim().isEmpty()) {
-      return false;
-    }
+
     // 같은 프로젝트 내 중복여부 검증
     if (milestoneRepository.existsByProjectIdAndTitle(milestone.getProjectId(),
         milestone.getTitle())) {
