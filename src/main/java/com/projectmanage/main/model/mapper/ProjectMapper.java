@@ -58,7 +58,8 @@ public class ProjectMapper {
     }
 
     Project.ProjectBuilder builder =
-        Project.builder().title(projectDTO.getTitle()).description(projectDTO.getDescription());
+        Project.builder().title(projectDTO.getTitle()).description(projectDTO.getDescription())
+            .createdAt(projectDTO.getCreatedAt()).updatedAt(projectDTO.getUpdatedAt());
 
     if (projectDTO.getId() != null) {
       builder.id(projectDTO.getId());
