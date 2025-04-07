@@ -11,8 +11,8 @@ const EditMilestoneModal: React.FC<EditMilestoneModalProps> = ({ milestone, onCl
   const [title, setTitle] = useState(milestone.title);
   const [description, setDescription] = useState(milestone.description || '');
   const [titleError, setTitleError] = useState('');
-  const [startDate, setStartDate] = useState(milestone.startDate || '');
-  const [dueDate, setDueDate] = useState(milestone.dueDate || '');
+  const [startDate, setStartDate] = useState(milestone.startDate ? new Date(milestone.startDate) : '');
+  const [dueDate, setDueDate] = useState(milestone.dueDate ? new Date(milestone.dueDate) : '');
   const { updateMilestone } = useProject();
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -24,7 +24,7 @@ const EditMilestoneModal: React.FC<EditMilestoneModalProps> = ({ milestone, onCl
     e.preventDefault();
 
     if (!title.trim()) {
-      setTitleError('Project title is required');
+      setTitleError('Title is required');
       return;
     }
 
@@ -33,6 +33,8 @@ const EditMilestoneModal: React.FC<EditMilestoneModalProps> = ({ milestone, onCl
         ...milestone,
         title: title.trim(),
         description: description.trim() || undefined,
+        startDate: startDate ? new Date(startDate) : undefined,
+        dueDate: dueDate ? new Date(dueDate) : undefined,
         updatedAt: new Date(),
       };
 
@@ -40,7 +42,7 @@ const EditMilestoneModal: React.FC<EditMilestoneModalProps> = ({ milestone, onCl
       onClose();
     } catch (error) {
       console.error('Error updating milestone:', error);
-      alert('프로젝트 수정에 실패했습니다. 다시 시도해주세요.');
+      alert('Milestone update failed. Please try again.');
     }
   };
 
