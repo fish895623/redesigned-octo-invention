@@ -44,7 +44,7 @@ public class ProjectController {
 
   // 프로젝트 하나 읽기
   @GetMapping("/{projectId}")
-  public ResponseEntity<?> getProjectById(@PathVariable Long projectId,
+  public ResponseEntity<?> getProjectById(@PathVariable(name = "projectId") Long projectId,
       @AuthenticationPrincipal CustomUserDetails userDetails) {
     ProjectDTO projectDTO = projectService.getProjectById(projectId);
     return ResponseEntity.ok(projectDTO);
@@ -54,7 +54,7 @@ public class ProjectController {
   @PreAuthorize("isAuthenticated()")
   @PutMapping("/{projectId}")
   public ResponseEntity<?> updateProject(@AuthenticationPrincipal CustomUserDetails userDetails,
-      @PathVariable Long projectId, @RequestBody ProjectDTO projectDTO) {
+      @PathVariable(name = "projectId") Long projectId, @RequestBody ProjectDTO projectDTO) {
     projectService.updateProject(projectId, projectDTO);
     return ResponseEntity.ok("Project updated successfully");
   }
@@ -63,7 +63,7 @@ public class ProjectController {
   @PreAuthorize("isAuthenticated()")
   @DeleteMapping("/{projectId}")
   public ResponseEntity<?> deleteProject(@AuthenticationPrincipal CustomUserDetails userDetails,
-      @PathVariable Long projectId) {
+      @PathVariable(name = "projectId") Long projectId) {
     projectService.deleteProject(projectId);
     return ResponseEntity.ok("Project deleted successfully");
   }
