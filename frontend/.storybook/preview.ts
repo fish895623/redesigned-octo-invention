@@ -24,6 +24,18 @@ const preview: Preview = {
       ],
     },
     layout: 'centered',
+    docs: {
+      canvas: {
+        sourceState: 'shown',
+      },
+      story: {
+        inline: true,
+        iframeHeight: 600,
+      },
+      source: {
+        state: 'open',
+      },
+    },
   },
 };
 
