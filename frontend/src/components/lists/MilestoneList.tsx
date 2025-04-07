@@ -40,7 +40,7 @@ const MilestoneList = ({ projectId, milestones }: MilestoneListProps) => {
     <div className="w-full max-w-7xl mx-auto bg-gray-900 rounded-lg shadow-md overflow-hidden">
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center p-4 border-b border-gray-700">
         <div>
-          <h2 className="text-xl font-bold text-white">Milestones</h2>
+          <h2 className="text-xl font-bold text-white text-left">Milestones</h2>
           <div className="text-sm text-blue-400 font-medium mt-1">
             Total Milestones:{' '}
             <span className="bg-blue-600 text-white px-2 py-0.5 rounded-full ml-1">{milestones.length}</span>
