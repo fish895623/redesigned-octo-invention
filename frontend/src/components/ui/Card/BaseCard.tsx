@@ -4,6 +4,7 @@ export interface BaseCardProps {
   title?: string;
   description?: string;
   headerRight?: ReactNode;
+  headerLeft?: ReactNode;
   footer?: ReactNode;
   children?: ReactNode;
   onClick?: () => void;
@@ -14,6 +15,7 @@ const BaseCard: React.FC<BaseCardProps> = ({
   title,
   description,
   headerRight,
+  headerLeft,
   footer,
   children,
   onClick,
@@ -34,6 +36,7 @@ const BaseCard: React.FC<BaseCardProps> = ({
               {description && <p className="text-gray-400 mt-1">{description}</p>}
             </div>
           )}
+          {headerLeft && <div className="flex items-center gap-3">{headerLeft}</div>}
           {headerRight && <div className="flex items-center gap-3">{headerRight}</div>}
         </div>
       )}
