@@ -11,6 +11,7 @@ const EditProjectModal: React.FC<EditProjectModalProps> = ({ project, onClose })
   const [title, setTitle] = useState(project.title);
   const [description, setDescription] = useState(project.description || '');
   const [titleError, setTitleError] = useState('');
+  const [apiError, setApiError] = useState('');
   const { updateProject } = useProject();
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -37,8 +38,7 @@ const EditProjectModal: React.FC<EditProjectModalProps> = ({ project, onClose })
       await updateProject(updatedProject);
       onClose();
     } catch (error) {
-      console.error('Error updating project:', error);
-      alert('Failed to update project');
+      setApiError('Failed to update project');
     }
   };
 
@@ -100,6 +100,14 @@ const EditProjectModal: React.FC<EditProjectModalProps> = ({ project, onClose })
               Save Changes
             </button>
           </div>
+          {apiError && (
+            <div
+              className="mt-4 p-2 bg-red-500 bg-opacity-10 border border-red-500 rounded text-white"
+              data-testid="edit-project-error"
+            >
+              {apiError}
+            </div>
+          )}
         </form>
       </div>
     </div>

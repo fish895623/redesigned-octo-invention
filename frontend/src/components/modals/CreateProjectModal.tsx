@@ -30,8 +30,7 @@ const CreateProjectModal: React.FC<CreateProjectModalProps> = ({ onClose }) => {
       await addProject({ title, description });
       onClose();
     } catch (error) {
-      console.error('Error creating project:', error);
-      setApiError(error instanceof Error ? error.message : 'Failed to create project');
+      setApiError('Failed to create Project');
     }
   };
 
@@ -99,7 +98,7 @@ const CreateProjectModal: React.FC<CreateProjectModalProps> = ({ onClose }) => {
           </div>
           {apiError && (
             <div
-              className="mt-4 p-2 bg-red-500 bg-opacity-10 border border-red-500 rounded text-red-500"
+              className="mt-4 p-2 bg-red-500 bg-opacity-10 border border-red-500 rounded text-white"
               data-testid="create-project-error"
             >
               {apiError}
