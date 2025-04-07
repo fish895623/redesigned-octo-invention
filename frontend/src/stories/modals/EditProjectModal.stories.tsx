@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import EditProjectModal from '../../components/modals/EditProjectModal';
 import { ProjectContextDecorator } from '../decorators/ProjectContextDecorator';
+import { within, userEvent } from '@storybook/testing-library';
 
 const meta = {
   title: 'Modals/EditProjectModal',
@@ -83,6 +84,102 @@ export const WithoutDescription: Story = {
     docs: {
       description: {
         story: 'Edit project modal state when the project has no description.',
+      },
+    },
+  },
+};
+
+export const ValidationError: Story = {
+  args: {
+    project: mockProject,
+    onClose: () => {},
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const titleInput = canvas.getByPlaceholderText('Enter project title');
+
+    // Clear the title field
+    await userEvent.clear(titleInput);
+
+    // Try to submit the form
+    const submitButton = canvas.getByText('Save Changes');
+    await userEvent.click(submitButton);
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Shows validation error when trying to submit with an empty title.',
+      },
+    },
+  },
+};
+
+export const EditingTitle: Story = {
+  args: {
+    project: mockProject,
+    onClose: () => {},
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const titleInput = canvas.getByPlaceholderText('Enter project title');
+
+    await userEvent.clear(titleInput);
+    await userEvent.type(titleInput, 'Updated Project Title', { delay: 100 });
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Demonstrates editing the project title.',
+      },
+    },
+  },
+};
+
+export const EditingDescription: Story = {
+  args: {
+    project: mockProject,
+    onClose: () => {},
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const descriptionInput = canvas.getByPlaceholderText('Enter project description (optional)');
+
+    await userEvent.clear(descriptionInput);
+    await userEvent.type(descriptionInput, 'This is an updated project description with new details.', { delay: 50 });
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Demonstrates editing the project description.',
+      },
+    },
+  },
+};
+
+export const WithLongContent: Story = {
+  args: {
+    project: {
+      ...mockProject,
+      title: 'Project with a Very Long Title That Demonstrates Text Wrapping Behavior in the Modal Header',
+      description: `This is a very detailed project description that demonstrates how the modal handles large amounts of text content. 
+      
+      Key Features:
+      • Responsive design implementation
+      • Dark theme support
+      • Comprehensive error handling
+      • Form validation
+      • Accessibility features
+      • Performance optimizations
+      • Cross-browser compatibility
+      
+      The modal should properly contain and display this content while maintaining its usability and visual appeal. This helps verify that the layout remains stable with varying content lengths.`,
+    },
+    onClose: () => {},
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Shows how the modal handles long title and description content.',
       },
     },
   },
