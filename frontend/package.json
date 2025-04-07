@@ -14,23 +14,36 @@
     "test": "concurrently \"npm run dev\" \"cypress run\"",
     "test:open": "concurrently \"npm run dev\" \"cypress open\"",
     "test:e2e": "concurrently \"npm run dev\" \"cypress run --e2e -b firefox\"",
-    "test:e2e:open": "concurrently \"npm run dev\" \"cypress open --e2e -b firefox\""
+    "test:e2e:open": "concurrently \"npm run dev\" \"cypress open --e2e -b firefox\"",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "dependencies": {
     "@material-tailwind/react": "^2.1.10",
     "axios": "^1.8.4",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
-    "react-router-dom": "^7.4.0"
+    "react-router-dom": "^7.4.0",
+    "storybook": "^8.6.12"
   },
   "devDependencies": {
+    "@chromatic-com/storybook": "^3",
     "@eslint/js": "^9.21.0",
+    "@storybook/addon-essentials": "^8.6.12",
+    "@storybook/addon-onboarding": "^8.6.12",
+    "@storybook/blocks": "^8.6.12",
+    "@storybook/experimental-addon-test": "^8.6.12",
+    "@storybook/react": "^8.6.12",
+    "@storybook/react-vite": "^8.6.12",
+    "@storybook/test": "^8.6.12",
     "@tailwindcss/postcss": "^4.0.17",
     "@tailwindcss/vite": "^4.0.17",
     "@types/node": "^22.13.14",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
     "@vitejs/plugin-react": "^4.3.4",
+    "@vitest/browser": "^3.1.1",
+    "@vitest/coverage-v8": "^3.1.1",
     "autoprefixer": "^10.4.21",
     "concurrently": "^9.1.2",
     "cypress": "^14.2.1",
@@ -39,7 +52,9 @@
     "eslint": "^9.21.0",
     "eslint-plugin-react-hooks": "^5.1.0",
     "eslint-plugin-react-refresh": "^0.4.19",
+    "eslint-plugin-storybook": "^0.12.0",
     "globals": "^15.15.0",
+    "playwright": "^1.51.1",
     "postcss": "^8.5.3",
     "postcss-import": "^16.1.0",
     "rollup-plugin-visualizer": "^5.14.0",
@@ -47,6 +62,12 @@
     "terser": "^5.39.0",
     "typescript": "~5.7.2",
     "typescript-eslint": "^8.24.1",
-    "vite": "^6.2.0"
+    "vite": "^6.2.0",
+    "vitest": "^3.1.1"
+  },
+  "eslintConfig": {
+    "extends": [
+      "plugin:storybook/recommended"
+    ]
   }
 }
