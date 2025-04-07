@@ -6,6 +6,7 @@
 import React, { useState } from 'react';
 import { useProject } from '../../context/ProjectContext';
 import DeleteModal from './DeleteModal';
+import DeleteConfirmationForm from './DeleteConfirmationForm';
 
 interface DeleteTaskModalProps {
   projectId: number;
@@ -54,7 +55,7 @@ const DeleteTaskModal: React.FC<DeleteTaskModalProps> = ({ projectId, taskId, on
     }
   };
 
-  // Custom DeleteTaskModal content to inject into DeleteModal
+  // Modal content with confirmation form
   const renderDeleteModalContent = () => {
     if (!project || !task) {
       return (
@@ -65,94 +66,27 @@ const DeleteTaskModal: React.FC<DeleteTaskModalProps> = ({ projectId, taskId, on
     }
 
     return (
-      <>
-        <div className="mb-4 text-red-500 text-center">
-          <p className="font-semibold">Warning: This action cannot be undone</p>
-          <p className="mt-2 text-gray-300">This will permanently delete the task and all its data.</p>
-        </div>
-
-        <form onSubmit={handleSubmit} className="mt-4">
-          <div className="mb-4">
-            <p className="text-sm text-gray-300 mb-2">
-              To confirm deletion, please type the task name: <span className="font-semibold">{task.title}</span>
-            </p>
-            <input
-              type="text"
-              value={confirmText}
-              onChange={handleInputChange}
-              placeholder="Type task name to confirm"
-              autoFocus
-              className={`w-full px-3 py-2 bg-gray-700 border rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                error ? 'border-red-500' : 'border-gray-600'
-              }`}
-            />
-            {error && <div className="mt-1 text-sm text-red-500">{error}</div>}
-          </div>
-
-          <div className="flex justify-end gap-3 mt-6">
-            <button
-              type="button"
-              className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white font-medium rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500"
-              onClick={onClose}
-              disabled={isLoading}
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={isLoading || confirmText !== task.title}
-              className={`px-4 py-2 text-white font-medium rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 ${
-                isLoading || confirmText !== task.title
-                  ? 'bg-red-800 cursor-not-allowed opacity-70'
-                  : 'bg-red-600 hover:bg-red-700'
-              }`}
-            >
-              {isLoading ? 'Deleting...' : 'Delete Task'}
-            </button>
-          </div>
-        </form>
-      </>
+      <DeleteConfirmationForm
+        entityName="Task"
+        entityTitle={task.title}
+        warningText="This will permanently delete the task and all its data."
+        confirmText={confirmText}
+        onChange={handleInputChange}
+        onSubmit={handleSubmit}
+        onCancel={onClose}
+        isLoading={isLoading}
+        error={error}
+        actionButtonText="Delete Task"
+        loadingButtonText="Deleting..."
+      />
     );
   };
 
-  // Here we customize the DeleteModal
-  class CustomDeleteModal extends DeleteModal {
-    render() {
-      const renderResult = super.render();
-
-      // Clone the result to customize it
-      const customizedModal = React.cloneElement(
-        renderResult,
-        {
-          onClick: onClose, // Add click handler to close when clicking outside
-        },
-        React.cloneElement(
-          renderResult.props.children,
-          {},
-          <>
-            {/* Replace the header section with our custom one */}
-            <div className="flex justify-between items-center px-6 py-4 bg-gray-900 border-b border-gray-700">
-              <h2 className="text-xl font-semibold text-white">Delete Task</h2>
-              <button
-                className="text-gray-400 hover:text-white text-2xl font-bold focus:outline-none"
-                onClick={onClose}
-                aria-label="Close modal"
-              >
-                &times;
-              </button>
-            </div>
-
-            {/* Replace the body section with our custom content */}
-            <div className="px-6 py-4">{renderDeleteModalContent()}</div>
-          </>,
-        ),
-      );
-
-      return customizedModal;
-    }
-  }
-
-  return <CustomDeleteModal name="Task" />;
+  return (
+    <DeleteModal name={task?.title || 'Task'} title="Delete Task" onClose={onClose} isLoading={isLoading}>
+      {renderDeleteModalContent()}
+    </DeleteModal>
+  );
 };
 
 export default DeleteTaskModal;
