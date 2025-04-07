@@ -37,7 +37,7 @@ const EditProjectModal: React.FC<EditProjectModalProps> = ({ project, onClose })
       await updateProject(updatedProject);
       onClose();
     } catch (error) {
-      console.error('Error updating project:', error);
+      console.error('Error updating projec:', error);
       alert('Failed to update project');
     }
   };
