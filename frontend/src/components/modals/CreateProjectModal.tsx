@@ -30,7 +30,7 @@ const CreateProjectModal: React.FC<CreateProjectModalProps> = ({ onClose }) => {
       await addProject({ title, description });
       onClose();
     } catch (error) {
-      setApiError("Failed to create Project")
+      setApiError('Failed to create Project');
     }
   };
 
