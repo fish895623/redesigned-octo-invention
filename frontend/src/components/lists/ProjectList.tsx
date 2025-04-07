@@ -4,6 +4,7 @@ import { Project } from '../../types/project';
 import CreateProjectModal from '../modals/CreateProjectModal';
 import EditProjectModal from '../modals/EditProjectModal';
 import { Link, useNavigate } from 'react-router-dom';
+import BaseCard from '../ui/Card/BaseCard';
 
 interface ProjectListProps {
   onSelectProject?: (id: number) => void;
@@ -23,14 +24,14 @@ const ProjectList = ({ onSelectProject }: ProjectListProps) => {
     setEditingProject(project);
   }, []);
 
-  const convertLocalDateTimeArrayToDate= (arr)=>{
+  const convertLocalDateTimeArrayToDate = (arr) => {
     if (!arr || arr.length < 7) return null;
     const [year, month, day, hour, minute, second, nano] = arr;
     const jsMonth = month - 1;
 
     const millisecond = Math.floor(nano / 1000000);
     return new Date(year, jsMonth, day, hour, minute, second, millisecond);
-  }
+  };
 
   const handleDeleteProject = useCallback(
     async (projectId: number) => {
@@ -106,74 +107,75 @@ const ProjectList = ({ onSelectProject }: ProjectListProps) => {
         )}
         {!loading &&
           sortedProjects.map((project) => (
-            <div
+            <BaseCard
               key={project.id}
-              className="flex items-start gap-4 p-4 border border-gray-700 rounded-md bg-gray-800 project-item"
-              onClick={() => onSelectProject && onSelectProject(project.id)}
-            >
-              <Link to={`/project/${project.id}/milestone`} className="flex-1 cursor-pointer no-underline text-inherit">
-                <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-white mb-2 text-left">{project.title}</h3>
-                  {project.description && (
-                    <p className="text-gray-400 text-sm whitespace-pre-wrap text-left">{project.description}</p>
-                  )}
+              title={project.title}
+              description={project.description || undefined}
+              onClick={() => {
+                if (onSelectProject) onSelectProject(project.id);
+                else navigate(`/project/${project.id}/milestone`);
+              }}
+              headerRight={
+                <div className="flex gap-2">
+                  <button
+                    className="inline-block px-3 py-1 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(`/project/${project.id}`);
+                    }}
+                    data-testid={`view-project-${project.id}`}
+                    disabled={loading}
+                  >
+                    More
+                  </button>
+                  <button
+                    className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleEditProject(project);
+                    }}
+                    data-testid={`edit-project-${project.id}`}
+                    disabled={loading}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    className="px-3 py-1 bg-red-600 hover:bg-red-700 text-white font-medium rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteProject(project.id);
+                    }}
+                    data-testid={`delete-project-${project.id}`}
+                    disabled={loading || deletingProjectId === project.id}
+                  >
+                    {deletingProjectId === project.id ? (
+                      <span className="flex items-center gap-1">
+                        <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></span>
+                        Deleting...
+                      </span>
+                    ) : (
+                      'Delete'
+                    )}
+                  </button>
                 </div>
-                <div className="flex gap-4 mb-2 text-sm text-gray-300">
-                  <span>Milestones: {project.milestones.length}</span>
-                  <span>Tasks: {project.tasks.length}</span>
-                </div>
-                <div className="flex gap-4 text-sm text-gray-500">
-                  <span className="flex items-center gap-1">
-                    Updated: {convertLocalDateTimeArrayToDate(project.updatedAt)?.toLocaleString()}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    Created: {convertLocalDateTimeArrayToDate(project.createdAt)?.toLocaleString()}
-                  </span>
-                </div>
-              </Link>
-              <div className="flex gap-2">
-                <button
-                  className="inline-block px-3 py-1 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    navigate(`/project/${project.id}`);
-                  }}
-                  data-testid={`view-project-${project.id}`}
-                  disabled={loading}
-                >
-                  More
-                </button>
-                <button
-                  className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleEditProject(project);
-                  }}
-                  data-testid={`edit-project-${project.id}`}
-                  disabled={loading}
-                >
-                  Edit
-                </button>
-                <button
-                  className="px-3 py-1 bg-red-600 hover:bg-red-700 text-white font-medium rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleDeleteProject(project.id);
-                  }}
-                  data-testid={`delete-project-${project.id}`}
-                  disabled={loading || deletingProjectId === project.id}
-                >
-                  {deletingProjectId === project.id ? (
+              }
+              footer={
+                <>
+                  <div className="flex gap-4 mb-2 text-sm text-gray-300">
+                    <span>Milestones: {project.milestones.length}</span>
+                    <span>Tasks: {project.tasks.length}</span>
+                  </div>
+                  <div className="flex gap-4 text-sm text-gray-500">
                     <span className="flex items-center gap-1">
-                      <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></span>
-                      Deleting...
+                      Updated: {convertLocalDateTimeArrayToDate(project.updatedAt)?.toLocaleString()}
                     </span>
-                  ) : (
-                    'Delete'
-                  )}
-                </button>
-              </div>
-            </div>
+                    <span className="flex items-center gap-1">
+                      Created: {convertLocalDateTimeArrayToDate(project.createdAt)?.toLocaleString()}
+                    </span>
+                  </div>
+                </>
+              }
+            />
           ))}
       </div>
       {showProjectModal && <CreateProjectModal onClose={() => setShowProjectModal(false)} />}

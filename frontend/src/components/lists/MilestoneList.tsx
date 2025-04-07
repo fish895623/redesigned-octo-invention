@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { Milestone } from '../../types/project';
 import CreateMilestoneModal from '../modals/CreateMilestoneModal';
 import { useProject } from '../../context/ProjectContext';
+import BaseCard from '../ui/Card/BaseCard';
 
 interface MilestoneListProps {
   projectId: number;
@@ -65,19 +66,12 @@ const MilestoneList = ({ projectId, milestones }: MilestoneListProps) => {
       </div>
       <div className="p-4 flex flex-col gap-4">
         {sortedMilestones.map((milestone) => (
-          <div
+          <BaseCard
             key={milestone.id}
-            className="bg-gray-800 rounded-lg p-4 border border-gray-700 hover:border-gray-600 transition-colors cursor-pointer"
-            onClick={() => handleMilestoneClick(milestone.id)}
-          >
-            <div className="flex justify-between items-start">
-              <div>
-                <h3 className="text-lg font-semibold text-white hover:text-blue-400 transition-colors">
-                  {milestone.title}
-                </h3>
-                {milestone.description && <p className="text-gray-400 mt-1">{milestone.description}</p>}
-              </div>
-              <div className="flex items-center gap-3">
+            title={milestone.title}
+            description={milestone.description || undefined}
+            headerRight={
+              <>
                 <div
                   className={`px-3 py-1 rounded-full text-sm font-medium ${
                     milestone.completed ? 'bg-green-600 text-green-100' : 'bg-yellow-600 text-yellow-100'
@@ -92,14 +86,17 @@ const MilestoneList = ({ projectId, milestones }: MilestoneListProps) => {
                 >
                   Delete
                 </button>
-              </div>
-            </div>
-            <div className="mt-4 flex flex-wrap gap-4 text-sm text-gray-400">
-              {milestone.startDate && <div>Start: {new Date(milestone.startDate).toLocaleDateString()}</div>}
-              {milestone.dueDate && <div>Due: {new Date(milestone.dueDate).toLocaleDateString()}</div>}
-              <div>Tasks: {milestone.tasks.length}</div>
-            </div>
-          </div>
+              </>
+            }
+            footer={
+              <>
+                {milestone.startDate && <div>Start: {new Date(milestone.startDate).toLocaleDateString()}</div>}
+                {milestone.dueDate && <div>Due: {new Date(milestone.dueDate).toLocaleDateString()}</div>}
+                <div>Tasks: {milestone.tasks.length}</div>
+              </>
+            }
+            onClick={() => handleMilestoneClick(milestone.id)}
+          />
         ))}
         {sortedMilestones.length === 0 && (
           <div className="text-center text-gray-400 py-8">No milestones found. Create one to get started!</div>

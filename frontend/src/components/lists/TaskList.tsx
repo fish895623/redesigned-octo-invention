@@ -3,6 +3,7 @@ import { useProject } from '../../context/ProjectContext';
 import { Task, Milestone } from '../../types/project';
 import CreateTaskModal from '../modals/CreateTaskModal';
 import EditTaskModal from '../modals/EditTaskModal';
+import BaseCard from '../ui/Card/BaseCard';
 
 interface TaskListProps {
   projectId: number;
@@ -111,18 +112,12 @@ const TaskList = ({ projectId, tasks = [], milestones = [] }: TaskListProps) => 
 
       <div className="p-4 flex flex-col gap-4">
         {sortedTasks.map((task) => (
-          <div
+          <BaseCard
             key={task.id}
-            className="bg-gray-800 rounded-lg p-4 border border-gray-700 hover:border-gray-600 transition-colors"
-          >
-            <div className="flex justify-between items-start">
-              <div>
-                <h3 className={`text-lg font-semibold ${task.completed ? 'text-gray-400 line-through' : 'text-white'}`}>
-                  {task.title}
-                </h3>
-                {task.description && <p className="text-gray-400 mt-1">{task.description}</p>}
-              </div>
-              <div className="flex items-center gap-3">
+            title={task.title}
+            description={task.description || undefined}
+            headerRight={
+              <>
                 <div
                   className={`px-3 py-1 rounded-full text-sm font-medium ${
                     task.completed ? 'bg-green-600 text-green-100' : 'bg-yellow-600 text-yellow-100'
@@ -148,14 +143,17 @@ const TaskList = ({ projectId, tasks = [], milestones = [] }: TaskListProps) => 
                 >
                   Delete
                 </button>
-              </div>
-            </div>
-            <div className="mt-4 flex flex-wrap gap-4 text-sm text-gray-400">
-              <div>Created: {new Date(task.createdAt).toLocaleDateString()}</div>
-              <div>Updated: {new Date(task.updatedAt).toLocaleDateString()}</div>
-              {task.milestoneId && <div>Milestone: {milestones.find((m) => m.id === task.milestoneId)?.title}</div>}
-            </div>
-          </div>
+              </>
+            }
+            footer={
+              <>
+                <div>Created: {new Date(task.createdAt).toLocaleDateString()}</div>
+                <div>Updated: {new Date(task.updatedAt).toLocaleDateString()}</div>
+                {task.milestoneId && <div>Milestone: {milestones.find((m) => m.id === task.milestoneId)?.title}</div>}
+              </>
+            }
+            className={task.completed ? 'text-gray-400 line-through' : ''}
+          />
         ))}
         {sortedTasks.length === 0 && (
           <div className="text-center text-gray-400 py-8">No tasks found. Create one to get started!</div>
