@@ -1,19 +1,18 @@
 import React, { createContext, useContext } from 'react';
 import { Comment } from '../types/project';
-// import { apiClient } from '../api/apiClient'; // TODO: Uncomment when API endpoints are ready
-// import { API_ENDPOINTS } from '../config/api'; // TODO: Uncomment when API endpoints are ready
 
 // Define the shape of the context data
 export interface CommentContextType {
   comments: Comment[];
   loading: boolean;
   error: string | null;
-  fetchComments: (taskId: number) => Promise<void>;
+  fetchComments: (projectId: number, taskId: number) => Promise<void>;
   addComment: (
+    projectId: number,
     taskId: number,
     commentData: Omit<Comment, 'id' | 'createdAt' | 'updatedAt' | 'taskId' | 'userId' | 'userFullName'>,
-  ) => Promise<Comment | null>; // Adjusted Omit based on previous type changes
-  deleteComment: (commentId: number) => Promise<void>;
+  ) => Promise<Comment | null>;
+  deleteComment: (projectId: number, taskId: number, commentId: number) => Promise<void>;
 }
 
 // Create the context with a default value

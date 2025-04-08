@@ -1,5 +1,6 @@
 import { useParams } from 'react-router-dom';
-import { ProjectProvider } from '../context/ProjectContext';
+import { ProjectProvider } from '../context/ProjectContextDefinition';
+import { CommentProvider } from '../context/CommentContextDefinition';
 import TaskDetail from '../components/details/TaskDetail';
 import { useAuth } from '../hooks/useAuth';
 
@@ -20,9 +21,11 @@ const TaskPage = () => {
 
   return (
     <ProjectProvider>
-      <div className="w-full p-0 md:p-2 mt-16">
-        <TaskDetail projectId={Number(projectId)} taskId={Number(taskId)} />
-      </div>
+      <CommentProvider>
+        <div className="w-full p-0 md:p-2 mt-16">
+          <TaskDetail projectId={Number(projectId)} taskId={Number(taskId)} />
+        </div>
+      </CommentProvider>
     </ProjectProvider>
   );
 };

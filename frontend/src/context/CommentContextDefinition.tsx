@@ -1,8 +1,8 @@
-import React, { useState, useContext, ReactNode, useCallback } from 'react';
+import React, { useState, ReactNode, useCallback } from 'react';
 import { Comment } from '../types/project';
-import { CommentContext } from './CommentContext'; // Import context from the other file
-// import { apiClient } from '../api/apiClient'; // TODO: Uncomment when API endpoints are ready
-// import { API_ENDPOINTS } from '../config/api'; // TODO: Uncomment when API endpoints are ready
+import { CommentContext, CommentContextType } from './CommentContext'; // Import context and type
+import { apiClient } from '../api/apiClient'; // Uncommented
+import { API_ENDPOINTS } from '../config/api'; // Uncommented
 
 // Define the props for the provider component
 interface CommentProviderProps {
@@ -15,55 +15,59 @@ export const CommentProvider = ({ children }: CommentProviderProps) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Fetch comments for a specific task (placeholder)
-  const fetchComments = useCallback(async (taskId: number) => {
+  // Fetch comments for a specific task
+  const fetchComments = useCallback(async (projectId: number, taskId: number) => {
     setLoading(true);
     setError(null);
-    console.log(`Fetching comments for task ${taskId}...`); // Placeholder
+    console.log(`Fetching comments for task ${taskId} in project ${projectId}...`);
     try {
-      // TODO: Replace with actual API call
-      // const response = await apiClient.get<Comment[]>(API_ENDPOINTS.comments.list(taskId));
-      // setComments(response.data);
-      // Simulate API delay and set mock data for now
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      const mockComments: Comment[] = [
-        // Add mock comments if needed for testing, ensure they match the Comment type
-        // { id: 1, content: 'Mock Comment 1', createdAt: new Date(), updatedAt: new Date(), taskId: taskId, userId: 1 },
-      ];
-      setComments(mockComments); // Set empty or mock data
-      console.log(`Fetched comments for task ${taskId}`);
+      const response = await apiClient.get<any[]>(API_ENDPOINTS.comments.readAll(projectId, taskId));
+      const rawComments = (response.data || []) as any[];
+      // Adapt inline
+      const adaptedComments = rawComments.map((rawComment) => ({
+        ...rawComment,
+        id: Number(rawComment.id),
+        taskId: Number(rawComment.taskId),
+        userId: Number(rawComment.userId),
+        createdAt: new Date(rawComment.createdAt),
+        updatedAt: new Date(rawComment.updatedAt),
+      }));
+      setComments(adaptedComments);
+      console.log(`Fetched ${adaptedComments.length} comments for task ${taskId}`);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : String(err);
       console.error(`Error fetching comments for task ${taskId}:`, errorMessage);
       setError(`Failed to fetch comments for task ${taskId}`);
-      setComments([]); // Clear comments on error
+      setComments([]);
     } finally {
       setLoading(false);
     }
   }, []);
 
-  // Add a new comment (placeholder)
+  // Add a new comment
   const addComment = async (
+    projectId: number,
     taskId: number,
-    commentData: Omit<Comment, 'id' | 'createdAt' | 'updatedAt' | 'taskId' | 'userId' | 'userFullName'>,
+    commentData: Pick<Comment, 'content'>,
   ): Promise<Comment | null> => {
     setLoading(true);
     setError(null);
-    console.log('Adding comment:', commentData, 'to task', taskId); // Placeholder
-    try {
-      // TODO: Replace with actual API call
-      // const response = await apiClient.post<Comment>(API_ENDPOINTS.comments.create(taskId), commentData);
-      // const newComment = response.data;
+    console.log('Adding comment:', commentData, 'to task', taskId, 'in project', projectId);
+    const payload = {
+      content: commentData.content,
+    };
 
-      // Simulate API call and add locally
-      await new Promise((resolve) => setTimeout(resolve, 300));
+    try {
+      const response = await apiClient.post<any>(API_ENDPOINTS.comments.create(projectId, taskId), payload); // Use any for response type
+      // Adapt inline
+      const rawNewComment = response.data;
       const newComment: Comment = {
-        ...commentData,
-        id: Date.now(), // Temporary ID
-        taskId: taskId,
-        userId: 999, // Placeholder user ID
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        ...rawNewComment,
+        id: Number(rawNewComment.id),
+        taskId: Number(rawNewComment.taskId),
+        userId: Number(rawNewComment.userId),
+        createdAt: new Date(rawNewComment.createdAt),
+        updatedAt: new Date(rawNewComment.updatedAt),
       };
 
       setComments((prevComments) => [...prevComments, newComment]);
@@ -72,36 +76,32 @@ export const CommentProvider = ({ children }: CommentProviderProps) => {
       const errorMessage = err instanceof Error ? err.message : String(err);
       console.error('Error adding comment:', errorMessage);
       setError('Failed to add comment');
-      throw err; // Re-throw error to be caught by caller if needed
+      return null;
     } finally {
       setLoading(false);
     }
   };
 
-  // Delete a comment (placeholder)
-  const deleteComment = async (commentId: number): Promise<void> => {
+  // Delete a comment
+  const deleteComment = async (projectId: number, taskId: number, commentId: number): Promise<void> => {
     setLoading(true);
     setError(null);
-    console.log('Deleting comment:', commentId); // Placeholder
+    console.log('Deleting comment:', commentId, 'from task', taskId, 'in project', projectId);
     try {
-      // TODO: Replace with actual API call
-      // await apiClient.delete(API_ENDPOINTS.comments.delete(commentId));
-
-      // Simulate API call and remove locally
-      await new Promise((resolve) => setTimeout(resolve, 300));
+      await apiClient.delete(API_ENDPOINTS.comments.delete(projectId, taskId, commentId));
+      // No adaptation needed for delete, just filter state
       setComments((prevComments) => prevComments.filter((comment) => comment.id !== commentId));
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : String(err);
       console.error('Error deleting comment:', errorMessage);
       setError('Failed to delete comment');
-      throw err; // Re-throw error
     } finally {
       setLoading(false);
     }
   };
 
   // Value provided by the context
-  const value = {
+  const value: CommentContextType = {
     comments,
     loading,
     error,
