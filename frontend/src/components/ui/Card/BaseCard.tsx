@@ -3,8 +3,9 @@ import React, { ReactNode } from 'react';
 export interface BaseCardProps {
   title?: string;
   description?: string;
+  assignees?: ReactNode;
+  reviewers?: ReactNode;
   headerRight?: ReactNode;
-  headerLeft?: ReactNode;
   footer?: ReactNode;
   children?: ReactNode;
   onClick?: () => void;
@@ -14,8 +15,9 @@ export interface BaseCardProps {
 const BaseCard: React.FC<BaseCardProps> = ({
   title,
   description,
+  assignees,
+  reviewers,
   headerRight,
-  headerLeft,
   footer,
   children,
   onClick,
@@ -36,14 +38,17 @@ const BaseCard: React.FC<BaseCardProps> = ({
               {description && <p className="text-gray-400 mt-1">{description}</p>}
             </div>
           )}
-          {headerLeft && <div className="flex items-center gap-3">{headerLeft}</div>}
-          {headerRight && <div className="flex items-center gap-3">{headerRight}</div>}
+          {headerRight && <div className="flex items-center gap-4 ml-auto">{headerRight}</div>}
         </div>
       )}
 
       {children && <div className="mt-4">{children}</div>}
 
-      {footer && <div className="mt-4 flex flex-wrap gap-4 text-sm text-gray-400">{footer}</div>}
+      <div>
+        {footer && <div className="mt-4 flex flex-wrap gap-4 text-sm text-gray-400">{footer}</div>}
+        {assignees && <div className="mt-4 flex flex-wrap gap-4 text-sm text-gray-400">{assignees}</div>}
+        {reviewers && <div className="mt-4 flex flex-wrap gap-4 text-sm text-gray-400">{reviewers}</div>}
+      </div>
     </div>
   );
 };

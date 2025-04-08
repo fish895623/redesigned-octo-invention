@@ -3,7 +3,7 @@ import { useProject } from '../../context/ProjectContext';
 import { Project } from '../../types/project';
 import CreateProjectModal from '../modals/CreateProjectModal';
 import EditProjectModal from '../modals/EditProjectModal';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import BaseCard from '../ui/Card/BaseCard';
 
 interface ProjectListProps {

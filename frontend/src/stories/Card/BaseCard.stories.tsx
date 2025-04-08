@@ -1,4 +1,3 @@
-import React from 'react';
 import { Meta, StoryFn } from '@storybook/react';
 import BaseCard, { BaseCardProps } from '../../components/ui/Card/BaseCard';
 
@@ -30,18 +29,45 @@ WithFooter.args = {
   ),
 };
 
-export const WithHeaderActions = Template.bind({});
-WithHeaderActions.args = {
-  title: 'Card With Actions',
-  description: 'This card includes action buttons',
+export const WithHeaderLeft = Template.bind({});
+WithHeaderLeft.args = {
+  title: 'Card With Left Header Content',
+  description: 'This card includes content on the left side of the header',
+  headerLeft: (
+    <div className="bg-blue-600 text-white p-2 rounded-full w-10 h-10 flex items-center justify-center text-xl font-bold">
+      P
+    </div>
+  ),
+};
+
+export const WithHeaderRight = Template.bind({});
+WithHeaderRight.args = {
+  title: 'Card With Right Header Content',
+  description: 'This card includes content on the right side of the header',
   headerRight: (
     <>
-      <div className="px-3 py-1 rounded-full text-sm font-medium bg-green-600 text-green-100">Completed</div>
+      <div className="px-3 py-1 rounded-full text-sm font-medium bg-green-600 text-green-100">Active</div>
       <button className="px-3 py-1 bg-gray-700 text-white text-sm rounded-md hover:bg-gray-600 transition-colors">
         Edit
       </button>
-      <button className="px-3 py-1 bg-red-600 hover:bg-red-700 text-white text-sm rounded-md transition-colors">
-        Delete
+    </>
+  ),
+};
+
+export const WithBothHeaders = Template.bind({});
+WithBothHeaders.args = {
+  title: 'Card With Both Headers',
+  description: 'This card includes both left and right header content',
+  headerLeft: (
+    <div className="bg-purple-600 text-white p-2 rounded-full w-10 h-10 flex items-center justify-center text-xl font-bold">
+      T
+    </div>
+  ),
+  headerRight: (
+    <>
+      <div className="px-3 py-1 rounded-full text-sm font-medium bg-green-600 text-green-100">Active</div>
+      <button className="px-3 py-1 bg-gray-700 text-white text-sm rounded-md hover:bg-gray-600 transition-colors">
+        Edit
       </button>
     </>
   ),

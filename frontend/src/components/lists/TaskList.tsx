@@ -118,19 +118,6 @@ const TaskList = ({ projectId, tasks = [], milestones = [] }: TaskListProps) => 
             description={task.description || undefined}
             headerRight={
               <>
-                <div
-                  className={`px-3 py-1 rounded-full text-sm font-medium ${
-                    task.completed ? 'bg-green-600 text-green-100' : 'bg-yellow-600 text-yellow-100'
-                  }`}
-                >
-                  {task.completed ? 'Completed' : 'In Progress'}
-                </div>
-                <input
-                  type="checkbox"
-                  checked={task.completed}
-                  onChange={() => handleToggleTask(task)}
-                  className="h-4 w-4 rounded bg-gray-700 border-gray-600 text-blue-600"
-                />
                 <button
                   onClick={() => handleEditTask(task)}
                   className="px-3 py-1 bg-gray-700 text-white text-sm rounded-md hover:bg-gray-600 transition-colors"
