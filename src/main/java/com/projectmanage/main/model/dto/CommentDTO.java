@@ -11,11 +11,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CommentDTO {
-    private Long id;
-    private Long taskId;
-    private Long userId;
-    private String content;
-    private String userName; // Additional field to show who made the comment
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+  private Long id;
+  private Long taskId;
+  private Long userId;
+  private String content;
+  private String userName; // Additional field to show who made the comment
+  private LocalDateTime createdAt;
+  private LocalDateTime updatedAt;
 }

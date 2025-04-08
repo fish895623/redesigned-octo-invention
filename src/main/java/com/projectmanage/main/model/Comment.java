@@ -24,26 +24,26 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class Comment {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "task_id", nullable = false)
-    private Task task;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "task_id", nullable = false)
+  private Task task;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "user_id", nullable = false)
+  private User user;
 
-    @Column(columnDefinition = "TEXT")
-    private String content;
+  @Column(columnDefinition = "TEXT")
+  private String content;
 
-    @CreationTimestamp
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
+  @CreationTimestamp
+  @Column(name = "created_at", nullable = false, updatable = false)
+  private LocalDateTime createdAt;
 
-    @UpdateTimestamp
-    @Column(name = "updated_at", nullable = false)
-    private LocalDateTime updatedAt;
+  @UpdateTimestamp
+  @Column(name = "updated_at", nullable = false)
+  private LocalDateTime updatedAt;
 }

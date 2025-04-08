@@ -32,155 +32,151 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CommentController {
 
-    private final CommentRepository commentRepository;
-    private final ProjectRepository projectRepository;
-    private final TaskRepository taskRepository;
-    private final UserRepository userRepository;
-    private final CommentMapper commentMapper;
+  private final CommentRepository commentRepository;
+  private final ProjectRepository projectRepository;
+  private final TaskRepository taskRepository;
+  private final UserRepository userRepository;
+  private final CommentMapper commentMapper;
 
-    // Create a new comment for a task within a project
-    @PostMapping
-    public ResponseEntity<CommentDTO> createComment(
-            @PathVariable(name = "projectId") Long projectId,
-            @PathVariable(name = "taskId") Long taskId, @RequestBody CommentDTO commentDTO,
-            @AuthenticationPrincipal UserDetails currentUser) {
+  // Create a new comment for a task within a project
+  @PostMapping
+  public ResponseEntity<CommentDTO> createComment(@PathVariable(name = "projectId") Long projectId,
+      @PathVariable(name = "taskId") Long taskId, @RequestBody CommentDTO commentDTO,
+      @AuthenticationPrincipal UserDetails currentUser) {
 
-        if (currentUser == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-
-        // Get username (assuming it's the email) from Principal
-        String currentUsername = currentUser.getUsername();
-
-        // Validate Project and Task existence
-        projectRepository.findById(projectId).orElseThrow(
-                () -> new EntityNotFoundException("Project not found with id: " + projectId));
-
-        Task task = taskRepository.findByIdAndProjectId(taskId, projectId)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        "Task not found with id: " + taskId + " for Project " + projectId));
-
-        // Fetch the User entity using the username/email from the principal
-        User user = userRepository.findByEmail(currentUsername) // Assuming findByEmail exists
-                .orElseThrow(() -> new EntityNotFoundException(
-                        "Authenticated user not found in database with email: " + currentUsername));
-
-        // Create and save the comment
-        Comment comment = Comment.builder().content(commentDTO.getContent()).task(task).user(user) // Use
-                                                                                                   // the
-                                                                                                   // User
-                                                                                                   // entity
-                                                                                                   // found
-                                                                                                   // via
-                                                                                                   // principal's
-                                                                                                   // username
-                .build();
-
-        Comment savedComment = commentRepository.save(comment);
-        return new ResponseEntity<>(commentMapper.toDTO(savedComment), HttpStatus.CREATED);
+    if (currentUser == null) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
-    // Get all comments for a specific task within a project
-    @GetMapping
-    public ResponseEntity<List<CommentDTO>> getCommentsByTaskId(
-            @PathVariable(name = "projectId") Long projectId,
-            @PathVariable(name = "taskId") Long taskId) {
-        if (!projectRepository.existsById(projectId)) {
-            throw new EntityNotFoundException("Project not found with id: " + projectId);
-        }
-        if (!taskRepository.existsByIdAndProjectId(taskId, projectId)) {
-            throw new EntityNotFoundException(
-                    "Task not found with id: " + taskId + " for Project " + projectId);
-        }
+    // Get username (assuming it's the email) from Principal
+    String currentUsername = currentUser.getUsername();
 
-        List<Comment> comments = commentRepository.findByTaskId(taskId);
-        return ResponseEntity.ok(commentMapper.toDTOList(comments));
+    // Validate Project and Task existence
+    projectRepository.findById(projectId)
+        .orElseThrow(() -> new EntityNotFoundException("Project not found with id: " + projectId));
+
+    Task task = taskRepository.findByIdAndProjectId(taskId, projectId)
+        .orElseThrow(() -> new EntityNotFoundException(
+            "Task not found with id: " + taskId + " for Project " + projectId));
+
+    // Fetch the User entity using the username/email from the principal
+    User user = userRepository.findByEmail(currentUsername) // Assuming findByEmail exists
+        .orElseThrow(() -> new EntityNotFoundException(
+            "Authenticated user not found in database with email: " + currentUsername));
+
+    // Create and save the comment
+    Comment comment = Comment.builder().content(commentDTO.getContent()).task(task).user(user) // Use
+                                                                                               // the
+                                                                                               // User
+                                                                                               // entity
+                                                                                               // found
+                                                                                               // via
+                                                                                               // principal's
+                                                                                               // username
+        .build();
+
+    Comment savedComment = commentRepository.save(comment);
+    return new ResponseEntity<>(commentMapper.toDTO(savedComment), HttpStatus.CREATED);
+  }
+
+  // Get all comments for a specific task within a project
+  @GetMapping
+  public ResponseEntity<List<CommentDTO>> getCommentsByTaskId(
+      @PathVariable(name = "projectId") Long projectId,
+      @PathVariable(name = "taskId") Long taskId) {
+    if (!projectRepository.existsById(projectId)) {
+      throw new EntityNotFoundException("Project not found with id: " + projectId);
+    }
+    if (!taskRepository.existsByIdAndProjectId(taskId, projectId)) {
+      throw new EntityNotFoundException(
+          "Task not found with id: " + taskId + " for Project " + projectId);
     }
 
-    // Update an existing comment
-    @PutMapping("/{commentId}")
-    public ResponseEntity<CommentDTO> updateComment(
-            @PathVariable(name = "projectId") Long projectId,
-            @PathVariable(name = "taskId") Long taskId,
-            @PathVariable(name = "commentId") Long commentId, @RequestBody CommentDTO commentDTO,
-            @AuthenticationPrincipal UserDetails currentUser) throws AccessDeniedException {
-        if (!projectRepository.existsById(projectId)) {
-            throw new EntityNotFoundException("Project not found with id: " + projectId);
-        }
-        if (!taskRepository.existsByIdAndProjectId(taskId, projectId)) {
-            throw new EntityNotFoundException(
-                    "Task not found with id: " + taskId + " for Project " + projectId);
-        }
+    List<Comment> comments = commentRepository.findByTaskId(taskId);
+    return ResponseEntity.ok(commentMapper.toDTOList(comments));
+  }
 
-        Comment existingComment = commentRepository.findById(commentId).orElseThrow(
-                () -> new EntityNotFoundException("Comment not found with id: " + commentId));
-
-        if (!existingComment.getTask().getId().equals(taskId)) {
-            throw new IllegalArgumentException(
-                    "Comment " + commentId + " does not belong to Task " + taskId);
-        }
-
-        checkOwnershipOrAdmin(existingComment, currentUser);
-
-        existingComment.setContent(commentDTO.getContent());
-
-        Comment updatedComment = commentRepository.save(existingComment);
-        return ResponseEntity.ok(commentMapper.toDTO(updatedComment));
+  // Update an existing comment
+  @PutMapping("/{commentId}")
+  public ResponseEntity<CommentDTO> updateComment(@PathVariable(name = "projectId") Long projectId,
+      @PathVariable(name = "taskId") Long taskId, @PathVariable(name = "commentId") Long commentId,
+      @RequestBody CommentDTO commentDTO, @AuthenticationPrincipal UserDetails currentUser)
+      throws AccessDeniedException {
+    if (!projectRepository.existsById(projectId)) {
+      throw new EntityNotFoundException("Project not found with id: " + projectId);
+    }
+    if (!taskRepository.existsByIdAndProjectId(taskId, projectId)) {
+      throw new EntityNotFoundException(
+          "Task not found with id: " + taskId + " for Project " + projectId);
     }
 
-    // Delete a comment
-    @DeleteMapping("/{commentId}")
-    public ResponseEntity<Void> deleteComment(@PathVariable(name = "projectId") Long projectId,
-            @PathVariable(name = "taskId") Long taskId,
-            @PathVariable(name = "commentId") Long commentId,
-            @AuthenticationPrincipal UserDetails currentUser) throws AccessDeniedException {
-        if (!projectRepository.existsById(projectId)) {
-            throw new EntityNotFoundException("Project not found with id: " + projectId);
-        }
-        if (!taskRepository.existsByIdAndProjectId(taskId, projectId)) {
-            throw new EntityNotFoundException(
-                    "Task not found with id: " + taskId + " for Project " + projectId);
-        }
+    Comment existingComment = commentRepository.findById(commentId)
+        .orElseThrow(() -> new EntityNotFoundException("Comment not found with id: " + commentId));
 
-        Comment commentToDelete = commentRepository.findById(commentId).orElseThrow(
-                () -> new EntityNotFoundException("Comment not found with id: " + commentId));
-
-        if (!commentToDelete.getTask().getId().equals(taskId)) {
-            throw new IllegalArgumentException(
-                    "Comment " + commentId + " does not belong to Task " + taskId);
-        }
-
-        checkOwnershipOrAdmin(commentToDelete, currentUser);
-
-        commentRepository.deleteById(commentId);
-        return ResponseEntity.noContent().build();
+    if (!existingComment.getTask().getId().equals(taskId)) {
+      throw new IllegalArgumentException(
+          "Comment " + commentId + " does not belong to Task " + taskId);
     }
 
-    private void checkOwnershipOrAdmin(Comment comment, UserDetails currentUser)
-            throws AccessDeniedException {
-        if (currentUser == null) {
-            throw new AccessDeniedException("User must be authenticated.");
-        }
+    checkOwnershipOrAdmin(existingComment, currentUser);
 
-        // Get username (email) from principal
-        String currentUsername = currentUser.getUsername();
+    existingComment.setContent(commentDTO.getContent());
 
-        // Fetch the authenticated user entity to get their actual ID
-        User authenticatedUser = userRepository.findByEmail(currentUsername)
-                .orElseThrow(() -> new AccessDeniedException(
-                        "Authenticated user not found in database with email: " + currentUsername));
-        Long currentUserId = authenticatedUser.getId(); // Get the actual ID
+    Comment updatedComment = commentRepository.save(existingComment);
+    return ResponseEntity.ok(commentMapper.toDTO(updatedComment));
+  }
 
-        // Check admin role (no change needed here)
-        boolean isAdmin =
-                currentUser.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"));
-
-        // Check ownership using the fetched user ID
-        boolean isOwner = comment.getUser().getId().equals(currentUserId);
-
-        if (!isAdmin && !isOwner) {
-            throw new AccessDeniedException(
-                    "User does not have permission to modify this comment.");
-        }
+  // Delete a comment
+  @DeleteMapping("/{commentId}")
+  public ResponseEntity<Void> deleteComment(@PathVariable(name = "projectId") Long projectId,
+      @PathVariable(name = "taskId") Long taskId, @PathVariable(name = "commentId") Long commentId,
+      @AuthenticationPrincipal UserDetails currentUser) throws AccessDeniedException {
+    if (!projectRepository.existsById(projectId)) {
+      throw new EntityNotFoundException("Project not found with id: " + projectId);
     }
+    if (!taskRepository.existsByIdAndProjectId(taskId, projectId)) {
+      throw new EntityNotFoundException(
+          "Task not found with id: " + taskId + " for Project " + projectId);
+    }
+
+    Comment commentToDelete = commentRepository.findById(commentId)
+        .orElseThrow(() -> new EntityNotFoundException("Comment not found with id: " + commentId));
+
+    if (!commentToDelete.getTask().getId().equals(taskId)) {
+      throw new IllegalArgumentException(
+          "Comment " + commentId + " does not belong to Task " + taskId);
+    }
+
+    checkOwnershipOrAdmin(commentToDelete, currentUser);
+
+    commentRepository.deleteById(commentId);
+    return ResponseEntity.noContent().build();
+  }
+
+  private void checkOwnershipOrAdmin(Comment comment, UserDetails currentUser)
+      throws AccessDeniedException {
+    if (currentUser == null) {
+      throw new AccessDeniedException("User must be authenticated.");
+    }
+
+    // Get username (email) from principal
+    String currentUsername = currentUser.getUsername();
+
+    // Fetch the authenticated user entity to get their actual ID
+    User authenticatedUser =
+        userRepository.findByEmail(currentUsername).orElseThrow(() -> new AccessDeniedException(
+            "Authenticated user not found in database with email: " + currentUsername));
+    Long currentUserId = authenticatedUser.getId(); // Get the actual ID
+
+    // Check admin role (no change needed here)
+    boolean isAdmin =
+        currentUser.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"));
+
+    // Check ownership using the fetched user ID
+    boolean isOwner = comment.getUser().getId().equals(currentUserId);
+
+    if (!isAdmin && !isOwner) {
+      throw new AccessDeniedException("User does not have permission to modify this comment.");
+    }
+  }
 }

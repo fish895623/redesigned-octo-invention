@@ -9,11 +9,11 @@ import com.projectmanage.main.model.Comment;
 
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Long> {
-    // Use JOIN FETCH to eagerly load the User associated with each Comment
-    @Query("SELECT c FROM Comment c JOIN FETCH c.user WHERE c.task.id = :taskId")
-    List<Comment> findByTaskId(@Param("taskId") Long taskId);
+  // Use JOIN FETCH to eagerly load the User associated with each Comment
+  @Query("SELECT c FROM Comment c JOIN FETCH c.user WHERE c.task.id = :taskId")
+  List<Comment> findByTaskId(@Param("taskId") Long taskId);
 
-    // List all comments for projects (potentially also needs JOIN FETCH if user is accessed later)
-    @Query("SELECT c FROM Comment c JOIN FETCH c.user WHERE c.task.project.id = :projectId")
-    List<Comment> findByProjectId(@Param("projectId") Long projectId);
+  // List all comments for projects (potentially also needs JOIN FETCH if user is accessed later)
+  @Query("SELECT c FROM Comment c JOIN FETCH c.user WHERE c.task.project.id = :projectId")
+  List<Comment> findByProjectId(@Param("projectId") Long projectId);
 }
