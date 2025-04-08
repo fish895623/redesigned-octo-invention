@@ -44,6 +44,15 @@ public class CommentController {
             @PathVariable(name = "projectId") Long projectId,
             @PathVariable(name = "taskId") Long taskId, @RequestBody CommentDTO commentDTO,
             @AuthenticationPrincipal UserDetails currentUser) {
+
+        if (currentUser == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        // Get username (assuming it's the email) from Principal
+        String currentUsername = currentUser.getUsername();
+
+        // Validate Project and Task existence
         projectRepository.findById(projectId).orElseThrow(
                 () -> new EntityNotFoundException("Project not found with id: " + projectId));
 
@@ -51,14 +60,21 @@ public class CommentController {
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Task not found with id: " + taskId + " for Project " + projectId));
 
-        User user = userRepository.findById(commentDTO.getUserId())
+        // Fetch the User entity using the username/email from the principal
+        User user = userRepository.findByEmail(currentUsername) // Assuming findByEmail exists
                 .orElseThrow(() -> new EntityNotFoundException(
-                        "User not found with id: " + commentDTO.getUserId()));
+                        "Authenticated user not found in database with email: " + currentUsername));
 
-        Comment comment = new Comment();
-        comment.setContent(commentDTO.getContent());
-        comment.setTask(task);
-        comment.setUser(user);
+        // Create and save the comment
+        Comment comment = Comment.builder().content(commentDTO.getContent()).task(task).user(user) // Use
+                                                                                                   // the
+                                                                                                   // User
+                                                                                                   // entity
+                                                                                                   // found
+                                                                                                   // via
+                                                                                                   // principal's
+                                                                                                   // username
+                .build();
 
         Comment savedComment = commentRepository.save(comment);
         return new ResponseEntity<>(commentMapper.toDTO(savedComment), HttpStatus.CREATED);
@@ -145,15 +161,21 @@ public class CommentController {
         if (currentUser == null) {
             throw new AccessDeniedException("User must be authenticated.");
         }
-        Long currentUserId;
-        try {
-            currentUserId = Long.parseLong(currentUser.getUsername());
-        } catch (NumberFormatException e) {
-            throw new AccessDeniedException("Invalid user identifier in principal.");
-        }
 
+        // Get username (email) from principal
+        String currentUsername = currentUser.getUsername();
+
+        // Fetch the authenticated user entity to get their actual ID
+        User authenticatedUser = userRepository.findByEmail(currentUsername)
+                .orElseThrow(() -> new AccessDeniedException(
+                        "Authenticated user not found in database with email: " + currentUsername));
+        Long currentUserId = authenticatedUser.getId(); // Get the actual ID
+
+        // Check admin role (no change needed here)
         boolean isAdmin =
                 currentUser.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"));
+
+        // Check ownership using the fetched user ID
         boolean isOwner = comment.getUser().getId().equals(currentUserId);
 
         if (!isAdmin && !isOwner) {
