@@ -8,6 +8,7 @@ import { Milestone } from '../../types/project';
 import CreateMilestoneModal from '../modals/CreateMilestoneModal';
 import { useProject } from '../../context/ProjectContext';
 import BaseCard from '../ui/Card/BaseCard';
+import { useNavigate } from 'react-router-dom';
 
 interface MilestoneListProps {
   projectId: number;
@@ -18,9 +19,10 @@ const MilestoneList = ({ projectId, milestones }: MilestoneListProps) => {
   const { deleteMilestone } = useProject();
   const [showMilestoneModal, setShowMilestoneModal] = useState(false);
   const [sortBy, setSortBy] = useState<'created' | 'updated'>('updated');
+  const navigate = useNavigate();
 
   const handleMilestoneClick = (milestoneId: number) => {
-    window.location.href = `/project/${projectId}/milestone/${milestoneId}`;
+    navigate(`/project/${projectId}/milestone/${milestoneId}`);
   };
 
   const handleDelete = (milestoneId: number, event: React.MouseEvent) => {
