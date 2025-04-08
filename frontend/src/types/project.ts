@@ -5,7 +5,6 @@ export interface Comment {
   updatedAt: Date;
   taskId: number;
   userId: number;
-  userFullName: string;
 }
 
 export interface Task {
@@ -36,7 +35,6 @@ export interface Milestone {
 export interface Project {
   id: number;
   title: string;
-  name?: string;
   description?: string;
   milestones: Milestone[];
   tasks: Task[];

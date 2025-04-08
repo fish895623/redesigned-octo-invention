@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useProjects } from '../../hooks/useProjects';
 import { Task } from '../../types/project';
 import CommentCard from '../ui/Card/CommentCard';
+import { Comment } from '../../types/project';
 
 interface TaskDetailProps {
   projectId: number;
@@ -20,6 +21,25 @@ const TaskDetail = ({ projectId, taskId }: TaskDetailProps) => {
   const [projectTitle, setProjectTitle] = useState<string>('');
   const [milestoneTitle, setMilestoneTitle] = useState<string | null>(null);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [newComment, setNewComment] = useState('');
+  const [comments, setComments] = useState<Comment[]>([
+    {
+      id: 1,
+      createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+      updatedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+      content: "This looks good, but let's double-check the requirements.",
+      taskId: taskId,
+      userId: 101,
+    },
+    {
+      id: 2,
+      createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
+      updatedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
+      content: "Agreed. I'll review the spec document again.",
+      taskId: taskId,
+      userId: 102,
+    },
+  ]);
 
   useEffect(() => {
     setLoading(true); // Reset loading state on dependency change
@@ -94,6 +114,27 @@ const TaskDetail = ({ projectId, taskId }: TaskDetailProps) => {
     if (task && window.confirm('Are you sure you want to delete this task?')) {
       deleteTask(projectId, task.id);
       // Redirect would happen via react-router navigation in a real app
+    }
+  };
+
+  const handleAddComment = (e: React.FormEvent) => {
+    e.preventDefault();
+    const trimmedComment = newComment.trim();
+    if (trimmedComment && task) {
+      // In a real app, you would make a POST request here
+      console.log('Submitting comment:', trimmedComment, 'for task', task.id, 'in project', projectId);
+
+      // Simulate adding the comment locally, matching the Comment type
+      const newCommentData: Comment = {
+        id: Date.now(), // Temporary ID generation
+        createdAt: new Date(),
+        updatedAt: new Date(), // Add updatedAt
+        content: trimmedComment,
+        taskId: task.id, // Add taskId
+        userId: 999, // Placeholder user ID, replace with actual logged-in user ID
+      };
+      setComments([...comments, newCommentData]);
+      setNewComment(''); // Clear the input field
     }
   };
 
@@ -228,31 +269,30 @@ const TaskDetail = ({ projectId, taskId }: TaskDetailProps) => {
 
             {/* List of comments (Using CommentCard) */}
             <div className="space-y-4 mb-6">
-              <CommentCard
-                author="Jane Doe"
-                date="2 days ago"
-                content="This looks good, but let's double-check the requirements."
-              />
-              <CommentCard
-                author="John Smith"
-                date="1 day ago"
-                content="Agreed. I'll review the spec document again."
-              />
+              {comments.map((comment) => (
+                <CommentCard
+                  key={comment.id}
+                  date={comment.createdAt.toLocaleString()}
+                  author={`User ${comment.userId}`}
+                  content={comment.content}
+                />
+              ))}
             </div>
 
             {/* Add Comment Form (Basic Structure) */}
-            <form className="space-y-3">
+            <form onSubmit={handleAddComment} className="space-y-3">
               <textarea
                 placeholder="Add a comment..."
                 rows={3}
+                value={newComment}
+                onChange={(e) => setNewComment(e.target.value)}
                 className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500 resize-y"
-                // Add state and onChange handler here
               />
               <div className="flex justify-end">
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
-                  // Add onSubmit handler and potentially disabled state here
+                  disabled={!newComment.trim()}
+                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Add Comment
                 </button>

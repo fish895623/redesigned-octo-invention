@@ -19,7 +19,6 @@ const CustomProjectContextDecorator = (Story: React.ComponentType) => {
 
   const mockProject: Project = {
     id: 123,
-    name: 'Test Project',
     title: 'Test Project',
     description: 'This is a test project for the delete modal',
     milestones: [mockMilestone],
@@ -75,7 +74,6 @@ const LoadingStateDecorator = (Story: React.ComponentType) => {
 
   const mockProject: Project = {
     id: 123,
-    name: 'Test Project',
     title: 'Test Project',
     description: 'This is a test project for the delete modal',
     milestones: [mockMilestone],
@@ -132,7 +130,6 @@ const ErrorStateDecorator = (Story: React.ComponentType) => {
 
   const mockProject: Project = {
     id: 123,
-    name: 'Test Project',
     title: 'Test Project',
     description: 'This is a test project for the delete modal',
     milestones: [mockMilestone],

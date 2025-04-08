@@ -50,6 +50,7 @@ type Story = StoryObj<typeof meta>;
 
 const mockProject = {
   id: 1,
+  userId: 1,
   title: 'Example Project',
   description: 'This is an example project description',
   milestones: [],
