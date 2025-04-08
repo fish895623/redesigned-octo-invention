@@ -12,7 +12,7 @@ interface TaskListProps {
 }
 
 const TaskList = ({ projectId, tasks = [], milestones = [] }: TaskListProps) => {
-  const { updateTask, deleteTask, projects } = useProject();
+  const { deleteTask, projects } = useProject();
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [showTaskModal, setShowTaskModal] = useState(false);
   const [sortBy, setSortBy] = useState<'created' | 'updated'>('updated');
@@ -22,22 +22,6 @@ const TaskList = ({ projectId, tasks = [], milestones = [] }: TaskListProps) => 
     const currentProject = projects.find((p) => p.id === projectId);
     return currentProject?.tasks || tasks;
   }, [projectId, projects, tasks]);
-
-  // Callbacks to avoid unnecessary rerenders
-  const handleToggleTask = useCallback(
-    async (task: Task) => {
-      try {
-        await updateTask({
-          ...task,
-          completed: !task.completed,
-          updatedAt: new Date(),
-        });
-      } catch (error) {
-        console.error('Error updating task:', error);
-      }
-    },
-    [updateTask],
-  );
 
   const handleEditTask = useCallback((task: Task) => {
     setEditingTask(task);

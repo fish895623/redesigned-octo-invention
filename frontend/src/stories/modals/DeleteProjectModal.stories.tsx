@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import DeleteProjectModal from '../../components/modals/DeleteProjectModal';
-import { ProjectContextDecorator } from '../decorators/ProjectContextDecorator';
 import { ProjectContext, ProjectContextType } from '../../context/ProjectContext';
 import React from 'react';
 import { Project } from '../../types/project';
