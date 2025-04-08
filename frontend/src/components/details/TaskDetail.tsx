@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useProjects } from '../../hooks/useProjects';
-import { useComments } from '../../context/CommentContext';
+import { useComments } from '../../hooks/useComments';
 import { Task } from '../../types/project';
 import CommentCard from '../ui/Card/CommentCard';
 

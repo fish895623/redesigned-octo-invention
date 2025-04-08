@@ -1,4 +1,4 @@
-import React, { useState, ReactNode, useCallback } from 'react';
+import { useState, ReactNode, useCallback } from 'react';
 import { Comment } from '../types/project';
 import { CommentContext, CommentContextType } from './CommentContext'; // Import context and type
 import { apiClient } from '../api/apiClient'; // Uncommented
