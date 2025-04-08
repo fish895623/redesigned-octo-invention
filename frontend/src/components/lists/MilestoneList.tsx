@@ -83,8 +83,8 @@ const MilestoneList = ({ projectId, milestones }: MilestoneListProps) => {
             }
             footer={
               <>
-                {milestone.startDate && <div>Start: {new Date(milestone.startDate).toLocaleDateString()}</div>}
-                {milestone.dueDate && <div>Due: {new Date(milestone.dueDate).toLocaleDateString()}</div>}
+                {milestone.startDate && <div>Start: {milestone.startDate.toString()}</div>}
+                {milestone.dueDate && <div>Due: {milestone.dueDate.toString()}</div>}
                 <div>Tasks: {milestone.tasks.length}</div>
               </>
             }

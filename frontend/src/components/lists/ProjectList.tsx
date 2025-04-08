@@ -24,24 +24,15 @@ const ProjectList = ({ onSelectProject }: ProjectListProps) => {
     setEditingProject(project);
   }, []);
 
-  const convertLocalDateTimeArrayToDate = (arr) => {
-    if (!arr || arr.length < 7) return null;
-    const [year, month, day, hour, minute, second, nano] = arr;
-    const jsMonth = month - 1;
-
-    const millisecond = Math.floor(nano / 1000000);
-    return new Date(year, jsMonth, day, hour, minute, second, millisecond);
-  };
-
   const handleDeleteProject = useCallback(
     async (projectId: number) => {
-      if (window.confirm('프로젝트를 삭제하시겠습니까?')) {
+      if (window.confirm('Are you sure you want to delete this project?')) {
         try {
           setDeletingProjectId(projectId);
           await deleteProject(projectId);
         } catch (error) {
           console.error('Error deleting project:', error);
-          alert('프로젝트 삭제에 실패했습니다. 다시 시도해주세요.');
+          alert('Failed to delete project. Please try again.');
         } finally {
           setDeletingProjectId(null);
         }
@@ -166,12 +157,8 @@ const ProjectList = ({ onSelectProject }: ProjectListProps) => {
                     <span>Tasks: {project.tasks.length}</span>
                   </div>
                   <div className="flex gap-4 text-sm text-gray-500">
-                    <span className="flex items-center gap-1">
-                      Updated: {convertLocalDateTimeArrayToDate(project.updatedAt)?.toLocaleString()}
-                    </span>
-                    <span className="flex items-center gap-1">
-                      Created: {convertLocalDateTimeArrayToDate(project.createdAt)?.toLocaleString()}
-                    </span>
+                    <span className="flex items-center gap-1">Updated: {project.updatedAt.toString()}</span>
+                    <span className="flex items-center gap-1">Created: {project.createdAt.toString()}</span>
                   </div>
                 </>
               }

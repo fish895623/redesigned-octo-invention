@@ -2,10 +2,8 @@ package com.projectmanage.main.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import com.projectmanage.main.model.Milestone;
 import com.projectmanage.main.model.Project;
 import com.projectmanage.main.model.Task;
@@ -14,7 +12,6 @@ import com.projectmanage.main.model.mapper.TaskMapper;
 import com.projectmanage.main.repository.MilestoneRepository;
 import com.projectmanage.main.repository.ProjectRepository;
 import com.projectmanage.main.repository.TaskRepository;
-
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 

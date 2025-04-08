@@ -127,8 +127,8 @@ const TaskList = ({ projectId, tasks = [], milestones = [] }: TaskListProps) => 
             }
             footer={
               <>
-                <div>Created: {new Date(task.createdAt).toLocaleDateString()}</div>
-                <div>Updated: {new Date(task.updatedAt).toLocaleDateString()}</div>
+                <div>Created: {task.createdAt.toString()}</div>
+                <div>Updated: {task.updatedAt.toString()}</div>
                 {task.milestoneId && <div>Milestone: {milestones.find((m) => m.id === task.milestoneId)?.title}</div>}
               </>
             }
