@@ -34,6 +34,17 @@ export const API_ENDPOINTS = {
     update: (projectId: number, taskId: number) => `${API_BASE_URL}/api/projects/${projectId}/tasks/${taskId}`,
     delete: (projectId: number, taskId: number) => `${API_BASE_URL}/api/projects/${projectId}/tasks/${taskId}`,
   },
+  comments: {
+    create: (projectId: number, taskId: number) => `${API_BASE_URL}/api/projects/${projectId}/tasks/${taskId}/comments`,
+    readAll: (projectId: number, taskId: number) =>
+      `${API_BASE_URL}/api/projects/${projectId}/tasks/${taskId}/comments`,
+    readOne: (projectId: number, taskId: number, commentId: number) =>
+      `${API_BASE_URL}/api/projects/${projectId}/tasks/${taskId}/comments/${commentId}`,
+    update: (projectId: number, taskId: number, commentId: number) =>
+      `${API_BASE_URL}/api/projects/${projectId}/tasks/${taskId}/comments/${commentId}`,
+    delete: (projectId: number, taskId: number, commentId: number) =>
+      `${API_BASE_URL}/api/projects/${projectId}/tasks/${taskId}/comments/${commentId}`,
+  },
 } as const;
 
 export const createHeaders = () => {

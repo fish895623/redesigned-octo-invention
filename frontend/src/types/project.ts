@@ -1,3 +1,12 @@
+export interface Comment {
+  id: number;
+  content: string;
+  createdAt: Date;
+  updatedAt: Date;
+  taskId: number;
+  userId: number;
+}
+
 export interface Task {
   id: number;
   title: string;
@@ -26,7 +35,6 @@ export interface Milestone {
 export interface Project {
   id: number;
   title: string;
-  name?: string;
   description?: string;
   milestones: Milestone[];
   tasks: Task[];

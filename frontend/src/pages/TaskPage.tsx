@@ -1,5 +1,6 @@
-import { useParams, Link } from 'react-router-dom';
-import { ProjectProvider } from '../context/ProjectContext';
+import { useParams } from 'react-router-dom';
+import { ProjectProvider } from '../context/ProjectContextDefinition';
+import { CommentProvider } from '../context/CommentContextDefinition';
 import TaskDetail from '../components/details/TaskDetail';
 import { useAuth } from '../hooks/useAuth';
 
@@ -20,14 +21,11 @@ const TaskPage = () => {
 
   return (
     <ProjectProvider>
-      <div className="app-container">
-        <div className="navigation-buttons">
-          <Link to={`/project/${projectId}/task`} className="back-button">
-            Back to Tasks
-          </Link>
+      <CommentProvider>
+        <div className="w-full p-0 md:p-2 mt-16">
+          <TaskDetail projectId={Number(projectId)} taskId={Number(taskId)} />
         </div>
-        <TaskDetail projectId={Number(projectId)} taskId={Number(taskId)} />
-      </div>
+      </CommentProvider>
     </ProjectProvider>
   );
 };

@@ -34,7 +34,7 @@ const DeleteProjectModal: React.FC<DeleteProjectModalProps> = ({ projectId, onCl
 
     if (!project) return;
 
-    if (confirmText !== project.name) {
+    if (confirmText !== project.title) {
       setError('The project name does not match. Please try again.');
       return;
     }
@@ -64,7 +64,7 @@ const DeleteProjectModal: React.FC<DeleteProjectModalProps> = ({ projectId, onCl
     return (
       <DeleteConfirmationForm
         entityName="Project"
-        entityTitle={project.name}
+        entityTitle={project.title}
         warningText="This will permanently delete the project and all associated tasks, milestones, and subtasks."
         confirmText={confirmText}
         onChange={handleInputChange}
@@ -79,7 +79,7 @@ const DeleteProjectModal: React.FC<DeleteProjectModalProps> = ({ projectId, onCl
   };
 
   return (
-    <DeleteModal name={project?.name || 'Project'} onClose={onClose} isLoading={isLoading}>
+    <DeleteModal name={project?.title || 'Project'} onClose={onClose} isLoading={isLoading}>
       {renderDeleteModalContent()}
     </DeleteModal>
   );

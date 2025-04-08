@@ -1,6 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useProjects } from '../../hooks/useProjects';
+import { useComments } from '../../context/CommentContext';
 import { Task } from '../../types/project';
+import CommentCard from '../ui/Card/CommentCard';
 
 interface TaskDetailProps {
   projectId: number;
@@ -9,27 +11,45 @@ interface TaskDetailProps {
 
 const TaskDetail = ({ projectId, taskId }: TaskDetailProps) => {
   const { projects, updateTask, deleteTask } = useProjects();
+  const {
+    comments,
+    loading: commentsLoading,
+    error: commentsError,
+    fetchComments,
+    addComment,
+    deleteComment,
+  } = useComments();
+
   const [task, setTask] = useState<Task | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [taskLoading, setTaskLoading] = useState(true);
+  const [taskError, setTaskError] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState('');
   const [editDescription, setEditDescription] = useState('');
   const [editCompleted, setEditCompleted] = useState(false);
+  const [projectTitle, setProjectTitle] = useState<string>('');
+  const [milestoneTitle, setMilestoneTitle] = useState<string | null>(null);
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [newCommentContent, setNewCommentContent] = useState('');
 
   useEffect(() => {
-    // Find the project and task
+    setTaskLoading(true);
+    setTaskError(null);
+    setProjectTitle('');
+    setMilestoneTitle(null);
+
     const project = projects.find((p) => p.id === projectId);
     if (!project) {
-      setError('Project not found');
-      setLoading(false);
+      setTaskError('Project not found');
+      setTaskLoading(false);
       return;
     }
+    setProjectTitle(project.title);
 
     const foundTask = project.tasks.find((t) => t.id === taskId);
     if (!foundTask) {
-      setError('Task not found');
-      setLoading(false);
+      setTaskError('Task not found');
+      setTaskLoading(false);
       return;
     }
 
@@ -37,8 +57,22 @@ const TaskDetail = ({ projectId, taskId }: TaskDetailProps) => {
     setEditTitle(foundTask.title);
     setEditDescription(foundTask.description || '');
     setEditCompleted(foundTask.completed);
-    setLoading(false);
+
+    if (foundTask.milestoneId) {
+      const milestone = project.milestones.find((m) => m.id === foundTask.milestoneId);
+      setMilestoneTitle(milestone ? milestone.title : `Milestone ID: ${foundTask.milestoneId} (Not Found)`);
+    } else {
+      setMilestoneTitle(null);
+    }
+
+    setTaskLoading(false);
   }, [projectId, taskId, projects]);
+
+  useEffect(() => {
+    if (projectId && taskId) {
+      fetchComments(projectId, taskId);
+    }
+  }, [projectId, taskId, fetchComments]);
 
   const handleUpdate = (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,6 +85,8 @@ const TaskDetail = ({ projectId, taskId }: TaskDetailProps) => {
         updatedAt: new Date(),
       });
       setIsEditing(false);
+      setShowSuccessMessage(true);
+      setTimeout(() => setShowSuccessMessage(false), 3000);
     }
   };
 
@@ -64,19 +100,41 @@ const TaskDetail = ({ projectId, taskId }: TaskDetailProps) => {
     }
   };
 
-  const handleDelete = () => {
+  const handleDeleteTask = () => {
     if (task && window.confirm('Are you sure you want to delete this task?')) {
       deleteTask(projectId, task.id);
-      // Redirect would happen via react-router navigation in a real app
     }
   };
 
-  if (loading) {
+  const handleAddComment = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault();
+      const content = newCommentContent.trim();
+      if (content && task) {
+        const added = await addComment(projectId, taskId, { content });
+        if (added) {
+          setNewCommentContent('');
+        }
+      }
+    },
+    [newCommentContent, task, projectId, taskId, addComment],
+  );
+
+  const handleDeleteComment = useCallback(
+    async (commentId: number) => {
+      if (window.confirm('Are you sure you want to delete this comment?')) {
+        await deleteComment(projectId, taskId, commentId);
+      }
+    },
+    [projectId, taskId, deleteComment],
+  );
+
+  if (taskLoading) {
     return <div className="flex justify-center items-center p-8 text-gray-400">Loading task...</div>;
   }
 
-  if (error) {
-    return <div className="p-4 text-center text-red-500 bg-red-900/20 rounded-md">{error}</div>;
+  if (taskError) {
+    return <div className="p-4 text-center text-red-500 bg-red-900/20 rounded-md">{taskError}</div>;
   }
 
   if (!task) {
@@ -141,46 +199,113 @@ const TaskDetail = ({ projectId, taskId }: TaskDetailProps) => {
           </div>
         </form>
       ) : (
-        <div className="space-y-4">
-          <div className="flex justify-between items-center">
-            <h2 className="text-xl font-bold text-white">{task.title}</h2>
+        <div className="space-y-4 text-left">
+          <div className="flex justify-between items-start mb-4 pb-4 border-b border-gray-700">
+            <div>
+              <h2 className="text-xl font-bold text-white mb-1">{task.title}</h2>
+              <div className="flex space-x-1">
+                <div className="text-sm text-blue-400">Project: {projectTitle}</div>
+                {milestoneTitle && <div className="text-sm text-blue-400">Milestone: {milestoneTitle}</div>}
+              </div>
+            </div>
             <div
-              className={`px-3 py-1 rounded-full text-sm font-medium ${
+              className={`flex-shrink-0 px-3 py-1 rounded-full text-sm font-medium ${
                 task.completed ? 'bg-green-700 text-green-200' : 'bg-gray-700 text-gray-200'
               }`}
             >
               {task.completed ? 'Completed' : 'In Progress'}
             </div>
           </div>
-          {task.description && <p className="text-gray-300">{task.description}</p>}
-
-          <div className="space-y-1 text-sm text-gray-400">
+          {showSuccessMessage && (
+            <div className="mb-4 p-3 bg-green-800/50 text-green-300 rounded-md text-center transition-opacity duration-300">
+              Task updated successfully!
+            </div>
+          )}
+          {task.description && <p className="text-gray-300 whitespace-pre-wrap mb-4">{task.description}</p>}
+          <div className="flex space-x-1 text-sm text-gray-400 mb-4">
             <p>Created: {new Date(task.createdAt).toLocaleString()}</p>
             <p>Updated: {new Date(task.updatedAt).toLocaleString()}</p>
-            {task.milestoneId && <p>Milestone ID: {task.milestoneId}</p>}
           </div>
-
-          <div className="flex flex-wrap gap-2 pt-4">
+          <div className="flex flex-wrap gap-2 pt-4 mb-4 pb-4 border-b border-gray-700">
             <button
               onClick={() => setIsEditing(true)}
               className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              Edit
+              Edit Task
             </button>
             <button
               onClick={handleToggleStatus}
-              className={`px-4 py-2 ${
-                task.completed ? 'bg-yellow-600 hover:bg-yellow-700' : 'bg-green-600 hover:bg-green-700'
-              } text-white font-medium rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500`}
+              className="px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white font-medium rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-yellow-500"
             >
-              {task.completed ? 'Mark as Incomplete' : 'Mark as Complete'}
+              {task.completed ? 'Mark as In Progress' : 'Mark as Completed'}
             </button>
             <button
-              onClick={handleDelete}
+              onClick={handleDeleteTask}
               className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-red-500"
             >
-              Delete
+              Delete Task
             </button>
+          </div>
+
+          <div className="space-y-6">
+            <h3 className="text-lg font-semibold text-white">Comments</h3>
+
+            <form onSubmit={handleAddComment} className="space-y-3">
+              <textarea
+                value={newCommentContent}
+                onChange={(e) => setNewCommentContent(e.target.value)}
+                placeholder="Add a comment..."
+                required
+                className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[80px] resize-y"
+              />
+              <button
+                type="submit"
+                disabled={commentsLoading || !newCommentContent.trim()}
+                className="px-4 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-500 text-white font-medium rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-green-500"
+              >
+                {commentsLoading ? 'Adding...' : 'Add Comment'}
+              </button>
+            </form>
+
+            {commentsError && (
+              <div className="p-3 text-center text-red-400 bg-red-900/30 rounded-md">
+                Error loading or modifying comments: {commentsError}
+              </div>
+            )}
+
+            <div className="space-y-4">
+              {commentsLoading && comments.length === 0 && (
+                <div className="text-center text-gray-400 py-4">Loading comments...</div>
+              )}
+              {!commentsLoading && comments.length === 0 && !commentsError && (
+                <div className="text-center text-gray-400 py-4">No comments yet.</div>
+              )}
+              {comments.map((comment) => (
+                <div key={comment.id} className="relative group">
+                  <CommentCard
+                    date={comment.createdAt.toLocaleString()}
+                    author={`User ${comment.userId}`}
+                    content={comment.content}
+                  />
+                  <button
+                    onClick={() => handleDeleteComment(comment.id)}
+                    disabled={commentsLoading}
+                    className="absolute top-2 right-2 p-1 bg-red-700/50 hover:bg-red-600 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                    aria-label="Delete comment"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-4 w-4"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       )}

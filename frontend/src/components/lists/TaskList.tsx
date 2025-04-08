@@ -4,6 +4,7 @@ import { Task, Milestone } from '../../types/project';
 import CreateTaskModal from '../modals/CreateTaskModal';
 import EditTaskModal from '../modals/EditTaskModal';
 import BaseCard from '../ui/Card/BaseCard';
+import { useNavigate } from 'react-router-dom';
 
 interface TaskListProps {
   projectId: number;
@@ -12,6 +13,7 @@ interface TaskListProps {
 }
 
 const TaskList = ({ projectId, tasks = [], milestones = [] }: TaskListProps) => {
+  const navigate = useNavigate();
   const { deleteTask, projects } = useProject();
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [showTaskModal, setShowTaskModal] = useState(false);
@@ -57,6 +59,13 @@ const TaskList = ({ projectId, tasks = [], milestones = [] }: TaskListProps) => 
     const active = currentTasks.length - completed;
     return { total: currentTasks.length, active, completed };
   }, [currentTasks]);
+
+  const handleTaskClick = useCallback(
+    (id: number) => {
+      navigate(`/project/${projectId}/task/${id}`);
+    },
+    [navigate, projectId],
+  );
 
   return (
     <div className="w-full max-w-7xl mx-auto bg-gray-900 rounded-lg shadow-md overflow-hidden">
@@ -124,6 +133,7 @@ const TaskList = ({ projectId, tasks = [], milestones = [] }: TaskListProps) => 
               </>
             }
             className={task.completed ? 'text-gray-400 line-through' : ''}
+            onClick={() => handleTaskClick(task.id)}
           />
         ))}
         {sortedTasks.length === 0 && (
