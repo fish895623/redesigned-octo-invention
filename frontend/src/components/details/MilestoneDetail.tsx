@@ -21,8 +21,6 @@ const MilestoneDetail = ({ projectId, milestoneId }: MilestoneDetailProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [startDate, setStartDate] = useState<string>('');
-  const [dueDate, setDueDate] = useState<string>('');
   const [completed, setCompleted] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -39,8 +37,6 @@ const MilestoneDetail = ({ projectId, milestoneId }: MilestoneDetailProps) => {
         setMilestone(foundMilestone);
         setTitle(foundMilestone.title);
         setDescription(foundMilestone.description || '');
-        setStartDate(foundMilestone.startDate ? new Date(foundMilestone.startDate).toISOString().split('T')[0] : '');
-        setDueDate(foundMilestone.dueDate ? new Date(foundMilestone.dueDate).toISOString().split('T')[0] : '');
         setCompleted(foundMilestone.completed);
         setLoading(false);
       } else {
@@ -60,8 +56,6 @@ const MilestoneDetail = ({ projectId, milestoneId }: MilestoneDetailProps) => {
         ...milestone,
         title: title.trim(),
         description: description.trim() || undefined,
-        startDate: startDate ? new Date(startDate) : undefined,
-        dueDate: dueDate ? new Date(dueDate) : undefined,
         completed,
         updatedAt: new Date(),
       };
@@ -126,27 +120,6 @@ const MilestoneDetail = ({ projectId, milestoneId }: MilestoneDetailProps) => {
               rows={4}
               className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white resize-none"
             />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1">Start Date</label>
-              <input
-                type="date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1">Due Date</label>
-              <input
-                type="date"
-                value={dueDate}
-                onChange={(e) => setDueDate(e.target.value)}
-                className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white"
-              />
-            </div>
           </div>
 
           <div className="mb-4">
