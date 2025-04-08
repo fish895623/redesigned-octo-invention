@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.projectmanage.main.model.Comment;
-import com.projectmanage.main.model.Project;
 import com.projectmanage.main.model.Task;
 import com.projectmanage.main.model.User;
 import com.projectmanage.main.model.dto.CommentDTO;
@@ -41,7 +40,7 @@ public class CommentController {
             @PathVariable(name = "projectId") Long projectId,
             @PathVariable(name = "taskId") Long taskId, @RequestBody CommentDTO commentDTO) {
         // Validate project exists
-        Project project = projectRepository.findById(projectId).orElseThrow(
+        projectRepository.findById(projectId).orElseThrow(
                 () -> new EntityNotFoundException("Project not found with id: " + projectId));
         // Validate task exists and belongs to the project
         Task task = taskRepository.findByIdAndProjectId(taskId, projectId)
