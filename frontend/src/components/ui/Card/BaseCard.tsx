@@ -4,7 +4,7 @@ export interface BaseCardProps {
   title?: string;
   description?: string;
   assignees?: ReactNode;
-  reviewers?: ReactNode;
+  participants?: ReactNode;
   headerRight?: ReactNode;
   footer?: ReactNode;
   children?: ReactNode;
@@ -16,7 +16,7 @@ const BaseCard: React.FC<BaseCardProps> = ({
   title,
   description,
   assignees,
-  reviewers,
+  participants,
   headerRight,
   footer,
   children,
@@ -44,10 +44,12 @@ const BaseCard: React.FC<BaseCardProps> = ({
 
       {children && <div className="mt-4">{children}</div>}
 
-      <div>
+      <div className="flex gap-4 text-sm text-gray-400">
         {footer && <div className="mt-4 flex flex-wrap gap-4 text-sm text-gray-400">{footer}</div>}
-        {assignees && <div className="mt-4 flex flex-wrap gap-4 text-sm text-gray-400">{assignees}</div>}
-        {reviewers && <div className="mt-4 flex flex-wrap gap-4 text-sm text-gray-400">{reviewers}</div>}
+        <div className="flex gap-4 text-sm text-gray-400">
+          {assignees && <div className="mt-4  gap-4 text-sm text-gray-400">{assignees}</div>}
+          {participants && <div className="mt-4 gap-4 text-sm text-gray-400">{participants}</div>}
+        </div>
       </div>
     </div>
   );

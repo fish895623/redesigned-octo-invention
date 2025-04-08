@@ -156,11 +156,29 @@ const ProjectList = ({ onSelectProject }: ProjectListProps) => {
                     <span>Milestones: {project.milestones.length}</span>
                     <span>Tasks: {project.tasks.length}</span>
                   </div>
-                  <div className="flex gap-4 text-sm text-gray-500">
-                    <span className="flex items-center gap-1">Updated: {project.updatedAt.toString()}</span>
-                    <span className="flex items-center gap-1">Created: {project.createdAt.toString()}</span>
+                  <div className="flex gap-4 mb-2 text-sm text-gray-500">
+                    <span className="flex gap-1">Updated: {project.updatedAt.toString()}</span>
+                    <span className="flex gap-1">Created: {project.createdAt.toString()}</span>
                   </div>
                 </>
+              }
+              assignees={
+                <div className="flex gap-1">
+                  <div
+                    className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-base sm:text-lg font-semibold bg-blue-600 text-white'}`}
+                  >
+                    {'U'}
+                  </div>
+                </div>
+              }
+              participants={
+                <div className="flex gap-1">
+                  <div
+                    className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-base sm:text-lg font-semibold bg-blue-600 text-white'}`}
+                  >
+                    {'R'}
+                  </div>
+                </div>
               }
             />
           ))}
