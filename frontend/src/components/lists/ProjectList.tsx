@@ -163,20 +163,30 @@ const ProjectList = ({ onSelectProject }: ProjectListProps) => {
                 </>
               }
               assignees={
-                <div className="flex gap-1">
+                <div className="flex items-center">
                   <div
-                    className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-base sm:text-lg font-semibold bg-blue-600 text-white'}`}
+                    className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-base sm:text-lg font-semibold bg-blue-600 text-white border-2 border-gray-800`}
                   >
-                    {'U'}
+                    {'R'}
                   </div>
                 </div>
               }
               participants={
-                <div className="flex gap-1">
+                <div className="flex items-center">
                   <div
-                    className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-base sm:text-lg font-semibold bg-blue-600 text-white'}`}
+                    className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-base sm:text-lg font-semibold bg-blue-600 text-white border-2 border-gray-800`}
                   >
                     {'R'}
+                  </div>
+                  <div
+                    className={`-ml-4 w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-base sm:text-lg font-semibold bg-blue-600 text-white border-2 border-gray-800`}
+                  >
+                    {'F'}
+                  </div>
+                  <div
+                    className={`-ml-4 w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-base sm:text-lg font-semibold bg-blue-600 text-white border-2 border-gray-800`}
+                  >
+                    {'G'}
                   </div>
                 </div>
               }

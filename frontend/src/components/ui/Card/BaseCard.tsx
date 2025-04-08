@@ -44,7 +44,7 @@ const BaseCard: React.FC<BaseCardProps> = ({
 
       {children && <div className="mt-4">{children}</div>}
 
-      <div className="flex gap-4 text-sm text-gray-400">
+      <div className="flex gap-4 text-sm text-gray-400 justify-between">
         {footer && <div className="mt-4 flex flex-wrap gap-4 text-sm text-gray-400">{footer}</div>}
         <div className="flex gap-4 text-sm text-gray-400">
           {assignees && <div className="mt-4  gap-4 text-sm text-gray-400">{assignees}</div>}
