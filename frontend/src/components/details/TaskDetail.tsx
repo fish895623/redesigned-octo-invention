@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useProjects } from '../../hooks/useProjects';
 import { Task } from '../../types/project';
+import CommentCard from '../ui/Card/CommentCard';
 
 interface TaskDetailProps {
   projectId: number;
@@ -16,15 +17,23 @@ const TaskDetail = ({ projectId, taskId }: TaskDetailProps) => {
   const [editTitle, setEditTitle] = useState('');
   const [editDescription, setEditDescription] = useState('');
   const [editCompleted, setEditCompleted] = useState(false);
+  const [projectTitle, setProjectTitle] = useState<string>('');
+  const [milestoneTitle, setMilestoneTitle] = useState<string | null>(null);
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
   useEffect(() => {
-    // Find the project and task
+    setLoading(true); // Reset loading state on dependency change
+    setError(null); // Reset error state
+    setProjectTitle(''); // Reset project title
+    setMilestoneTitle(null); // Reset milestone title
+
     const project = projects.find((p) => p.id === projectId);
     if (!project) {
       setError('Project not found');
       setLoading(false);
       return;
     }
+    setProjectTitle(project.title); // Set project title
 
     const foundTask = project.tasks.find((t) => t.id === taskId);
     if (!foundTask) {
@@ -37,6 +46,21 @@ const TaskDetail = ({ projectId, taskId }: TaskDetailProps) => {
     setEditTitle(foundTask.title);
     setEditDescription(foundTask.description || '');
     setEditCompleted(foundTask.completed);
+
+    // Find milestone title if milestoneId exists
+    if (foundTask.milestoneId) {
+      const milestone = project.milestones.find((m) => m.id === foundTask.milestoneId);
+      if (milestone) {
+        setMilestoneTitle(milestone.title);
+      } else {
+        // Handle case where milestone ID exists but milestone is not found (optional)
+        console.warn(`Milestone with ID ${foundTask.milestoneId} not found for task ${foundTask.id}`);
+        setMilestoneTitle(`Milestone ID: ${foundTask.milestoneId} (Not Found)`);
+      }
+    } else {
+      setMilestoneTitle(null);
+    }
+
     setLoading(false);
   }, [projectId, taskId, projects]);
 
@@ -51,6 +75,8 @@ const TaskDetail = ({ projectId, taskId }: TaskDetailProps) => {
         updatedAt: new Date(),
       });
       setIsEditing(false);
+      setShowSuccessMessage(true);
+      setTimeout(() => setShowSuccessMessage(false), 3000); // Hide after 3 seconds
     }
   };
 
@@ -141,26 +167,39 @@ const TaskDetail = ({ projectId, taskId }: TaskDetailProps) => {
           </div>
         </form>
       ) : (
-        <div className="space-y-4">
-          <div className="flex justify-between items-center">
-            <h2 className="text-xl font-bold text-white">{task.title}</h2>
+        <div className="space-y-4 text-left">
+          <div className="flex justify-between items-start mb-4 pb-4 border-b border-gray-700">
+            <div>
+              <h2 className="text-xl font-bold text-white mb-1">{task.title}</h2>
+              <div className="flex space-x-1">
+                <div className="text-sm text-blue-400">Project: {projectTitle}</div>
+                {milestoneTitle && <div className="text-sm text-blue-400">Milestone: {milestoneTitle}</div>}
+              </div>
+            </div>
             <div
-              className={`px-3 py-1 rounded-full text-sm font-medium ${
+              className={`flex-shrink-0 px-3 py-1 rounded-full text-sm font-medium ${
                 task.completed ? 'bg-green-700 text-green-200' : 'bg-gray-700 text-gray-200'
+              }
               }`}
             >
               {task.completed ? 'Completed' : 'In Progress'}
             </div>
           </div>
-          {task.description && <p className="text-gray-300">{task.description}</p>}
 
-          <div className="space-y-1 text-sm text-gray-400">
+          {showSuccessMessage && (
+            <div className="mb-4 p-3 bg-green-800/50 text-green-300 rounded-md text-center transition-opacity duration-300">
+              Task updated successfully!
+            </div>
+          )}
+
+          {task.description && <p className="text-gray-300 whitespace-pre-wrap mb-4">{task.description}</p>}
+
+          <div className="flex space-x-1 text-sm text-gray-400 mb-4">
             <p>Created: {new Date(task.createdAt).toLocaleString()}</p>
             <p>Updated: {new Date(task.updatedAt).toLocaleString()}</p>
-            {task.milestoneId && <p>Milestone ID: {task.milestoneId}</p>}
           </div>
 
-          <div className="flex flex-wrap gap-2 pt-4">
+          <div className="flex flex-wrap gap-2 pt-4 mb-4 pb-4 border-b border-gray-700">
             <button
               onClick={() => setIsEditing(true)}
               className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -181,6 +220,44 @@ const TaskDetail = ({ projectId, taskId }: TaskDetailProps) => {
             >
               Delete
             </button>
+          </div>
+
+          {/* Comment Section */}
+          <div className="mt-6 pt-6 border-t border-gray-700">
+            <h3 className="text-lg font-semibold text-white mb-4">Comments</h3>
+
+            {/* List of comments (Using CommentCard) */}
+            <div className="space-y-4 mb-6">
+              <CommentCard
+                author="Jane Doe"
+                date="2 days ago"
+                content="This looks good, but let's double-check the requirements."
+              />
+              <CommentCard
+                author="John Smith"
+                date="1 day ago"
+                content="Agreed. I'll review the spec document again."
+              />
+            </div>
+
+            {/* Add Comment Form (Basic Structure) */}
+            <form className="space-y-3">
+              <textarea
+                placeholder="Add a comment..."
+                rows={3}
+                className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500 resize-y"
+                // Add state and onChange handler here
+              />
+              <div className="flex justify-end">
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+                  // Add onSubmit handler and potentially disabled state here
+                >
+                  Add Comment
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

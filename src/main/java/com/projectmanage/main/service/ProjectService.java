@@ -9,6 +9,7 @@ import com.projectmanage.main.model.Project;
 import com.projectmanage.main.model.dto.MilestoneDTO;
 import com.projectmanage.main.model.dto.ProjectDTO;
 import com.projectmanage.main.model.dto.TaskDTO;
+import com.projectmanage.main.model.dto.UserDTO;
 import com.projectmanage.main.model.mapper.ProjectMapper;
 import com.projectmanage.main.repository.ProjectRepository;
 import lombok.RequiredArgsConstructor;
@@ -116,5 +117,13 @@ public class ProjectService {
     }
 
     return true;
+  }
+
+  /**
+   * Get all participants of a project.
+   */
+  @Transactional(readOnly = true)
+  public List<UserDTO> getParticipants(Long projectId) {
+    return null;
   }
 }

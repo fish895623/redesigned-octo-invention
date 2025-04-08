@@ -1,3 +1,13 @@
+export interface Comment {
+  id: number;
+  content: string;
+  createdAt: Date;
+  updatedAt: Date;
+  taskId: number;
+  userId: number;
+  userFullName: string;
+}
+
 export interface Task {
   id: number;
   title: string;
