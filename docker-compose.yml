@@ -1,0 +1,75 @@
+version: "3.8"
+
+# 도커 컴포즈 이용시 .env 파일에서 SPRING_DATASOURCE_URL 를 jdbc:postgresql://postgresql:5432/project_db 으로 수정해야한다.
+
+services:
+  spring1:
+    build: .
+    env_file:
+      - .env
+    environment:
+      - SERVER_PORT=8080
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgresql
+
+  spring2:
+    build: .
+    env_file:
+      - .env
+    environment:
+      - SERVER_PORT=8081
+    ports:
+      - "8081:8081"
+    depends_on:
+      - postgresql
+
+  spring3:
+    build: .
+    env_file:
+      - .env
+    environment:
+      - SERVER_PORT=8082
+    ports:
+      - "8082:8082"
+    depends_on:
+      - postgresql
+
+  react:
+    build: ./frontend
+    restart: always
+    ports:
+      - "5173:80"
+
+  postgresql:
+    image: postgres:17
+    env_file:
+      - ./.env
+    environment:
+    - POSTGRES_USER=project_user
+    - POSTGRES_PASSWORD=0000
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U project_user"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  nginx:
+    build: ./conf
+    ports:
+      - "80:80"
+    depends_on:
+      - spring1
+      - spring2
+      - spring3
+      - react
+    restart: always
+
+volumes:
+  postgres-data:
