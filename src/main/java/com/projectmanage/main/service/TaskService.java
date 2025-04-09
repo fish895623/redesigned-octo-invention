@@ -2,16 +2,19 @@ package com.projectmanage.main.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.projectmanage.main.model.Milestone;
 import com.projectmanage.main.model.Project;
 import com.projectmanage.main.model.Task;
+import com.projectmanage.main.model.Comment;
 import com.projectmanage.main.model.dto.TaskDTO;
 import com.projectmanage.main.model.mapper.TaskMapper;
 import com.projectmanage.main.repository.MilestoneRepository;
 import com.projectmanage.main.repository.ProjectRepository;
 import com.projectmanage.main.repository.TaskRepository;
+import com.projectmanage.main.repository.CommentRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
@@ -22,6 +25,7 @@ public class TaskService {
   private final TaskRepository taskRepository;
   private final ProjectRepository projectRepository;
   private final MilestoneRepository milestoneRepository;
+  private final CommentRepository commentRepository;
   private final TaskMapper taskMapper;
 
   public List<TaskDTO> getTasksByProjectId(Long projectId) {
@@ -106,6 +110,11 @@ public class TaskService {
 
   @Transactional
   public void deleteTask(Long taskId) {
+    List<Comment> commentList=commentRepository.findByTaskId(taskId);
+    if(!commentList.isEmpty()){
+      commentList.forEach((comment)->commentRepository.deleteById(comment.getId()));
+    }
+
     Task task = taskRepository.findById(taskId)
         .orElseThrow(() -> new EntityNotFoundException("Task not found with id: " + taskId));
 
