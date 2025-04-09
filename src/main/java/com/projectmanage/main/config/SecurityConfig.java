@@ -2,6 +2,7 @@ package com.projectmanage.main.config;
 
 import java.util.Collections;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.lang.NonNull;
@@ -32,22 +33,28 @@ public class SecurityConfig {
   private final JWTUtil jwtUtil;
   private final UserRepository userRepository;
 
+  @Value("${app.cors.enabled}")
+  private boolean corsEnabled;
+
   @Bean
   SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-    /*
-     * http.cors(corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource()
-     * {
-     * 
-     * @Override public CorsConfiguration getCorsConfiguration(@NonNull HttpServletRequest request)
-     * { CorsConfiguration configuration = new CorsConfiguration();
-     * configuration.setAllowedOrigins(Collections.singletonList("http://localhost:5173"));
-     * configuration.setAllowedMethods(Collections.singletonList("*"));
-     * configuration.setAllowCredentials(true);
-     * configuration.setAllowedHeaders(Collections.singletonList("*"));
-     * configuration.setMaxAge(3600L);
-     * configuration.setExposedHeaders(Collections.singletonList("Authorization"));
-     * configuration.addExposedHeader("Set-Cookie"); return configuration; } }));
-     */
+
+    if (corsEnabled) {
+      http.cors(corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() {
+        @Override
+        public CorsConfiguration getCorsConfiguration(@NonNull HttpServletRequest request) {
+          CorsConfiguration configuration = new CorsConfiguration();
+          configuration.setAllowedOrigins(Collections.singletonList("http://localhost:5173"));
+          configuration.setAllowedMethods(Collections.singletonList("*"));
+          configuration.setAllowCredentials(true);
+          configuration.setAllowedHeaders(Collections.singletonList("*"));
+          configuration.setMaxAge(3600L);
+          configuration.setExposedHeaders(Collections.singletonList("Authorization"));
+          configuration.addExposedHeader("Set-Cookie");
+          return configuration;
+        }
+      }));
+    }
     http.csrf((auth) -> auth.disable());
     http.formLogin((auth) -> auth.disable());
     http.httpBasic((auth) -> auth.disable());
