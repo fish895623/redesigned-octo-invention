@@ -42,7 +42,7 @@ spring:
 # JWT token settings
 app:
   cors:
-    enabled: {APP_CORS_ANABLED:true}
+    enabled: {APP_CORS_ENABLED:""}
   jwt:
     access-token:
       expiration: 3600000 # 1 hour in milliseconds
