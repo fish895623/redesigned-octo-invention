@@ -2,6 +2,7 @@ import { defineConfig, loadEnv, type ConfigEnv, type UserConfig, type PluginOpti
 import react from '@vitejs/plugin-react';
 import { visualizer } from 'rollup-plugin-visualizer';
 import tailwindcss from '@tailwindcss/vite';
+import { viteStaticCopy } from 'vite-plugin-static-copy';
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
@@ -14,6 +15,7 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
   return {
     plugins: [
       react(),
+      tailwindcss(),
       // Add visualizer plugin in analyze mode
       ...(isAnalyze
         ? [
@@ -25,7 +27,16 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
             }),
           ]
         : []),
-      tailwindcss(),
+      // Copy build output from dist to Spring Boot's static folder
+      viteStaticCopy({
+        targets: [
+          {
+            src: 'dist/**/*',
+            dest: '../../src/main/resources/static'
+          },
+        ],
+        hook: 'writeBundle',
+      }),
     ] as PluginOption[],
 
     server: {
@@ -33,7 +44,7 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
     },
 
     build: {
-      // Generate source maps for production build
+      // Generate source maps for production build if needed
       sourcemap: mode === 'development',
 
       // Configure minification
@@ -50,27 +61,22 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
         output: {
           manualChunks: {
             vendor: ['react', 'react-dom', 'react-router-dom'],
-            // Group components with similar functionality
             auth: ['./src/context/AuthContext.tsx'],
             ui: ['./src/components/ui/Navigation/NavigationBar.tsx'],
           },
-          // Generate chunk filenames with content hashes for better caching
           chunkFileNames: 'assets/[name]-[hash].js',
           entryFileNames: 'assets/[name]-[hash].js',
           assetFileNames: 'assets/[name]-[hash].[ext]',
         },
       },
 
-      // Make sure chunks are at least 10kb
       chunkSizeWarningLimit: 1000,
     },
 
-    // Optimize dependency pre-bundling
     optimizeDeps: {
       include: ['react', 'react-dom', 'react-router-dom', 'axios'],
     },
 
-    // Enable CSS code splitting
     css: {
       devSourcemap: true,
     },
