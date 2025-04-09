@@ -9,8 +9,6 @@ interface CreateMilestoneModalProps {
 const CreateMilestoneModal = ({ projectId, onClose }: CreateMilestoneModalProps) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [startDate, setStartDate] = useState('');
-  const [dueDate, setDueDate] = useState('');
   const [titleError, setTitleError] = useState('');
   const { addMilestone } = useProject();
 
@@ -30,8 +28,6 @@ const CreateMilestoneModal = ({ projectId, onClose }: CreateMilestoneModalProps)
     addMilestone(projectId, {
       title: title.trim(),
       description: description.trim() || undefined,
-      startDate: startDate ? new Date(startDate) : undefined,
-      dueDate: dueDate ? new Date(dueDate) : undefined,
       completed: false,
     });
 
@@ -79,27 +75,6 @@ const CreateMilestoneModal = ({ projectId, onClose }: CreateMilestoneModalProps)
               rows={4}
               className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
             />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            <div>
-              <h3 className="text-sm font-medium text-gray-300 mb-2">Start Date (Optional)</h3>
-              <input
-                type="date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <div>
-              <h3 className="text-sm font-medium text-gray-300 mb-2">Due Date (Optional)</h3>
-              <input
-                type="date"
-                value={dueDate}
-                onChange={(e) => setDueDate(e.target.value)}
-                className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
           </div>
 
           <div className="flex justify-end gap-3 mt-6">

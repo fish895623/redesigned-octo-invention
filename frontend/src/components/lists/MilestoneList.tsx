@@ -3,9 +3,10 @@
  * This requests to /api/projects/:projectId/milestones.
  * Authentication is requested.
  */
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { Milestone } from '../../types/project';
 import CreateMilestoneModal from '../modals/CreateMilestoneModal';
+import EditMilestoneModal from '../modals/EditMilestoneModal';
 import { useProject } from '../../context/ProjectContext';
 import BaseCard from '../ui/Card/BaseCard';
 import { useNavigate } from 'react-router-dom';
@@ -18,6 +19,7 @@ interface MilestoneListProps {
 const MilestoneList = ({ projectId, milestones }: MilestoneListProps) => {
   const { deleteMilestone } = useProject();
   const [showMilestoneModal, setShowMilestoneModal] = useState(false);
+  const [editingMilestone, setEditingMilestone] = useState<Milestone | null>(null);
   const [sortBy, setSortBy] = useState<'created' | 'updated'>('updated');
   const navigate = useNavigate();
 
@@ -25,12 +27,24 @@ const MilestoneList = ({ projectId, milestones }: MilestoneListProps) => {
     navigate(`/project/${projectId}/milestone/${milestoneId}`);
   };
 
-  const handleDelete = (milestoneId: number, event: React.MouseEvent) => {
-    event.stopPropagation();
-    if (window.confirm('Are you sure you want to delete this milestone?')) {
-      deleteMilestone(projectId, milestoneId);
-    }
-  };
+  const handleEditMilestone = useCallback((milestone: Milestone) => {
+    setEditingMilestone(milestone);
+  }, []);
+
+  const handleDelete = useCallback(
+    (milestoneId: number, event: React.MouseEvent) => {
+      event.stopPropagation();
+      if (window.confirm('Are you sure you want to delete this milestone?')) {
+        try {
+          deleteMilestone(projectId, milestoneId);
+        } catch (error) {
+          console.error('Error deleting milestone:', error);
+          alert('Failed to delete milestone. Please try again.');
+        }
+      }
+    },
+    [deleteMilestone, projectId],
+  );
 
   const sortedMilestones = [...milestones].sort((a, b) => {
     if (sortBy === 'updated') {
@@ -73,18 +87,29 @@ const MilestoneList = ({ projectId, milestones }: MilestoneListProps) => {
             title={milestone.title}
             description={milestone.description || undefined}
             headerRight={
-              <button
-                onClick={(e) => handleDelete(milestone.id, e)}
-                className="px-3 py-1 bg-red-600 hover:bg-red-700 text-white text-sm rounded-md transition-colors"
-                title="Delete milestone"
-              >
-                Delete
-              </button>
+              <>
+                <div className="flex gap-2 items-center">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleEditMilestone(milestone);
+                    }}
+                    className="px-3 py-1 bg-gray-700 text-white text-sm rounded-md hover:bg-gray-600 transition-colors"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={(e) => handleDelete(milestone.id, e)}
+                    className="px-3 py-1 bg-red-600 hover:bg-red-700 text-white text-sm rounded-md transition-colors"
+                    title="Delete milestone"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </>
             }
             footer={
               <>
-                {milestone.startDate && <div>Start: {milestone.startDate.toString()}</div>}
-                {milestone.dueDate && <div>Due: {milestone.dueDate.toString()}</div>}
                 <div>Tasks: {milestone.tasks.length}</div>
               </>
             }
@@ -97,6 +122,9 @@ const MilestoneList = ({ projectId, milestones }: MilestoneListProps) => {
       </div>
       {showMilestoneModal && (
         <CreateMilestoneModal onClose={() => setShowMilestoneModal(false)} projectId={projectId} />
+      )}
+      {editingMilestone && (
+        <EditMilestoneModal milestone={editingMilestone} onClose={() => setEditingMilestone(null)} />
       )}
     </div>
   );

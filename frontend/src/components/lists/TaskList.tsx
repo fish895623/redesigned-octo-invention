@@ -14,7 +14,7 @@ interface TaskListProps {
 
 const TaskList = ({ projectId, tasks = [], milestones = [] }: TaskListProps) => {
   const navigate = useNavigate();
-  const { deleteTask, projects } = useProject();
+  const { deleteTask, projects, updateTask } = useProject();
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [showTaskModal, setShowTaskModal] = useState(false);
   const [sortBy, setSortBy] = useState<'created' | 'updated'>('updated');
@@ -41,6 +41,23 @@ const TaskList = ({ projectId, tasks = [], milestones = [] }: TaskListProps) => 
       }
     },
     [deleteTask, projectId],
+  );
+
+  const handleStatusToggle = useCallback(
+    async (task: Task) => {
+      try {
+        const updatedTaskData: Task = {
+          ...task,
+          completed: !task.completed,
+          updatedAt: new Date(),
+        };
+        await updateTask(updatedTaskData);
+      } catch (error) {
+        console.error('Error updating task status:', error);
+        alert('Failed to update task status. Please try again.');
+      }
+    },
+    [updateTask, projectId],
   );
 
   // Sort tasks by created/updated time
@@ -111,18 +128,39 @@ const TaskList = ({ projectId, tasks = [], milestones = [] }: TaskListProps) => 
             description={task.description || undefined}
             headerRight={
               <>
-                <button
-                  onClick={() => handleEditTask(task)}
-                  className="px-3 py-1 bg-gray-700 text-white text-sm rounded-md hover:bg-gray-600 transition-colors"
-                >
-                  Edit
-                </button>
-                <button
-                  onClick={() => handleDeleteTask(task.id)}
-                  className="px-3 py-1 bg-red-600 hover:bg-red-700 text-white text-sm rounded-md transition-colors"
-                >
-                  Delete
-                </button>
+                <div className="flex gap-2 items-center">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleStatusToggle(task);
+                    }}
+                    className={`px-3 py-1 text-white text-sm rounded-md transition-colors cursor-pointer ${
+                      task.completed ? 'bg-green-600 hover:bg-green-700' : 'bg-yellow-600 hover:bg-yellow-700'
+                    }`}
+                    title={task.completed ? 'Mark as In Progress' : 'Mark as Completed'}
+                  >
+                    {task.completed ? 'Completed' : 'In Progress'}
+                  </button>
+
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleEditTask(task);
+                    }}
+                    className="px-3 py-1 bg-gray-700 text-white text-sm rounded-md hover:bg-gray-600 transition-colors"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteTask(task.id);
+                    }}
+                    className="px-3 py-1 bg-red-600 hover:bg-red-700 text-white text-sm rounded-md transition-colors"
+                  >
+                    Delete
+                  </button>
+                </div>
               </>
             }
             footer={

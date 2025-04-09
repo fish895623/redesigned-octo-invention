@@ -1,10 +1,8 @@
 package com.projectmanage.main.model;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -44,12 +42,6 @@ public class Milestone {
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "project_id", nullable = false)
   private Project project;
-
-  @Column(name = "start_date", nullable = true)
-  private LocalDate startDate;
-
-  @Column(name = "due_date", nullable = true)
-  private LocalDate dueDate;
 
   @Column(nullable = true)
   @Builder.Default

@@ -24,8 +24,6 @@ export interface Milestone {
   title: string;
   description?: string;
   projectId: number;
-  startDate?: Date;
-  dueDate?: Date;
   completed: boolean;
   tasks: Task[];
   createdAt: Date;
