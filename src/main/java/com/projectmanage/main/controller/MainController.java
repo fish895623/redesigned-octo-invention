@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class MainController {
 
   @PermitAll
-  @GetMapping("/")
+  @GetMapping({"/", "/{path:^(?!api|error)[^\\.]*}"})
   public String index() {
-    return "index.html";
+    return "forward:/index.html";
   }
 }

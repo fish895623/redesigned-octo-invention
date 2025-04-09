@@ -3,8 +3,12 @@ package com.projectmanage.main.config;
 import java.util.Collections;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
+import org.springframework.boot.web.server.ErrorPage;
+import org.springframework.boot.web.server.WebServerFactoryCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -61,12 +65,13 @@ public class SecurityConfig {
     http.addFilterBefore(new JWTFilter(jwtUtil, userRepository),
         UsernamePasswordAuthenticationFilter.class);
     http.authorizeHttpRequests((auth) -> {
-      auth.requestMatchers("/").permitAll().requestMatchers("/index.html").permitAll()
-          .requestMatchers("/api/auth/login").permitAll().requestMatchers("/api/auth/register")
-          .permitAll().requestMatchers("/api/auth/refresh").permitAll()
-          .requestMatchers("/api/auth/status").permitAll().requestMatchers("/api/auth/user")
-          .permitAll().requestMatchers("/assets/**").permitAll().requestMatchers("/api/projects/**")
-          .authenticated().requestMatchers("/my").hasRole("USER").anyRequest().authenticated();
+      auth.requestMatchers("/", "/error", "index", "/index", "/login", "/project/**").permitAll()
+          .requestMatchers("/index.html").permitAll().requestMatchers("/api/auth/login").permitAll()
+          .requestMatchers("/api/auth/register").permitAll().requestMatchers("/api/auth/refresh")
+          .permitAll().requestMatchers("/api/auth/status").permitAll()
+          .requestMatchers("/api/auth/user").permitAll().requestMatchers("/assets/**").permitAll()
+          .requestMatchers("/api/projects/**").authenticated().requestMatchers("/my")
+          .hasRole("USER").anyRequest().authenticated();
     });
     http.sessionManagement(
         (session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
@@ -81,5 +86,13 @@ public class SecurityConfig {
   @Bean
   PasswordEncoder passwordEncoder() {
     return new BCryptPasswordEncoder();
+  }
+
+  @Bean
+  public WebServerFactoryCustomizer<TomcatServletWebServerFactory> containerCustomizer() {
+    return factory -> {
+      ErrorPage error404Page = new ErrorPage(HttpStatus.NOT_FOUND, "/index.html");
+      factory.addErrorPages(error404Page);
+    };
   }
 }
