@@ -110,9 +110,9 @@ public class TaskService {
 
   @Transactional
   public void deleteTask(Long taskId) {
-    List<Comment> commentList=commentRepository.findByTaskId(taskId);
-    if(!commentList.isEmpty()){
-      commentList.forEach((comment)->commentRepository.deleteById(comment.getId()));
+    List<Comment> commentList = commentRepository.findByTaskId(taskId);
+    if (!commentList.isEmpty()) {
+      commentList.forEach((comment) -> commentRepository.deleteById(comment.getId()));
     }
 
     Task task = taskRepository.findById(taskId)
