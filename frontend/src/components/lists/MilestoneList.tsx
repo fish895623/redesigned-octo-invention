@@ -9,7 +9,7 @@ import CreateMilestoneModal from '../modals/CreateMilestoneModal';
 import EditMilestoneModal from '../modals/EditMilestoneModal';
 import { useProject } from '../../context/ProjectContext';
 import BaseCard from '../ui/Card/BaseCard';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate,Link } from 'react-router-dom';
 
 interface MilestoneListProps {
   projectId: number;
@@ -78,6 +78,14 @@ const MilestoneList = ({ projectId, milestones }: MilestoneListProps) => {
           >
             Add Milestone
           </button>
+          {location.pathname !== `/project/${projectId}` && (
+            <Link
+            to={`/project/${projectId}`}
+            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+            >
+                Back Project
+            </Link>
+          )}
         </div>
       </div>
       <div className="p-4 flex flex-col gap-4">

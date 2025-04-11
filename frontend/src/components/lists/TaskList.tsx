@@ -4,7 +4,7 @@ import { Task, Milestone } from '../../types/project';
 import CreateTaskModal from '../modals/CreateTaskModal';
 import EditTaskModal from '../modals/EditTaskModal';
 import BaseCard from '../ui/Card/BaseCard';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate,Link } from 'react-router-dom';
 
 interface TaskListProps {
   projectId: number;
@@ -117,6 +117,14 @@ const TaskList = ({ projectId, tasks = [], milestones = [] }: TaskListProps) => 
           >
             Create Task
           </button>
+          {location.pathname !== `/project/${projectId}` && (
+            <Link
+              to={`/project/${projectId}`}
+              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+            >
+              Back Project
+            </Link>
+          )}
         </div>
       </div>
 
