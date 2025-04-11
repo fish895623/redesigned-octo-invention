@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { Link } from 'react-router-dom';
 import { useProjects } from '../../hooks/useProjects';
 import { useComments } from '../../hooks/useComments';
 import { Task } from '../../types/project';
@@ -245,6 +246,14 @@ const TaskDetail = ({ projectId, taskId }: TaskDetailProps) => {
             >
               Delete Task
             </button>
+          {location.pathname !== `/project/${projectId}` && (
+            <Link
+              to={`/project/${projectId}`}
+              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+            >
+              Back Project
+            </Link>
+          )}
           </div>
 
           <div className="space-y-6">

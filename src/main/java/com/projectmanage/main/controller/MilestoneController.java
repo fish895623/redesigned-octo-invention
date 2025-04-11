@@ -77,9 +77,8 @@ public class MilestoneController {
   @DeleteMapping("/{milestoneId}")
   public ResponseEntity<?> deleteMilestone(@AuthenticationPrincipal CustomUserDetails userDetails,
       @PathVariable(name = "projectId") Long projectId,
-      @PathVariable(name = "milestoneId") Long milestoneId,
-      @RequestParam(name = "isCascadeDelete") boolean isCascadeDelete) {
-    milestoneService.deleteMilestone(milestoneId, isCascadeDelete);
+      @PathVariable(name = "milestoneId") Long milestoneId ){
+    milestoneService.deleteMilestone(milestoneId, true);
     return ResponseEntity.ok("Milestone deleted successfully");
   }
 
